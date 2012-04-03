@@ -54,6 +54,7 @@ to setup
   set average-path-length-of-lattice average-path-length
   set number-rewired 0
   set highlight-string ""
+  rewire-all
 end
 
 to make-turtles
@@ -66,42 +67,6 @@ end
 ;;; Main Procedure ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;
 
-to rewire-one
-
-  ;; make sure num-turtles is setup correctly else run setup first
-  if count turtles != num-nodes [
-    setup
-  ]
-
-  ;; record which button was pushed
-  set rewire-one? true
-  set rewire-all? false
-
-  let potential-edges links with [ not rewired? ]
-  ifelse any? potential-edges [
-    ask one-of potential-edges [
-      ;; "a" remains the same
-      let node1 end1
-      ;; if "a" is not connected to everybody
-      if [ count link-neighbors ] of end1 < (count turtles - 1)
-      [
-        ;; find a node distinct from node1 and not already a neighbor of node1
-        let node2 one-of turtles with [ (self != node1) and (not link-neighbor? node1) ]
-        ;; wire the new edge
-        ask node1 [ create-link-with node2 [ set color cyan  set rewired? true ] ]
-
-        set number-rewired number-rewired + 1  ;; counter for number of rewirings
-
-        ;; remove the old edge
-        die
-      ]
-    ]
-    ;; plot the results
-    let connected? do-calculations
-    do-plotting
-  ]
-  [ user-message "all edges have already been rewired once" ]
-end
 
 to rewire-all
 
@@ -327,12 +292,16 @@ to wire-them
   let n 0
   while [n < count turtles]
   [
-    ;; make edges with the next two neighbors
-    ;; this makes a lattice with average degree of 4
+    ;; make edges with the next four neighbors
+    ;; this makes a lattice with average degree of 8
     make-edge turtle n
               turtle ((n + 1) mod count turtles)
     make-edge turtle n
               turtle ((n + 2) mod count turtles)
+    make-edge turtle n
+              turtle ((n + 3) mod count turtles)
+    make-edge turtle n
+              turtle ((n + 4) mod count turtles)
     set n n + 1
   ]
 end
@@ -401,21 +370,8 @@ end
 
 to do-plotting
 
-   if rewire-one? [
-     ;; plot the rewire-one graph
-     set-current-plot "Network Properties Rewire-One"
-     set-current-plot-pen "apl"
-     ;; note: dividing by value at initial value to normalize the plot
-     plotxy number-rewired / count links
-            average-path-length / average-path-length-of-lattice
 
-     set-current-plot-pen "cc"
-     ;; note: dividing by initial value to normalize the plot
-     plotxy number-rewired / count links
-            clustering-coefficient / clustering-coefficient-of-lattice
-   ]
-
-   if rewire-all? [
+  
      ;; plot the rewire-all graph
      set-current-plot "Network Properties Rewire-All"
      set-current-plot-pen "apl"
@@ -427,7 +383,7 @@ to do-plotting
      ;; note: dividing by initial value to normalize the plot
      plotxy rewiring-probability
             clustering-coefficient / clustering-coefficient-of-lattice
-   ]
+   
 end
 
 
@@ -435,13 +391,13 @@ end
 ; The full copyright notice is in the Information tab.
 @#$#@#$#@
 GRAPHICS-WINDOW
-387
-52
-747
-433
+281
+10
+809
+559
 17
 17
-10.0
+14.8
 1
 10
 1
@@ -461,117 +417,40 @@ GRAPHICS-WINDOW
 ticks
 
 SLIDER
-472
-10
-631
-43
+3
+50
+162
+83
 num-nodes
 num-nodes
 10
 125
-40
+71
 1
 1
 NIL
 HORIZONTAL
 
-PLOT
-12
-13
-276
-192
-Network Properties Rewire-One
-fraction of edges rewired
-NIL
-0.0
-1.0
-0.0
-1.0
-true
-true
-PENS
-"apl" 1.0 2 -65485 true
-"cc" 1.0 2 -10899396 true
-
-BUTTON
-283
-77
-373
-110
-NIL
-rewire-one
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-
 SLIDER
-99
-469
-370
-502
+3
+10
+274
+43
 rewiring-probability
 rewiring-probability
 0
 1
-0.3
+0.11
 0.01
 1
 NIL
 HORIZONTAL
 
-BUTTON
-280
-434
-370
-467
-NIL
-rewire-all
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-
 MONITOR
-387
-435
-813
-480
-node properties
-highlight-string
-3
-1
-11
-
-BUTTON
-637
-10
-737
-43
-NIL
-highlight
-T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-
-MONITOR
-14
-214
-142
-259
+5
+96
+133
+141
 NIL
 clustering-coefficient
 3
@@ -579,10 +458,10 @@ clustering-coefficient
 11
 
 MONITOR
-148
-214
-276
-259
+139
+96
+267
+141
 NIL
 average-path-length
 3
@@ -590,10 +469,10 @@ average-path-length
 11
 
 PLOT
-15
-288
-278
-467
+6
+170
+269
+349
 Network Properties Rewire-All
 rewiring probability
 NIL
@@ -608,13 +487,29 @@ PENS
 "cc" 1.0 2 -10899396 true
 
 BUTTON
-398
-10
-464
-43
+164
+50
+219
+83
 setup
 setup
 NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+
+BUTTON
+221
+50
+276
+83
+NIL
+highlight
+T
 1
 T
 OBSERVER
