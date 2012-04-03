@@ -59,7 +59,7 @@ to setup
   
   ask turtles [set neighborhood link-neighbors]
   ask turtle 0 [show neighborhood]
-  ask turtle 0 [show turtles-on neighbors]
+  
 end
 
 to make-turtles
