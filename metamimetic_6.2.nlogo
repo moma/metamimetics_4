@@ -82,7 +82,11 @@ to go
     set-outputs            
     update-plots
     reset-decisions 
-    replacement
+    if agent-renovation
+    [
+      replacement
+    ]
+    
     update-views
   ask turtles [
     ifelse am-i-the-best? [set shape "face happy"][set shape "face sad"]
@@ -308,10 +312,18 @@ to replace
     set rule? false
     set behavior? false
     set move? false
-    ;set theta_1 random-float 1.0
-    ;set theta_2 random-float 1.0
-    ;set weighting-history random-float 1.0
-    ;set likelihood-to-move random-float 1.0
+    ifelse random-init
+    [
+      set theta_1 random-float 1.0
+      set theta_2 random-float 1.0
+      set weighting-history random-float 1.0
+      set likelihood-to-move random-float 1.0]
+    [
+      set theta_1 Initial-prob-update-behavior
+      set theta_2 Initial-prob-update-rule
+      set weighting-history Initial-weighting-history
+      set likelihood-to-move Initial-like-to-move 
+      ]
     set rule (random 4) + 1
  
 end
@@ -702,7 +714,7 @@ inicoop
 inicoop
 0
 100
-56
+43
 1
 1
 NIL
@@ -717,7 +729,7 @@ density
 density
 0
 1
-0.39
+1
 0.01
 1
 NIL
@@ -747,7 +759,7 @@ Initial-prob-update-rule
 Initial-prob-update-rule
 0
 1.0
-1
+0.28
 0.01
 1
 NIL
@@ -760,7 +772,7 @@ SWITCH
 437
 random-init
 random-init
-0
+1
 1
 -1000
 
@@ -784,7 +796,7 @@ Initial-prob-update-behavior
 Initial-prob-update-behavior
 0
 1
-1
+0.3
 0.01
 1
 NIL
@@ -799,7 +811,7 @@ Initial-weighting-history
 Initial-weighting-history
 0
 1
-0.46
+0
 0.01
 1
 NIL
@@ -814,7 +826,7 @@ Initial-like-to-move
 Initial-like-to-move
 0
 1
-0.15
+0
 0.01
 1
 NIL
@@ -889,6 +901,17 @@ SWITCH
 522
 conflict?
 conflict?
+1
+1
+-1000
+
+SWITCH
+16
+530
+174
+563
+agent-renovation?
+agent-renovation?
 1
 1
 -1000
