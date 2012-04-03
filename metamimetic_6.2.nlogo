@@ -82,7 +82,7 @@ to go
     set-outputs            
     update-plots
     reset-decisions 
-    if agent-renovation
+    if agent-renovation?
     [
       replacement
     ]
