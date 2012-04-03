@@ -2,6 +2,7 @@ turtles-own
 [
   node-clustering-coefficient
   distance-from-other-turtles   ;; list of distances of this node from other turtles
+  neighborhood
 ]
 
 links-own
@@ -55,12 +56,19 @@ to setup
   set number-rewired 0
   set highlight-string ""
   rewire-all
+  
+  ask turtles [set neighborhood link-neighbors]
+  ask turtle 0 [show neighborhood]
+  ask turtle 0 [show turtles-on neighbors]
 end
 
 to make-turtles
   crt num-nodes [ set color gray + 2 ]
   ;; arrange them in a circle in order by who number
   layout-circle (sort turtles) max-pxcor - 1
+  ;;layout-radial turtles links (turtle 0)
+
+
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;
@@ -393,11 +401,11 @@ end
 GRAPHICS-WINDOW
 281
 10
-809
-559
-17
-17
-14.8
+803
+553
+14
+14
+17.66
 1
 10
 1
@@ -407,10 +415,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--17
-17
--17
-17
+-14
+14
+-14
+14
 0
 0
 0
@@ -440,7 +448,7 @@ rewiring-probability
 rewiring-probability
 0
 1
-0.11
+0.41
 0.01
 1
 NIL
