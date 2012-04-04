@@ -1,6 +1,6 @@
 - implement strategy and rule for each agent - CHECK
 - implement PD playing - CHECK
 - implement basic metamimetic framework - CHECK
-- plot cooperation rate/fraction best
-- plot proportion of population for each rule
+- plot cooperation rate/fraction best - CHECK
+- plot proportion of population for each rule - CHECK
 - start looking at openMole for the near future

@@ -30,7 +30,15 @@ globals
   highlight-string                     ;; message that appears on the node properties monitor
   number-rewired                       ;; number of edges that have been rewired. used for plots.
   rewire-one?                          ;; these two variables record which button was last pushed
+  
   rewire-all?
+  
+  cooperation-rate
+  fraction-best
+  maxi
+  mini
+  conf
+  anti
 ]
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -91,6 +99,9 @@ to go
     ifelse am-i-the-best? [set shape "face happy"][set shape "face sad"]
     ]  
   update-views
+  set-outputs
+  update-plots
+  
     tick
   
 end
@@ -337,6 +348,38 @@ to-report majority-behavior
   report one-of modes mylist
 end
 
+
+
+to set-outputs
+    set cooperation-rate count turtles with [cooperate?] / count turtles
+    set fraction-best count turtles with [shape = "face happy"]/ count turtles
+
+  set maxi count turtles with [rule = 1] / count turtles
+  set mini count turtles with [rule = 2] / count turtles
+  set conf count turtles with [rule = 3] / count turtles
+  set anti count turtles with [rule = 4] / count turtles
+end
+
+
+
+to update-plots
+  set-current-plot "cooperation"
+  set-current-plot-pen "cooperation"
+  plot cooperation-rate
+  
+  set-current-plot-pen "fraction-best"
+  plot fraction-best 
+  set-current-plot "population"
+  set-current-plot-pen "maxi"
+  plot maxi
+  set-current-plot-pen "mini"
+  plot mini
+  set-current-plot-pen "conf"
+  plot conf
+  set-current-plot-pen "anti"
+  plot anti
+ 
+end
 
 
 
@@ -650,8 +693,8 @@ SLIDER
 num-nodes
 num-nodes
 10
-125
-102
+400
+400
 1
 1
 NIL
@@ -753,7 +796,7 @@ inicoop
 inicoop
 0
 100
-25
+45
 1
 1
 NIL
@@ -768,7 +811,7 @@ strength-of-dilemma
 strength-of-dilemma
 0
 0.5
-0.5
+0
 0.01
 1
 NIL
@@ -789,6 +832,44 @@ NIL
 NIL
 NIL
 NIL
+
+PLOT
+852
+19
+1321
+228
+cooperation
+time
+NIL
+0.0
+100.0
+0.0
+1.0
+true
+true
+PENS
+"cooperation" 1.0 0 -13791810 true
+"fraction-best" 1.0 0 -955883 true
+
+PLOT
+851
+258
+1321
+506
+population
+time
+fraction
+0.0
+100.0
+0.0
+1.0
+true
+true
+PENS
+"maxi" 1.0 0 -2674135 true
+"mini" 1.0 0 -10899396 true
+"conf" 1.0 0 -13345367 true
+"anti" 1.0 0 -16777216 true
 
 @#$#@#$#@
 WHAT IS IT?
@@ -1196,6 +1277,25 @@ repeat 5 [rewire-one]
     <metric>average-path-length</metric>
     <metric>clustering-coefficient</metric>
     <steppedValueSet variable="rewiring-probability" first="0" step="0.025" last="1"/>
+  </experiment>
+  <experiment name="inicoopsweep_lowp" repetitions="10" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>go</go>
+    <metric>count cooperation-rate</metric>
+    <metric>count turtles with [rule=1]</metric>
+    <metric>count turtles with [rule=2]</metric>
+    <metric>count turtles with [rule=3]</metric>
+    <metric>count turtles with [rule=4]</metric>
+    <enumeratedValueSet variable="num-nodes">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="inicoop" first="0" step="1" last="100"/>
+    <enumeratedValueSet variable="rewiring-probability">
+      <value value="0.08"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="strength-of-dilemma">
+      <value value="0"/>
+    </enumeratedValueSet>
   </experiment>
 </experiments>
 @#$#@#$#@
