@@ -1,3 +1,3 @@
-- implement strategy and rule for each agent
+- implement strategy and rule for each agent - CHECK
 - implement PD playing
 - implement basic metamimetic framework
