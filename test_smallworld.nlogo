@@ -8,6 +8,8 @@ turtles-own
   score            ;; score resulting from interaction of neighboring patches. It is dictated by the PD payoffs and the discount factor
   last-score
   inst-score
+  rule?
+  behavior?
 ]
 
 links-own
@@ -65,6 +67,9 @@ to setup
   ask turtles [set neighborhood link-neighbors]
   ask turtles [
     set rule (random 4) + 1 
+    set score 0.0
+    set rule? false
+    set behavior? false
       set shape "face happy"
       ifelse random-float 1.0 < (inicoop / 100)
         [set cooperate? true]
@@ -72,10 +77,24 @@ to setup
   ]
   ask turtles [establish-color]
   ask turtles [interact]
-  ask turtle 0 [show score]
+  
   
   
 end
+
+to go
+  ask turtles [interact] 
+    decision-stage
+    learning-stage
+    update-views
+  ask turtles [
+    ifelse am-i-the-best? [set shape "face happy"][set shape "face sad"]
+    ]  
+  update-views
+    tick
+  
+end
+
 
 to make-turtles
   crt num-nodes [ set color gray + 2 ]
@@ -104,6 +123,33 @@ to establish-color  ;; agent procedure
     [set size 1.2]
     [set size 0.8]
 end
+
+
+to update-views
+  ask turtles [establish-color]
+ end
+
+
+to decision-stage
+   ask turtles [ 
+     ifelse not am-i-the-best? and not is-my-rule-the-best? [set rule? true]
+     [if not am-i-the-best? [set behavior? true]]
+   ]
+   
+end
+
+to learning-stage
+    ask turtles [ 
+   if rule?   
+   [     
+       select-rule
+       ;establish-color
+       select-behavior
+   ]
+   if behavior? [select-behavior]
+   ]
+end
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Main Procedure ;;;
@@ -182,6 +228,121 @@ to interact  ;; calculates the agent's payoff for Prisioner's Dilema. Each agent
   ;set score inst-score * ( 1 - weighting-history) + last-score * weighting-history   
   set score inst-score  
 end
+
+to-report am-i-the-best? ;; reports true if the agents is the best in its neighborhood (according with its rule) and false otherwise
+  let test false
+  ;; In the model, an isolated agent can not consider himself as the best
+  if any? turtles-on neighborhood [
+  if (rule = 1) and (score >= [score] of max-one-of turtles-on neighborhood [score] * 0.99) [set test true]
+  if (rule = 2) and (score <= [score] of min-one-of turtles-on neighborhood [score] * 1.01) [set test true]
+  if (rule = 3) and (member? rule majority-rules) [set test true]
+  if (rule = 4) and (member? rule minority-rules) and not all? (turtles-on neighborhood) [rule = 4] [set test true]  
+  ]
+  report test
+end
+
+
+to-report is-my-rule-the-best? ;; reports true if the agent's rule is used by any of the best valuated agents in its neighborhood (according with its rule) and false otherwise
+  let test false
+  ifelse am-i-the-best? [set test true][
+  if member? rule [rule] of best-elements [set test true] 
+  ]
+  report test
+end
+
+
+to select-rule
+                 ;; the agent changes its rule if every more succesfull neighbor has a different rule (if them exist).
+                 ;; The agent never change his rule nor behavior if is in the set of agents with best performance (according its rule)
+       
+     if not am-i-the-best? 
+     [
+     if not is-my-rule-the-best? [
+      copy-strategy (one-of best-elements)
+       ]
+     ] 
+end
+
+
+to select-behavior  ;; patch procedure
+  if any? turtles-on neighborhood
+  [
+  if (rule = 1) or (rule = 2) 
+  [set cooperate? [cooperate?] of one-of best-elements]
+                                                                ;;choose behavior (cooperate, not cooperate)
+                                                                ;; of neighbor who performed best according
+                                                                ;; the agent's rule 
+  
+  if rule = 3
+  [set cooperate? majority-behavior]                                                              
+  if rule = 4 
+  [set cooperate? not majority-behavior]
+  ]   
+end
+
+
+to-report majority-rules  ;; reports a set with the number of the most frequent rules in agent's neighborhood (agent included)
+                          ;; be careful when use in an ask cycle as the command is applied to "self"
+  let mylist [rule] of (turtle-set turtles-on neighborhood self)
+  set mylist modes mylist
+  report mylist
+end
+
+
+to-report minority-rules ;; reports a set with the number of the less frequent rules in agent's neighborhood (agent included)
+                         ;; be careful when use in an ask cycle as the command is applied to "self"
+  let mylist_1 [rule] of (turtle-set turtles-on neighborhood self)
+  let mylist []
+  let j 1
+  while [empty? mylist] [
+  let i 1
+  repeat 4 [
+    if length filter [? = i] mylist_1 = j  [set mylist lput i mylist] 
+    set i i + 1
+    ]
+  set j j + 1
+  ] 
+  report mylist
+end
+
+
+to-report best-elements ;; report a list with the agents with the best performance according agents
+  
+  let myset (turtle-set turtles-on neighborhood self)
+  if rule = 1 [set myset myset with [score >= [score] of max-one-of myset [score] * 0.99]]
+  
+  if rule = 2 [set myset myset with [score <= [score] of min-one-of myset [score] * 1.1]]
+  if rule = 3 [
+    let rules-list majority-rules
+    set myset myset with [member? rule rules-list]
+    ] 
+  if rule = 4 [
+    let rules-list minority-rules
+    if not empty? rules-list [
+    set myset myset with [member? rule rules-list]
+    ]  
+  ]
+  report myset
+end  
+
+to copy-strategy [temp-agent]
+  
+      set rule [rule] of temp-agent 
+      
+     
+end
+
+to-report majority-behavior
+  let mylist [cooperate?] of (turtle-set turtles-on neighborhood self)
+  report one-of modes mylist
+end
+
+
+
+
+
+
+
 
 
 
@@ -490,7 +651,7 @@ num-nodes
 num-nodes
 10
 125
-71
+102
 1
 1
 NIL
@@ -592,7 +753,7 @@ inicoop
 inicoop
 0
 100
-50
+25
 1
 1
 NIL
@@ -607,11 +768,27 @@ strength-of-dilemma
 strength-of-dilemma
 0
 0.5
-0
+0.5
 0.01
 1
 NIL
 HORIZONTAL
+
+BUTTON
+204
+367
+267
+400
+NIL
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
 
 @#$#@#$#@
 WHAT IS IT?
