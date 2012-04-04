@@ -5,6 +5,9 @@ turtles-own
   neighborhood
   cooperate?       ;; patch will cooperate
   rule             ;; patch will have one of four rules: 1=Maxi 2=mini 3=conformist 4=anticonformist
+  score            ;; score resulting from interaction of neighboring patches. It is dictated by the PD payoffs and the discount factor
+  last-score
+  inst-score
 ]
 
 links-own
@@ -68,6 +71,8 @@ to setup
         [set cooperate? false]
   ]
   ask turtles [establish-color]
+  ask turtles [interact]
+  ask turtle 0 [show score]
   
   
 end
@@ -95,6 +100,9 @@ to establish-color  ;; agent procedure
   if rule = 4  
     [set color white
       ]
+  ifelse cooperate?
+    [set size 1.2]
+    [set size 0.8]
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;
@@ -158,6 +166,26 @@ to rewire-all
   ;; do the plotting
   do-plotting
 end
+
+
+
+to interact  ;; calculates the agent's payoff for Prisioner's Dilema. Each agents plays only with its neighbors
+          
+  let total-cooperators count (turtles-on neighborhood) with [cooperate?]
+  set inst-score 0
+  ifelse cooperate?
+  ;[set inst-score total-cooperators + 1]
+  ;[set inst-score total-cooperators * strength-of-dilemma]
+    [set inst-score total-cooperators * ( 1 - strength-of-dilemma)]                   ;; cooperator gets score of # of neighbors who cooperated
+    [set inst-score total-cooperators + (count (turtles-on neighborhood) - total-cooperators) * strength-of-dilemma ]  ;; non-cooperator get score of a multiple of the neighbors who cooperated
+  set last-score score
+  ;set score inst-score * ( 1 - weighting-history) + last-score * weighting-history   
+  set score inst-score  
+end
+
+
+
+
 
 ;; do-calculations reports true if the network is connected,
 ;;   and reports false if the network is disconnected.
@@ -354,7 +382,7 @@ end
 to highlight
   ;; remove any previous highlights
   ask turtles [ establish-color 
-    set size 1]
+    ]
   ask links [ set color gray + 2 ]
   if mouse-inside? [ do-highlight ]
   display
@@ -566,6 +594,21 @@ inicoop
 100
 50
 1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+11
+402
+183
+435
+strength-of-dilemma
+strength-of-dilemma
+0
+0.5
+0
+0.01
 1
 NIL
 HORIZONTAL
