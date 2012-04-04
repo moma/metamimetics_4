@@ -3,6 +3,8 @@ turtles-own
   node-clustering-coefficient
   distance-from-other-turtles   ;; list of distances of this node from other turtles
   neighborhood
+  cooperate?       ;; patch will cooperate
+  rule             ;; patch will have one of four rules: 1=Maxi 2=mini 3=conformist 4=anticonformist
 ]
 
 links-own
@@ -58,7 +60,15 @@ to setup
   rewire-all
   
   ask turtles [set neighborhood link-neighbors]
-  ask turtle 0 [show neighborhood]
+  ask turtles [
+    set rule (random 4) + 1 
+      set shape "face happy"
+      ifelse random-float 1.0 < (inicoop / 100)
+        [set cooperate? true]
+        [set cooperate? false]
+  ]
+  ask turtles [establish-color]
+  
   
 end
 
@@ -69,6 +79,22 @@ to make-turtles
   ;;layout-radial turtles links (turtle 0)
 
 
+end
+
+
+to establish-color  ;; agent procedure
+  if rule = 1 
+    [set color red
+      ]
+  if rule = 2
+    [set color green
+      ]
+  if rule = 3
+    [set color blue
+      ]
+  if rule = 4  
+    [set color white
+      ]
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;
@@ -327,10 +353,12 @@ end
 
 to highlight
   ;; remove any previous highlights
-  ask turtles [ set color gray + 2 ]
+  ask turtles [ establish-color 
+    set size 1]
   ask links [ set color gray + 2 ]
   if mouse-inside? [ do-highlight ]
   display
+  
 end
 
 to do-highlight
@@ -355,8 +383,9 @@ to do-highlight
     ;; highlight neighbors
     ask neighbor-nodes
     [
-      set color blue - 1
+      ;set color yellow
 
+      set size 1.5
       ;; highlight edges connecting the chosen node to its neighbors
       ask my-links [
         ifelse (end1 = node or end2 = node)
@@ -448,7 +477,7 @@ rewiring-probability
 rewiring-probability
 0
 1
-0.41
+0.08
 0.01
 1
 NIL
@@ -525,6 +554,21 @@ NIL
 NIL
 NIL
 NIL
+
+SLIDER
+10
+360
+182
+393
+inicoop
+inicoop
+0
+100
+50
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 WHAT IS IT?
