@@ -694,7 +694,7 @@ num-nodes
 num-nodes
 10
 400
-400
+50
 1
 1
 NIL
@@ -796,7 +796,7 @@ inicoop
 inicoop
 0
 100
-45
+100
 1
 1
 NIL
@@ -811,7 +811,7 @@ strength-of-dilemma
 strength-of-dilemma
 0
 0.5
-0
+0.5
 0.01
 1
 NIL
@@ -1278,23 +1278,20 @@ repeat 5 [rewire-one]
     <metric>clustering-coefficient</metric>
     <steppedValueSet variable="rewiring-probability" first="0" step="0.025" last="1"/>
   </experiment>
-  <experiment name="inicoopsweep_lowp" repetitions="10" runMetricsEveryStep="false">
+  <experiment name="inicoopsweep_lowp" repetitions="100" runMetricsEveryStep="false">
     <setup>setup</setup>
     <go>go</go>
-    <metric>count cooperation-rate</metric>
-    <metric>count turtles with [rule=1]</metric>
-    <metric>count turtles with [rule=2]</metric>
-    <metric>count turtles with [rule=3]</metric>
-    <metric>count turtles with [rule=4]</metric>
+    <exitCondition>ticks = 50</exitCondition>
+    <metric>cooperation-rate</metric>
     <enumeratedValueSet variable="num-nodes">
-      <value value="100"/>
+      <value value="50"/>
     </enumeratedValueSet>
     <steppedValueSet variable="inicoop" first="0" step="1" last="100"/>
     <enumeratedValueSet variable="rewiring-probability">
       <value value="0.08"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="strength-of-dilemma">
-      <value value="0"/>
+      <value value="0.5"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
