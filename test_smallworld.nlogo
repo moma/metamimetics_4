@@ -50,6 +50,8 @@ to startup
 end
 
 to setup
+  clear-ticks
+  reset-ticks
   ca
   set infinity 99999  ;; just an arbitrary choice for a large number
   set-default-shape turtles "circle"
@@ -91,6 +93,7 @@ to setup
 end
 
 to go
+reset-ticks
   ask turtles [interact] 
     decision-stage
     learning-stage
@@ -100,7 +103,7 @@ to go
     ]  
   update-views
   set-outputs
-  update-plots
+;; redo-plots
   
     tick
   
@@ -108,7 +111,7 @@ end
 
 
 to make-turtles
-  crt num-nodes [ set color gray + 2 ]
+  crt num_nodes [ set color gray + 2 ]
   ;; arrange them in a circle in order by who number
   layout-circle (sort turtles) max-pxcor - 1
   ;;layout-radial turtles links (turtle 0)
@@ -170,7 +173,7 @@ end
 to rewire-all
 
   ;; make sure num-turtles is setup correctly; if not run setup first
-  if count turtles != num-nodes [
+  if count turtles != num_nodes [
     setup
   ]
 
@@ -192,7 +195,7 @@ to rewire-all
     ask links [
 
       ;; whether to rewire it or not?
-      if (random-float 1) < rewiring-probability
+      if (random-float 1) < rewiring_probability
       [
         ;; "a" remains the same
         let node1 end1
@@ -232,9 +235,9 @@ to interact  ;; calculates the agent's payoff for Prisioner's Dilema. Each agent
   set inst-score 0
   ifelse cooperate?
   ;[set inst-score total-cooperators + 1]
-  ;[set inst-score total-cooperators * strength-of-dilemma]
-    [set inst-score total-cooperators * ( 1 - strength-of-dilemma)]                   ;; cooperator gets score of # of neighbors who cooperated
-    [set inst-score total-cooperators + (count (turtles-on neighborhood) - total-cooperators) * strength-of-dilemma ]  ;; non-cooperator get score of a multiple of the neighbors who cooperated
+  ;[set inst-score total-cooperators * strength_of_dilemma]
+    [set inst-score total-cooperators * ( 1 - strength_of_dilemma)]                   ;; cooperator gets score of # of neighbors who cooperated
+    [set inst-score total-cooperators + (count (turtles-on neighborhood) - total-cooperators) * strength_of_dilemma ]  ;; non-cooperator get score of a multiple of the neighbors who cooperated
   set last-score score
   ;set score inst-score * ( 1 - weighting-history) + last-score * weighting-history   
   set score inst-score  
@@ -362,7 +365,7 @@ end
 
 
 
-to update-plots
+to redo-plots
   set-current-plot "cooperation"
   set-current-plot-pen "cooperation"
   plot cooperation-rate
@@ -645,12 +648,12 @@ to do-plotting
      set-current-plot "Network Properties Rewire-All"
      set-current-plot-pen "apl"
      ;; note: dividing by value at initial value to normalize the plot
-     plotxy rewiring-probability
+     plotxy rewiring_probability
             average-path-length / average-path-length-of-lattice
 
      set-current-plot-pen "cc"
      ;; note: dividing by initial value to normalize the plot
-     plotxy rewiring-probability
+     plotxy rewiring_probability
             clustering-coefficient / clustering-coefficient-of-lattice
    
 end
@@ -690,8 +693,8 @@ SLIDER
 50
 162
 83
-num-nodes
-num-nodes
+num_nodes
+num_nodes
 10
 400
 50
@@ -705,8 +708,8 @@ SLIDER
 10
 274
 43
-rewiring-probability
-rewiring-probability
+rewiring_probability
+rewiring_probability
 0
 1
 0.08
@@ -807,8 +810,8 @@ SLIDER
 402
 183
 435
-strength-of-dilemma
-strength-of-dilemma
+strength_of_dilemma
+strength_of_dilemma
 0
 0.5
 0.5
@@ -883,7 +886,7 @@ HOW IT WORKS
 ------------
 This model is an adaptation of a model proposed by Duncan Watts and Steve Strogatz (1998). It begins with a network where each person (or "node") is connected to his or her two neighbors on either side.  The REWIRE-ONE button picks a random connection (or "edge") and rewires it. By rewiring, we mean changing one end of a connected pair of nodes, and keeping the other end the same.
 
-The REWIRE-ALL button creates the network and then visits all edges and tries to rewire them.  The REWIRING-PROBABILITY slider determines the probability that an edge will get rewired.  Running REWIRE-ALL at multiple probabilities produces a range of possible networks with varying average path lengths and clustering coefficients.
+The REWIRE-ALL button creates the network and then visits all edges and tries to rewire them.  The rewiring_probability slider determines the probability that an edge will get rewired.  Running REWIRE-ALL at multiple probabilities produces a range of possible networks with varying average path lengths and clustering coefficients.
 
 To identify small worlds, the "average path length" (abbreviated "apl") and "clustering coefficient" (abbreviated "cc") of the network are calculated and plotted after the REWIRE-ONE or REWIRE-ALL buttons are pressed. These two plots are separated because the x-axis is slightly different.  The REWIRE-ONE x-axis is the fraction of edges rewired so far, whereas the REWIRE-ALL x-axis is the probability of rewiring.  Networks with short average path lengths and high clustering coefficients are considered small world networks. (Note: The plots for both the clustering coefficient and average path length are normalized by dividing by the values of the initial network. The monitors give the actual values.)
 
@@ -895,11 +898,11 @@ Clustering Coefficient:  Another property of small world networks is that from o
 
 HOW TO USE IT
 -------------
-The NUM-NODES slider controls the size of the network.  Choose a size and press SETUP.
+The num_nodes slider controls the size of the network.  Choose a size and press SETUP.
 
-Pressing the REWIRE-ONE button picks one edge at random, rewires it, and then plots the resulting network properties. The REWIRE-ONE button always rewires at least one edge (i.e., it ignores the REWIRING-PROBABILITY).
+Pressing the REWIRE-ONE button picks one edge at random, rewires it, and then plots the resulting network properties. The REWIRE-ONE button always rewires at least one edge (i.e., it ignores the rewiring_probability).
 
-Pressing the REWIRE-ALL button re-creates the initial network (each node connected to its two neighbors on each side for a total of four neighbors) and rewires all the edges with the current rewiring probability, then plots the resulting network properties on the rewire-all plot. Changing the REWIRING-PROBABILITY slider changes the fraction of links rewired after each run.
+Pressing the REWIRE-ALL button re-creates the initial network (each node connected to its two neighbors on each side for a total of four neighbors) and rewires all the edges with the current rewiring probability, then plots the resulting network properties on the rewire-all plot. Changing the rewiring_probability slider changes the fraction of links rewired after each run.
 
 When you press HIGHLIGHT and then point to node in the view it color-codes the nodes and edges.  The node itself turns pink. Its neighbors and the edges connecting the node to those neighbors turn blue. Edges connecting the neighbors of the node to each other turn yellow. The amount of yellow between neighbors can gives you an indication of the clustering coefficient for that node.  The NODE-PROPERTIES monitor displays the average path length and clustering coefficient of the highlighted node only.  The AVERAGE-PATH-LENGTH and CLUSTERING-COEFFICIENT monitors display the values for the entire network.
 
@@ -917,7 +920,7 @@ Do the trends depend on the number of nodes in the network?
 
 Can you get a small world by repeatedly pressing REWIRE-ONE?
 
-Set NUM-NODES to 80 and then press SETUP. Go to BehaviorSpace and run the VARY-REWIRING-PROBABILITY experiment. Try running the experiment multiple times without clearing the plot (i.e., do not run SETUP again).  What range of rewiring probabilities result in small world networks?
+Set num_nodes to 80 and then press SETUP. Go to BehaviorSpace and run the VARY-rewiring_probability experiment. Try running the experiment multiple times without clearing the plot (i.e., do not run SETUP again).  What range of rewiring probabilities result in small world networks?
 
 
 EXTENDING THE MODEL
@@ -1270,27 +1273,27 @@ repeat 5 [rewire-one]
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="vary-rewiring-probability" repetitions="5" runMetricsEveryStep="false">
+  <experiment name="vary-rewiring_probability" repetitions="5" runMetricsEveryStep="false">
     <go>rewire-all</go>
     <timeLimit steps="1"/>
-    <exitCondition>rewiring-probability &gt; 1</exitCondition>
+    <exitCondition>rewiring_probability &gt; 1</exitCondition>
     <metric>average-path-length</metric>
     <metric>clustering-coefficient</metric>
-    <steppedValueSet variable="rewiring-probability" first="0" step="0.025" last="1"/>
+    <steppedValueSet variable="rewiring_probability" first="0" step="0.025" last="1"/>
   </experiment>
   <experiment name="inicoopsweep_lowp" repetitions="100" runMetricsEveryStep="false">
     <setup>setup</setup>
     <go>go</go>
     <exitCondition>ticks = 50</exitCondition>
     <metric>cooperation-rate</metric>
-    <enumeratedValueSet variable="num-nodes">
+    <enumeratedValueSet variable="num_nodes">
       <value value="50"/>
     </enumeratedValueSet>
     <steppedValueSet variable="inicoop" first="0" step="1" last="100"/>
-    <enumeratedValueSet variable="rewiring-probability">
+    <enumeratedValueSet variable="rewiring_probability">
       <value value="0.08"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="strength-of-dilemma">
+    <enumeratedValueSet variable="strength_of_dilemma">
       <value value="0.5"/>
     </enumeratedValueSet>
   </experiment>
