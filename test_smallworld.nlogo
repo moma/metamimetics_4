@@ -561,16 +561,16 @@ to wire-them
   let n 0
   while [n < count turtles]
   [
-    ;; make edges with the next four neighbors
-    ;; this makes a lattice with average degree of 8
+    ;; make edges with the next three neighbors
+    ;; this makes a lattice with average degree of 6
     make-edge turtle n
               turtle ((n + 1) mod count turtles)
     make-edge turtle n
               turtle ((n + 2) mod count turtles)
     make-edge turtle n
               turtle ((n + 3) mod count turtles)
-    make-edge turtle n
-              turtle ((n + 4) mod count turtles)
+;;    make-edge turtle n
+;;             turtle ((n + 4) mod count turtles)
     set n n + 1
   ]
 end
