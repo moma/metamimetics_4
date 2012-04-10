@@ -10,6 +10,8 @@ turtles-own
   inst-score
   rule?
   behavior?
+  rewire?
+  likelihood-to-rewire
 ]
 
 links-own
@@ -72,14 +74,16 @@ to setup
   set average-path-length-of-lattice average-path-length
   set number-rewired 0
   set highlight-string ""
-  rewire-all
+  ;;rewire-all
   
   ask turtles [set neighborhood link-neighbors]
   ask turtles [
     set rule (random 4) + 1 
+    set likelihood-to-rewire Initial-likelihood-to-rewire
     set score 0.0
     set rule? false
     set behavior? false
+    set rewire? false
       set shape "face happy"
       ifelse random-float 1.0 < (inicoop / 100)
         [set cooperate? true]
@@ -87,7 +91,7 @@ to setup
   ]
   ask turtles [establish-color]
   ask turtles [interact]
-  
+ 
   
   
 end
@@ -97,15 +101,18 @@ to go
   ask turtles [interact] 
     decision-stage
     learning-stage
-    update-views
+    rewiring-stage
+    do-plotting
   ask turtles [
     ifelse am-i-the-best? [set shape "face happy"][set shape "face sad"]
     ]  
   update-views
   set-outputs
-;; redo-plots
+  reset-decisions 
+  redo-plots
   
-    tick
+  tick
+    
   
 end
 
@@ -141,15 +148,24 @@ end
 
 to update-views
   ask turtles [establish-color]
+    find-path-lengths
+
+  let num-connected-pairs sum [length remove infinity (remove 0 distance-from-other-turtles)] of turtles
+  set average-path-length (sum [sum distance-from-other-turtles] of turtles) / (num-connected-pairs)
+    find-clustering-coefficient
  end
 
 
 to decision-stage
+ 
    ask turtles [ 
+      ifelse random-float 1 < likelihood-to-rewire
+   [if not am-i-the-best? [set rewire? true]]
+   [
      ifelse not am-i-the-best? and not is-my-rule-the-best? [set rule? true]
      [if not am-i-the-best? [set behavior? true]]
    ]
-   
+   ]
 end
 
 to learning-stage
@@ -366,6 +382,7 @@ end
 
 
 to redo-plots
+  
   set-current-plot "cooperation"
   set-current-plot-pen "cooperation"
   plot cooperation-rate
@@ -374,6 +391,7 @@ to redo-plots
   plot fraction-best 
   set-current-plot "population"
   set-current-plot-pen "maxi"
+  
   plot maxi
   set-current-plot-pen "mini"
   plot mini
@@ -384,6 +402,32 @@ to redo-plots
  
 end
 
+
+to rewiring-stage
+   ask turtles [if rewire? and not am-i-the-best? [rewire-agent]] 
+end
+
+to rewire-agent
+  let potential-neighbors link-neighbors with [not member? self best-elements]
+  let potential-edges my-links with [member? other-end potential-neighbors]
+  if any? potential-edges [
+    ask one-of potential-edges [
+            let node1 end1
+            let node2 one-of turtles with [ (self != node1) and (not link-neighbor? node1) ]
+            ask node1 [create-link-with node2]
+            die]
+  ]
+
+end
+
+
+to reset-decisions
+  ask turtles [
+  set rewire? false
+  set rule? false
+  set behavior? false
+  ] 
+end 
 
 
 
@@ -648,12 +692,12 @@ to do-plotting
      set-current-plot "Network Properties Rewire-All"
      set-current-plot-pen "apl"
      ;; note: dividing by value at initial value to normalize the plot
-     plotxy rewiring_probability
+     plotxy ticks
             average-path-length / average-path-length-of-lattice
 
      set-current-plot-pen "cc"
      ;; note: dividing by initial value to normalize the plot
-     plotxy rewiring_probability
+     plotxy ticks
             clustering-coefficient / clustering-coefficient-of-lattice
    
 end
@@ -697,7 +741,7 @@ num_nodes
 num_nodes
 10
 400
-100
+99
 1
 1
 NIL
@@ -746,7 +790,7 @@ PLOT
 269
 349
 Network Properties Rewire-All
-rewiring probability
+NIL
 NIL
 0.0
 1.0
@@ -755,8 +799,8 @@ NIL
 true
 true
 PENS
-"apl" 1.0 2 -2674135 true
-"cc" 1.0 2 -10899396 true
+"apl" 1.0 0 -2674135 true
+"cc" 1.0 0 -10899396 true
 
 BUTTON
 164
@@ -799,7 +843,7 @@ inicoop
 inicoop
 0
 100
-100
+52
 1
 1
 NIL
@@ -873,6 +917,21 @@ PENS
 "mini" 1.0 0 -10899396 true
 "conf" 1.0 0 -13345367 true
 "anti" 1.0 0 -16777216 true
+
+SLIDER
+11
+447
+246
+480
+Initial-likelihood-to-rewire
+Initial-likelihood-to-rewire
+0
+1
+0.15
+0.01
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 WHAT IS IT?
