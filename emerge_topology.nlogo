@@ -74,7 +74,7 @@ to setup
   set average-path-length-of-lattice average-path-length
   set number-rewired 0
   set highlight-string ""
-  ;;rewire-all
+  rewire-all
   
   ask turtles [set neighborhood link-neighbors]
   ask turtles [
@@ -756,7 +756,7 @@ rewiring_probability
 rewiring_probability
 0
 1
-0.2
+0.05
 0.01
 1
 NIL
@@ -843,7 +843,7 @@ inicoop
 inicoop
 0
 100
-52
+50
 1
 1
 NIL
@@ -858,7 +858,7 @@ strength_of_dilemma
 strength_of_dilemma
 0
 0.5
-0.4
+0
 0.01
 1
 NIL
@@ -927,7 +927,7 @@ Initial-likelihood-to-rewire
 Initial-likelihood-to-rewire
 0
 1
-0.15
+0.05
 0.01
 1
 NIL
