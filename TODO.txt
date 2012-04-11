@@ -5,5 +5,5 @@
 - plot proportion of population for each rule - CHECK
 - start looking at openMole for the near future - PENDING
 - Introduce noise
-- Look at structuring of the network (Netlogo library)
+- Look at structuring of the network (Netlogo library) - seems to work only on netlogo 5...
 - Endogenize propensity to rewire
