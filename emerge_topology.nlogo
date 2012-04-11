@@ -727,9 +727,9 @@ GRAPHICS-WINDOW
 14
 -14
 14
-0
-0
-0
+1
+1
+1
 ticks
 
 SLIDER
@@ -741,7 +741,7 @@ num_nodes
 num_nodes
 10
 400
-99
+300
 1
 1
 NIL
@@ -756,7 +756,7 @@ rewiring_probability
 rewiring_probability
 0
 1
-0.05
+0.2
 0.01
 1
 NIL

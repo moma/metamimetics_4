@@ -3,4 +3,7 @@
 - implement basic metamimetic framework - CHECK
 - plot cooperation rate/fraction best - CHECK
 - plot proportion of population for each rule - CHECK
-- start looking at openMole for the near future
+- start looking at openMole for the near future - PENDING
+- Introduce noise
+- Look at structuring of the network (Netlogo library)
+- Endogenize propensity to rewire
