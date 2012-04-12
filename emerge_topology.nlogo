@@ -1,3 +1,5 @@
+;extensions [network]
+
 turtles-own
 [
   node-clustering-coefficient
@@ -12,11 +14,13 @@ turtles-own
   behavior?
   rewire?
   likelihood-to-rewire
+  
+  changed-neighborhood?
 ]
 
 links-own
 [
-  rewired?                    ;; keeps track of whether the link has been rewired or not
+    rewired?                  ;; keeps track of whether the link has been rewired or not
 ]
 
 globals
@@ -53,8 +57,13 @@ end
 
 to setup
 
-  reset-ticks
-  ca
+  clear-all
+  ;reset-ticks
+  ;; (for this model to work with NetLogo's new plotting features,
+  ;; __clear-all-and-reset-ticks should be replaced with clear-all at
+  ;; the beginning of your setup procedure and reset-ticks at the end
+  ;; of the procedure.)
+  
   set infinity 99999  ;; just an arbitrary choice for a large number
   set-default-shape turtles "circle"
   make-turtles
@@ -80,6 +89,7 @@ to setup
   ask turtles [
     set rule (random 4) + 1 
     set likelihood-to-rewire Initial-likelihood-to-rewire
+    set changed-neighborhood? false
     set score 0.0
     set rule? false
     set behavior? false
@@ -107,6 +117,7 @@ to go
     ifelse am-i-the-best? [set shape "face happy"][set shape "face sad"]
     ]  
   update-views
+  change-layout
   set-outputs
   reset-decisions 
   redo-plots
@@ -357,7 +368,17 @@ end
 
 to copy-strategy [temp-agent]
   
-      set rule [rule] of temp-agent 
+  ifelse random-float 1 < Transcription-error[
+    let new-rule (random 4) + 1
+    while [new-rule = [rule] of temp-agent]
+    [
+      set new-rule (random 4) + 1
+    ]
+    set rule new-rule
+    ]
+  [
+    set rule [rule] of temp-agent]
+  
       
      
 end
@@ -408,6 +429,7 @@ to rewiring-stage
 end
 
 to rewire-agent
+  ;let potential-neighbors link-neighbors
   let potential-neighbors link-neighbors with [not member? self best-elements]
   let potential-edges my-links with [member? other-end potential-neighbors]
   if any? potential-edges [
@@ -415,6 +437,7 @@ to rewire-agent
             let node1 end1
             let node2 one-of turtles with [ (self != node1) and (not link-neighbor? node1) ]
             ask node1 [create-link-with node2]
+            ask node1 [set changed-neighborhood? true]
             die]
   ]
 
@@ -445,8 +468,9 @@ end
 to-report do-calculations
 
   ;; set up a variable so we can report if the network is disconnected
+  ;let connected? network:mean-link-path-length turtles links
+  ;set average-path-length network:mean-link-path-length turtles links
   let connected? true
-
   ;; find the path lengths in the network
   find-path-lengths
 
@@ -457,6 +481,7 @@ to-report do-calculations
   ;; If there were any "infinity" length paths between nodes, then the network is disconnected.
   ;; In that case, calculating the average-path-length doesn't really make sense.
   ifelse ( num-connected-pairs != (count turtles * (count turtles - 1) ))
+  ;ifelse ( connected? = false)
   [
       set average-path-length infinity
       ;; report that the network is not connected
@@ -464,6 +489,8 @@ to-report do-calculations
   ]
   [
     set average-path-length (sum [sum distance-from-other-turtles] of turtles) / (num-connected-pairs)
+    set connected? true
+    
   ]
   ;; find the clustering coefficient and add to the aggregate for all iterations
   find-clustering-coefficient
@@ -613,8 +640,8 @@ to wire-them
               turtle ((n + 2) mod count turtles)
     make-edge turtle n
               turtle ((n + 3) mod count turtles)
-;;    make-edge turtle n
-;;             turtle ((n + 4) mod count turtles)
+    make-edge turtle n
+             turtle ((n + 4) mod count turtles)
     set n n + 1
   ]
 end
@@ -694,6 +721,7 @@ to do-plotting
      ;; note: dividing by value at initial value to normalize the plot
      plotxy ticks
             average-path-length / average-path-length-of-lattice
+     
 
      set-current-plot-pen "cc"
      ;; note: dividing by initial value to normalize the plot
@@ -701,6 +729,18 @@ to do-plotting
             clustering-coefficient / clustering-coefficient-of-lattice
    
 end
+
+
+
+to change-layout
+  layout-circle (sort turtles) max-pxcor - 1
+  ;layout-tutte turtles with [changed-neighborhood? = true] links (max-pxcor - 1)
+  layout-tutte turtles links (max-pxcor - 1)
+  ;layout-spring turtles with [changed-neighborhood? = true] links 10 10 0.1
+  ;layout-spring turtles links 10 10 0.1
+  
+end
+
 
 
 ; Copyright 2005 Uri Wilensky. All rights reserved.
@@ -741,7 +781,7 @@ num_nodes
 num_nodes
 10
 400
-300
+102
 1
 1
 NIL
@@ -749,14 +789,14 @@ HORIZONTAL
 
 SLIDER
 3
-10
-274
-43
+490
+95
+523
 rewiring_probability
 rewiring_probability
 0
 1
-0.2
+0
 0.01
 1
 NIL
@@ -783,24 +823,6 @@ average-path-length
 3
 1
 11
-
-PLOT
-6
-170
-269
-349
-Network Properties Rewire-All
-NIL
-NIL
-0.0
-1.0
-0.0
-1.0
-true
-true
-PENS
-"apl" 1.0 0 -2674135 true
-"cc" 1.0 0 -10899396 true
 
 BUTTON
 164
@@ -858,7 +880,7 @@ strength_of_dilemma
 strength_of_dilemma
 0
 0.5
-0
+0.5
 0.01
 1
 NIL
@@ -895,7 +917,7 @@ NIL
 true
 true
 PENS
-"cooperation" 1.0 0 -13791810 true
+"cooperation" 1.0 0 -13345367 true
 "fraction-best" 1.0 0 -955883 true
 
 PLOT
@@ -915,8 +937,8 @@ true
 PENS
 "maxi" 1.0 0 -2674135 true
 "mini" 1.0 0 -10899396 true
-"conf" 1.0 0 -13345367 true
 "anti" 1.0 0 -16777216 true
+"conf" 1.0 0 -13345367 true
 
 SLIDER
 11
@@ -933,16 +955,48 @@ Initial-likelihood-to-rewire
 NIL
 HORIZONTAL
 
+SLIDER
+3
+12
+199
+45
+Transcription-error
+Transcription-error
+0
+1
+0.1
+0.01
+1
+NIL
+HORIZONTAL
+
+PLOT
+8
+159
+272
+355
+Network Properties Rewire-all
+NIL
+NIL
+0.0
+1.0
+0.0
+1.0
+true
+true
+PENS
+"apl" 1.0 0 -2674135 true
+"cc" 1.0 0 -10899396 true
+
 @#$#@#$#@
-WHAT IS IT?
------------
+## WHAT IS IT?
+
 This model explores the formation of networks that result in the "small world" phenomenon -- the idea that a person is only a couple of connections away any other person in the world.
 
 A popular example of the small world phenomenon is the network formed by actors appearing in the same movie (e.g. the "six degrees of Kevin Bacon" game), but small worlds are not limited to people-only networks.  Other examples range from power grids to the neural networks of worms.  This model illustrates some general, theoretical conditions under which small world networks between people or things might occur.
 
+## HOW IT WORKS
 
-HOW IT WORKS
-------------
 This model is an adaptation of a model proposed by Duncan Watts and Steve Strogatz (1998). It begins with a network where each person (or "node") is connected to his or her two neighbors on either side.  The REWIRE-ONE button picks a random connection (or "edge") and rewires it. By rewiring, we mean changing one end of a connected pair of nodes, and keeping the other end the same.
 
 The REWIRE-ALL button creates the network and then visits all edges and tries to rewire them.  The rewiring_probability slider determines the probability that an edge will get rewired.  Running REWIRE-ALL at multiple probabilities produces a range of possible networks with varying average path lengths and clustering coefficients.
@@ -954,9 +1008,8 @@ Average Path Length: Average path length is calculated by finding the shortest p
 Clustering Coefficient:  Another property of small world networks is that from one person's perspective it seems unlikely that they could be only a few steps away from anybody else in the world.  This is because their friends more or less know all the same people they do. The clustering coefficient is a measure of this "all-my-friends-know-each-other" property.  This is sometimes described as the friends of my friends are my friends.  More precisely, the clustering coefficient of a node is the ratio of existing links connecting a node's neighbors to each other to the maximum possible number of such links.  You can see this is if you press the HIGHLIGHT button and click a node, that will display all of the neighbors in blue and the edges connecting those neighbors in yellow.  The more yellow links, the higher the clustering coefficient for the node you are examining (the one in pink) will be.  The clustering coefficient for the entire network is the average of the clustering coefficients of all the nodes. A high clustering coefficient for a network is another indication of a small world.
 
 
+## HOW TO USE IT
 
-HOW TO USE IT
--------------
 The num_nodes slider controls the size of the network.  Choose a size and press SETUP.
 
 Pressing the REWIRE-ONE button picks one edge at random, rewires it, and then plots the resulting network properties. The REWIRE-ONE button always rewires at least one edge (i.e., it ignores the rewiring_probability).
@@ -965,14 +1018,12 @@ Pressing the REWIRE-ALL button re-creates the initial network (each node connect
 
 When you press HIGHLIGHT and then point to node in the view it color-codes the nodes and edges.  The node itself turns pink. Its neighbors and the edges connecting the node to those neighbors turn blue. Edges connecting the neighbors of the node to each other turn yellow. The amount of yellow between neighbors can gives you an indication of the clustering coefficient for that node.  The NODE-PROPERTIES monitor displays the average path length and clustering coefficient of the highlighted node only.  The AVERAGE-PATH-LENGTH and CLUSTERING-COEFFICIENT monitors display the values for the entire network.
 
+## THINGS TO NOTICE
 
-THINGS TO NOTICE
-----------------
 Note that for certain ranges of the fraction of nodes, the average path length decreases faster than the clustering coefficient.  In fact, there is a range of values for which the average path length is much smaller than clustering coefficient.  (Note that the values for average path length and clustering coefficient have been normalized, so that they are more directly comparable.)  Networks in that range are considered small worlds.
 
+## THINGS TO TRY
 
-THINGS TO TRY
--------------
 Try plotting the values for different rewiring probabilities and observe the trends of the values for average path length and clustering coefficient.  What is the relationship between rewiring probability and fraction of nodes?  In other words, what is the relationship between the rewire-one plot and the rewire-all plot?
 
 Do the trends depend on the number of nodes in the network?
@@ -981,66 +1032,58 @@ Can you get a small world by repeatedly pressing REWIRE-ONE?
 
 Set num_nodes to 80 and then press SETUP. Go to BehaviorSpace and run the VARY-rewiring_probability experiment. Try running the experiment multiple times without clearing the plot (i.e., do not run SETUP again).  What range of rewiring probabilities result in small world networks?
 
+## EXTENDING THE MODEL
 
-EXTENDING THE MODEL
--------------------
 Try to see if you can produce the same results if you start with a different initial network.  Create new BehaviorSpace experiments to compare results.
 
 In a precursor to this model, Watts and Strogatz created an "alpha" model where the rewiring was not based on a global rewiring probability.  Instead, the probability that a node got connected to another node depended on how many mutual connections the two nodes had. The extent to which mutual connections mattered was determined by the parameter "alpha."  Create the "alpha" model and see if it also can result in small world formation.
 
+## NETWORK CONCEPTS
 
-NETWORK CONCEPTS
-----------------
 In this model we need to find the shortest paths between all pairs of nodes.  This is accomplished through the use of a standard dynamic programming algorithm called the Floyd Warshall algorithm. You may have noticed that the model runs slowly for large number of nodes.  That is because the time it takes for the Floyd Warshall algorithm (or other "all-pairs-shortest-path" algorithm) to run grows polynomially with the number of nodes.  For more information on the Floyd Warshall algorithm please consult:  http://en.wikipedia.org/wiki/Floyd-Warshall_algorithm
 
-
-NETLOGO FEATURES
-----------------
+## NETLOGO FEATURES
 
 The various network/link features (introduced in NetLogo 4.0) are used extensively in this model.
 
 Lists are used heavily in the procedures that calculates shortest paths.
 
-RELATED MODELS
---------------
+## RELATED MODELS
+
 See other models in the Networks section of the Models Library, such as Giant Component and Preferential Attachment.
 
+## CREDITS AND REFERENCES
 
-CREDITS AND REFERENCES
-----------------------
-This model is adapted from:
+This model is adapted from:  
 Duncan J. Watts, Six Degrees: The Science of a Connected Age (W.W. Norton & Company, New York, 2003), pages 83-100.
 
-The work described here was originally published in:
-DJ Watts and SH Strogatz. Collective dynamics of 'small-world' networks, Nature,
+The work described here was originally published in:  
+DJ Watts and SH Strogatz. Collective dynamics of 'small-world' networks, Nature,  
 393:440-442 (1998)
 
 For more information please see Watts' website:  http://smallworld.columbia.edu/index.html
 
-The small worlds idea was first made popular by Stanley Milgram's famous experiment (1967) which found that two random US citizens where on average connected by six acquaintances (giving rise to the popular "six degrees of separation" expression):
+The small worlds idea was first made popular by Stanley Milgram's famous experiment (1967) which found that two random US citizens where on average connected by six acquaintances (giving rise to the popular "six degrees of separation" expression):  
 Stanley Milgram.  The Small World Problem,  Psychology Today,  2: 60-67 (1967).
 
 This experiment was popularized into a game called "six degrees of Kevin Bacon" which you can find more information about here:  http://www.cs.virginia.edu/oracle/
 
+## HOW TO CITE
 
-HOW TO CITE
------------
-If you mention this model in an academic publication, we ask that you include these citations for the model itself and for the NetLogo software:
-- Wilensky, U. (2005).  NetLogo Small Worlds model.  http://ccl.northwestern.edu/netlogo/models/SmallWorlds.  Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.
+If you mention this model in an academic publication, we ask that you include these citations for the model itself and for the NetLogo software:  
+- Wilensky, U. (2005).  NetLogo Small Worlds model.  http://ccl.northwestern.edu/netlogo/models/SmallWorlds.  Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.  
 - Wilensky, U. (1999). NetLogo. http://ccl.northwestern.edu/netlogo/. Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.
 
-In other publications, please use:
+In other publications, please use:  
 - Copyright 2005 Uri Wilensky. All rights reserved. See http://ccl.northwestern.edu/netlogo/models/SmallWorlds for terms of use.
 
+## COPYRIGHT NOTICE
 
-COPYRIGHT NOTICE
-----------------
 Copyright 2005 Uri Wilensky. All rights reserved.
 
-Permission to use, modify or redistribute this model is hereby granted, provided that both of the following requirements are followed:
-a) this copyright notice is included.
+Permission to use, modify or redistribute this model is hereby granted, provided that both of the following requirements are followed:  
+a) this copyright notice is included.  
 b) this model will not be redistributed for profit without permission from Uri Wilensky. Contact Uri Wilensky for appropriate licenses for redistribution for profit.
-
 @#$#@#$#@
 default
 true
