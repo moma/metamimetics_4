@@ -4,6 +4,9 @@
 - plot cooperation rate/fraction best - CHECK
 - plot proportion of population for each rule - CHECK
 - start looking at openMole for the near future - PENDING
-- Introduce noise - HALF-CHECK (ideas for how to do that?)
+- Introduce noise - HALF-CHECK
 - Look at structuring of the network (Netlogo library) - CHECK (no need for netlogo library, but netlogo library is now being used on NL for calculating stuff)
-- Endogenize propensity to rewire
+- Endogenize propensity to rewire, weighting of history
+- use springs for visualization
+- introduce maturing period
+- Introduce refreshing of agents
