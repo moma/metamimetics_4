@@ -10,3 +10,4 @@
 - use springs for visualization
 - introduce maturing period
 - Introduce refreshing of agents
+- re-check algorithm (agents sad without neighbors with the same rule are not changing) - CHECK (problem with neighborhood)

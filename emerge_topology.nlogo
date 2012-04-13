@@ -1,4 +1,6 @@
 ;extensions [network]
+extensions [profiler]
+
 
 turtles-own
 [
@@ -107,6 +109,7 @@ to setup
 end
 
 to go
+profiler:start         ;; start profiling
 
   ask turtles [interact] 
     decision-stage
@@ -121,7 +124,9 @@ to go
   set-outputs
   reset-decisions 
   redo-plots
-  
+  profiler:stop          ;; stop profiling
+print profiler:report  ;; view the results
+profiler:reset         ;; clear the data
   tick
     
   
@@ -257,7 +262,7 @@ end
 
 
 to interact  ;; calculates the agent's payoff for Prisioner's Dilema. Each agents plays only with its neighbors
-          
+  set neighborhood link-neighbors
   let total-cooperators count (turtles-on neighborhood) with [cooperate?]
   set inst-score 0
   ifelse cooperate?
@@ -640,8 +645,8 @@ to wire-them
               turtle ((n + 2) mod count turtles)
     make-edge turtle n
               turtle ((n + 3) mod count turtles)
-    make-edge turtle n
-             turtle ((n + 4) mod count turtles)
+;    make-edge turtle n
+;             turtle ((n + 4) mod count turtles)
     set n n + 1
   ]
 end
@@ -781,7 +786,7 @@ num_nodes
 num_nodes
 10
 400
-102
+197
 1
 1
 NIL
