@@ -7,7 +7,7 @@
 - Introduce noise - HALF-CHECK
 - Look at structuring of the network (Netlogo library) - CHECK (no need for netlogo library, but netlogo library is now being used on NL for calculating stuff)
 - Endogenize propensity to rewire, weighting of history
-- use springs for visualization
+- use springs for visualization - CHECK
 - introduce maturing period
 - Introduce refreshing of agents
 - re-check algorithm (agents sad without neighbors with the same rule are not changing) - CHECK (problem with neighborhood)
