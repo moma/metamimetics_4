@@ -9,5 +9,5 @@
 - Endogenize propensity to rewire, weighting of history - CHECK
 - use springs for visualization - CHECK
 - introduce maturing period - HALF-CHECK?
-- Introduce refreshing of agents
+- Introduce refreshing of agents - CHECK
 - re-check algorithm (agents sad without neighbors with the same rule are not changing) - CHECK (problem with neighborhood)
