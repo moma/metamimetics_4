@@ -1,0 +1,27 @@
+- Implementation of a small-world prototype, following the small-world network model from Netlogo
+	RESULT: implementation works, rewiring coefficient changes the network from lattice to SWN to random network
+
+- Implementation of the basic metamimetic dynamics in a SWN
+	FILE: test_smallworld.nlogo
+	RESULT:	high strength of dilemma -> diversity of populations (conf seems favoured), cooperation drifts towards ~50%
+		low strength of dilemma, low inicoop -> some diversity of populations (mini seems heavily favoured), cooperation stays very low
+		low strength of dilemma, high inicoop -> conformism heavily favoured, cooperation stays relatively high (at least ~75%)
+		low strength of dilemma, medium inicoop -> conformism very favoured, cooperation stays around ~50%
+
+- Porting of the code to Netlogo 5, using network library to speed up calculations
+
+- Code moved to new file: emerge_topology.nlogo
+
+- As of 24/04: emerge_topology, when set to initial conditions to work similarly as test_smallworld, gives us the following results:
+		high strength of dilemma -> conf normally favoured, eventual domination of mini/maxi/combination of them - CHECK THIS!!!!
+		low strength of dilemma, low inicoop -> some diversity of populations (mini seems heavily favoured), eventual domination of conf. Domination of mini seems more pronounced. Run OpenMOLE to confirm?
+		low strength of dilemma, high inicoop -> behaviours seem more extreme, confs either explode or give way to mini/maxi.
+		low strength of dilemma, medium inicoop -> same as above
+CHECK IF ALTERATION ON CRITERIA FOR AM-I-THE-BEST HAS INFLUENCE
+It seems so. Changing the criteria to the same as used before has normalized both files.
+
+validation of emerge_topology to the results obtained at test_smallword: CHECK!
+
+- First addition: ability to rewire. 
+	RESULT: for very small LTR, even when in the most favourable condition for others (high SOD), conf dominates heavily. SWN emerges.
+		for relatively small LTR (0.01), conf dominates. SWN emerges. Eventual domination of minis, with random network.

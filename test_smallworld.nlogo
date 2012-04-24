@@ -103,7 +103,7 @@ to go
     ]  
   update-views
   set-outputs
-;; redo-plots
+ redo-plots
   
     tick
   
@@ -230,7 +230,7 @@ end
 
 
 to interact  ;; calculates the agent's payoff for Prisioner's Dilema. Each agents plays only with its neighbors
-          
+  set neighborhood link-neighbors
   let total-cooperators count (turtles-on neighborhood) with [cooperate?]
   set inst-score 0
   ifelse cooperate?
@@ -685,7 +685,7 @@ GRAPHICS-WINDOW
 14
 0
 0
-0
+1
 ticks
 
 SLIDER
@@ -697,7 +697,7 @@ num_nodes
 num_nodes
 10
 400
-100
+99
 1
 1
 NIL
@@ -712,7 +712,7 @@ rewiring_probability
 rewiring_probability
 0
 1
-0.2
+0
 0.01
 1
 NIL
@@ -799,7 +799,7 @@ inicoop
 inicoop
 0
 100
-100
+49
 1
 1
 NIL
@@ -814,7 +814,7 @@ strength_of_dilemma
 strength_of_dilemma
 0
 0.5
-0.4
+0
 0.01
 1
 NIL
