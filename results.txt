@@ -25,3 +25,20 @@ validation of emerge_topology to the results obtained at test_smallword: CHECK!
 - First addition: ability to rewire. 
 	RESULT: for very small LTR, even when in the most favourable condition for others (high SOD), conf dominates heavily. SWN emerges.
 		for relatively small LTR (0.01), conf dominates. SWN emerges. Eventual domination of minis, with random network.
+		for relatively high LTR (0.05), conf dominates heavily. SWN emerges. Eventual domination of minis, with random network.
+
+- Next addition: transcription error. 
+	RESULT: for very small TE (0.01), conditions above are the same.
+		for medium TE (0.1), conditions above are the same.
+		for high TE (0.5), we have random network.
+
+- Next addition: replacement of agents.
+	RESULT: With a medium TE, we get very low-grade SWN with vast conf domination. 
+
+- Next addition: maturing period
+	RESULT: run detailed openMOLE. It seems to make networks more unstable (favours maxi?).
+
+- Next addition: random init
+	RESULT: with a 0.01 ceiling for LTR, everything runs as expected. With a 0.05 ceiling for LTR, things get slightly more unstable (confirm with openMOLE?), but still conf-dominated and SWN-emerging.
+
+- Next addition: weighting of history

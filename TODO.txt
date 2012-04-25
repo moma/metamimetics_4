@@ -11,3 +11,8 @@
 - introduce maturing period - HALF-CHECK?
 - Introduce refreshing of agents - CHECK
 - re-check algorithm (agents sad without neighbors with the same rule are not changing) - CHECK (problem with neighborhood)
+- Implement visualization of scores -  CHECK
+- Implement noise and tolerance to scores
+
+- preferential rewiring (by distance)
+- selective pressure (index prob to die by cumulative payoff)
