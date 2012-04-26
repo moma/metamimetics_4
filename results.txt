@@ -42,3 +42,6 @@ validation of emerge_topology to the results obtained at test_smallword: CHECK!
 	RESULT: with a 0.01 ceiling for LTR, everything runs as expected. With a 0.05 ceiling for LTR, things get slightly more unstable (confirm with openMOLE?), but still conf-dominated and SWN-emerging.
 
 - Next addition: weighting of history
+	RESULT: for low WH (0.1), no alteration from the standard behavior.
+		for medium WN (0.5), mini seems to be slightly favoured compared to the standard behavior.
+		for high WN (0.9), mini is favoured. Mini dominance with random network quite common.
