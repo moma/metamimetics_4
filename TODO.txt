@@ -14,5 +14,6 @@
 - Implement visualization of scores -  CHECK
 - Implement noise and tolerance to scores
 
-- preferential rewiring (by distance)
+- preferential rewiring (by distance) - CHECK
 - selective pressure (index prob to die by cumulative payoff)
+- change score to average, giving no preference to bigger/smaller neighborhoods - CHECK
