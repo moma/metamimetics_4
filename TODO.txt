@@ -15,5 +15,8 @@
 - Implement noise and tolerance to scores
 
 - preferential rewiring (by distance) - CHECK
-- selective pressure (index prob to die by cumulative payoff)
+- selective pressure (index prob to die by cumulative payoff) - CHECK - REDO
 - change score to average, giving no preference to bigger/smaller neighborhoods - CHECK
+
+- selective pressure: two levels of strategy (genetic and cultural, genetic is initialization). When someone dies, make replicator dynamics on the neighbors (at genetic level) to decide the genetic level of the new agent
+- average score to be calculated with an alpha-factor, where alpha is a discount factor which is the probability to survive - wouldn't it favour older agents?
