@@ -18,5 +18,6 @@
 - selective pressure (index prob to die by cumulative payoff) - CHECK - REDO
 - change score to average, giving no preference to bigger/smaller neighborhoods - CHECK
 
-- selective pressure: two levels of strategy (genetic and cultural, genetic is initialization). When someone dies, make replicator dynamics on the neighbors (at genetic level) to decide the genetic level of the new agent
+- selective pressure: two levels of strategy (genetic and cultural, genetic is initialization). When someone dies, make replicator dynamics on the neighbors (at genetic level) to decide the genetic level of the new agent - DONE
 - average score to be calculated with an alpha-factor, where alpha is a discount factor which is the probability to survive - wouldn't it favour older agents?
+- should the replicator dynamics be done on each individual parameter or in the whole strategy?
