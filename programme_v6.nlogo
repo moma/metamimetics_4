@@ -85,10 +85,10 @@ end
 to go
     ask turtles [interact] 
     ask turtles [analyse-neighbors] 
-    ask turtles [decision-stage] 
-    ask turtles [learning-stage] 
+    decision-stage
+    learning-stage 
     ask turtles [calculate-satisfaction]
-    ask turtles [moving-stage] 
+    moving-stage
     
    set-outputs            
    update-plot    
@@ -133,8 +133,11 @@ end
 
 to analyse-neighbors
 
+  
   let mylist [rule] of (turtle-set turtles-on neighbors self)
   set mylist modes mylist
+  
+  
   set last-count-majority-rule count-majority-rule 
   set count-majority-rule length mylist
 
@@ -144,7 +147,7 @@ to analyse-neighbors
   while [empty? mylist3] [
   let i 1
   repeat 4 [
-    if length filter [? = i] mylist2 = j  [set mylist lput i mylist3] 
+    if length filter [? = i] mylist2 = j  [set mylist3 lput i mylist3] 
     set i i + 1
     ]
   set j j + 1
@@ -226,13 +229,13 @@ to calculate-satisfaction
           let bottom count (turtle-set turtles-on neighbors self) with [rule = bottom-rule]/ count     (turtle-set turtles-on neighbors self)     
           let my-rule rule
           let my-group count (turtle-set turtles-on neighbors self) with [rule = my-rule]/ count     (turtle-set turtles-on neighbors self)      
-                     set satisfaction (my-group - bottom) / (top - bottom)  
+          set satisfaction (my-group - bottom) / (top - bottom)  
       
         ]
     if rule = 4 ;; si règle anticonf
       [
           let top-rule one-of majority-rules
-          let bottom  -1 * count (turtle-set turtles-on neighbors self) with [rule = top-rule]/ count     (turtle-set turtles-on neighbors self) 
+          let bottom   -1 * count (turtle-set turtles-on neighbors self) with [rule = top-rule]/ count     (turtle-set turtles-on neighbors self) 
           let bottom-rule one-of minority-rules
           let top -1 * count (turtle-set turtles-on neighbors self) with [rule = bottom-rule]/ count     (turtle-set turtles-on neighbors self)     
           let my-rule rule
@@ -575,7 +578,7 @@ to-report add-noise [value noise-std]
       let epsilon random-normal 0.0 noise-std
       if ( epsilon <= -100 )
       [ set epsilon -99] 
-      let noisy-value runresult value * 100 / ( 100 + epsilon )
+      let noisy-value runresult value * 100 / (100 + epsilon)
       if (noisy-value > 1) [set noisy-value 1]
       if (noisy-value < 0) [set noisy-value 0]     
       report noisy-value
@@ -791,7 +794,7 @@ INPUTBOX
 130
 105
 density
-9
+0.3
 1
 0
 Number
@@ -802,7 +805,7 @@ INPUTBOX
 127
 171
 strength-of-dilemma
-5
+0.5
 1
 0
 Number
@@ -840,6 +843,66 @@ NIL
 NIL
 NIL
 1
+
+PLOT
+704
+10
+904
+160
+cooperation
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"cooperation" 1.0 0 -16777216 true "" ""
+"satisfaction" 1.0 0 -7500403 true "" ""
+"fraction-best" 1.0 0 -2674135 true "" ""
+
+PLOT
+955
+10
+1155
+160
+population
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"maxi" 1.0 0 -13840069 true "" "plot maxi"
+"mini" 1.0 0 -2674135 true "" "plot mini"
+"conf" 1.0 0 -13345367 true "" "plot conf"
+"anti" 1.0 0 -3026479 true "" "plot anti"
+
+PLOT
+739
+200
+939
+350
+track
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"pen1" 1.0 0 -16777216 true "" "plot count turtles with [rule?]"
+"pen2" 1.0 0 -7500403 true "" "plot count turtles with [move?]"
 
 @#$#@#$#@
 ## WHAT IS IT?
