@@ -97,7 +97,7 @@ to go
    update-views
     
     ask turtles [
-      ifelse am-i-the-best? or am-i-progressing? or am-i-the-best-global?
+      ifelse am-i-the-best? or am-i-progressing?; or am-i-the-best-global?
      [set shape "face happy"] ;; si am-i-the-best = true ou am-i-progressing = true ou si am-i-the-best-global = true la tortue a une tête contente
      [set shape "face sad"] ;; si am-i-the-best = false la tortue a une tête pas contente
                 ]  
@@ -213,13 +213,17 @@ to calculate-satisfaction
       [
           let top [score] of max-one-of (turtle-set turtles-on neighbors self) [score]
           let bottom [score] of min-one-of (turtle-set turtles-on neighbors self) [score]
-          set satisfaction (score - bottom) / (top - bottom) ;;sinon calcul de la satisfaction par rapport au score
+          ifelse (top - bottom) = 0
+          [set satisfaction 0.5]
+          [set satisfaction (score - bottom) / (top - bottom)] ;;sinon calcul de la satisfaction par rapport au score
         ]
     if rule = 2 ;; si règle mini
       [
           let top [-1 * score] of min-one-of (turtle-set turtles-on neighbors self) [score]
           let bottom [ -1 * score] of max-one-of (turtle-set turtles-on neighbors self) [score]
-          set satisfaction ((-1 * score) - bottom) / (top - bottom) 
+          ifelse (top - bottom) = 0
+          [set satisfaction 0.5]
+          [set satisfaction ((-1 * score) - bottom) / (top - bottom)] 
         ]
     if rule = 3 ;; si règle conf
       [
@@ -229,7 +233,9 @@ to calculate-satisfaction
           let bottom count (turtle-set turtles-on neighbors self) with [rule = bottom-rule]/ count     (turtle-set turtles-on neighbors self)     
           let my-rule rule
           let my-group count (turtle-set turtles-on neighbors self) with [rule = my-rule]/ count     (turtle-set turtles-on neighbors self)      
-          set satisfaction (my-group - bottom) / (top - bottom)  
+          ifelse (top - bottom) = 0
+          [set satisfaction 0.5]
+          [set satisfaction (my-group - bottom) / (top - bottom)]  
       
         ]
     if rule = 4 ;; si règle anticonf
@@ -240,7 +246,9 @@ to calculate-satisfaction
           let top -1 * count (turtle-set turtles-on neighbors self) with [rule = bottom-rule]/ count     (turtle-set turtles-on neighbors self)     
           let my-rule rule
           let my-group -1 * count (turtle-set turtles-on neighbors self) with [rule = my-rule]/       count (turtle-set turtles-on neighbors self)      
-          set satisfaction (my-group - bottom) / (top - bottom) 
+          ifelse (top - bottom) = 0
+          [set satisfaction 0.5]
+          [set satisfaction (my-group - bottom) / (top - bottom)] 
         ]
     if not any? (turtles-on neighbors) ;; s’il n’y a pas de tortues voisines
   [set satisfaction 0]
@@ -527,17 +535,28 @@ end
 to select-rule
                  ;; the agent changes its rule if every more succesfull neighbor has a different rule (if them exist).
                  ;; The agent never change his rule nor behavior if is in the set of agents with best performance (according its rule)
-     if not am-i-progressing? 
-    [ ifelse am-i-the-best? 
-     [
-     if not am-i-the-best-global? 
-         [copy-strategy (one-of best-elements-global)]
-      ]
+     
+      if not am-i-progressing? 
+    [ if not am-i-the-best? 
      [
      if not is-my-rule-the-best?   
          [copy-strategy (one-of best-elements)]
       ]
      ] 
+     
+     
+     
+   ;  if not am-i-progressing? 
+   ; [ ifelse am-i-the-best? 
+   ;  [
+   ;  if not am-i-the-best-global? 
+    ;     [copy-strategy (one-of best-elements-global)]
+    ;  ]
+    ; [
+    ; if not is-my-rule-the-best?   
+    ;     [copy-strategy (one-of best-elements)]
+     ; ]
+     ;] 
 end
 
 
@@ -853,15 +872,15 @@ cooperation
 NIL
 NIL
 0.0
-10.0
+100.0
 0.0
-10.0
+1.0
 true
-false
+true
 "" ""
 PENS
 "cooperation" 1.0 0 -16777216 true "" ""
-"satisfaction" 1.0 0 -7500403 true "" ""
+"satisfaction" 1.0 0 -11221820 true "" ""
 "fraction-best" 1.0 0 -2674135 true "" ""
 
 PLOT
@@ -873,17 +892,17 @@ population
 NIL
 NIL
 0.0
-10.0
+100.0
 0.0
-10.0
+1.0
 true
-false
+true
 "" ""
 PENS
-"maxi" 1.0 0 -13840069 true "" "plot maxi"
-"mini" 1.0 0 -2674135 true "" "plot mini"
-"conf" 1.0 0 -13345367 true "" "plot conf"
-"anti" 1.0 0 -3026479 true "" "plot anti"
+"maxi" 1.0 0 -13840069 true "" ""
+"mini" 1.0 0 -2674135 true "" ""
+"conf" 1.0 0 -13345367 true "" ""
+"anti" 1.0 0 -3026479 true "" ""
 
 PLOT
 739
@@ -894,15 +913,15 @@ track
 NIL
 NIL
 0.0
-10.0
+100.0
 0.0
-10.0
+1.0
 true
-false
+true
 "" ""
 PENS
-"pen1" 1.0 0 -16777216 true "" "plot count turtles with [rule?]"
-"pen2" 1.0 0 -7500403 true "" "plot count turtles with [move?]"
+"pen1" 1.0 0 -955883 true "" ""
+"pen2" 1.0 0 -5825686 true "" ""
 
 @#$#@#$#@
 ## WHAT IS IT?
