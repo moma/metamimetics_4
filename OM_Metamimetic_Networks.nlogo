@@ -7,9 +7,7 @@ extensions [ nw ]
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
  globals [ 
-
 ;; Globals that come from the widget 
-FileName
 Topology                    ;type of graph
 Num-Agents                  ;number of turtles
 Connection-Probability      ;for random network
@@ -26,6 +24,19 @@ inicoop
 replacement?
 cultural-constant
 load-topology?
+
+
+FileIn
+FileOut
+
+;stopping condition
+lAvg
+condition
+cooperation-list
+avg1 
+avg2  
+var1 
+var2 
 
 ;NETWORK CONSTRUCTION
 ;for scale-free
@@ -87,11 +98,9 @@ turtles-own [
 
 ;for network computations
 ;%%%%%
-distance-from-other-turtles
-
+;distance-from-other-turtles
 degree
 free-stubs
-
 ;node-clustering-coefficient
 ;betweenness-centrality
 ;eigenvector-centrality
@@ -105,12 +114,9 @@ time.rule
 time.behavior
 n.changes
 n.changes.behavior
-
 n.changes.list 
 time.rule.list 
 time.behavior.list
-
-
 rule.at.death.list
 age.at.death.list
 
@@ -152,14 +158,18 @@ set inicoop *-inicoop
 set replacement? *-replacement?
 set cultural-constant *-cultural-constant
 set load-topology? Load-Topology
-set FileName file 
+set FileIn *-fileIn
+let seed random 2000000000
+random-seed seed
+
+
 
 ;only setup if RN
 if Topology = "Random" [set Connection-Probability *-Connection-Probability]
 
 ;only setup if SW
 if Topology = "Small-World" [
-                               set Initial-Neighbours *-Initial-Neighbours
+                               set Initial-Neighbours  *-Initial-Neighbours 
                                set Rewiring-Probability *-Rewiring-Probability
                                ]
 
@@ -167,22 +177,6 @@ if Topology = "Scale-Free" [set Scale-Free-Exponent *-Scale-Free-Exponent]
      
  
 set Initial-Random-Types? *-Initial-Random-Types?
-
-;if is-number? Initial-Random-Types? 
-;[
-;ifelse Initial-Random-Types? = 1 [set Initial-Random-Types? true] [set Initial-Random-Types? false] 
-;]
-;
-;if is-number? replacement? 
-;[
-;ifelse replacement? = 1 [set replacement? true] [set replacement? false] 
-;]
-;if is-number? load-topology? 
-;[
-;ifelse load-topology? = 1 [set load-topology? true] [set load-topology? false] 
-;]
-
-
 ifelse not Initial-Random-Types?
       [
       set Initial-Maxi-% *-Initial-Maxi-%
@@ -202,28 +196,28 @@ ifelse not Initial-Random-Types?
 ;set PEB *-p-Error-Copy-Behavior
 
 set radius ( ( min (list world-width world-height) ) / 2 - 1)  
-
+set FileOut (word Rewiring-Probability  "_" inicoop "_" seed "_" Strength-of-Dilemma "_" cultural-constant "_" Initial-Neighbours "_" replacement? )
 common-setup
-;set-outputs
-;my-update-plots
-; ask links [set color gray]
-
 end
-
-
-
 
 to common-setup
 set Initial-Anti-% (100 - Initial-Conf-% - Initial-Mini-% - Initial-Maxi-%)
 set infinity Num-Agents * 100
 set success? false
+set condition false
+set cooperation-list []
+set avg1 0
+set avg2 0 
+set var1 0
+set var2 0
+set lAvg 50
 
 ifelse not load-topology? [setup-Topology] 
 ;[nw:load-matrix FileName turtles links
 ;; ask links [set color gray]
 ;]
 [
- nw:load-graphml FileName 
+ nw:load-graphml FileIn 
  nw:set-context turtles links
 ]
 
@@ -234,20 +228,12 @@ setup-init-turtles
 if Topology != "Lattice" [ask turtles [set size 3]]
 set sizeT [size] of one-of turtles 
 
-
-;resize-turtles
-
 set-life-distribution-USA2010
-
 ;if replacement? [
 ;                 init-age-USA2010
 ;                ]
 
-;ask turtles [establish-color]
 reset-ticks
-
-
-
 ;set average-path-length nw:mean-path-length
 ;set diameter max [longest-path] of turtles  
 ;set clustering-coefficient mean  [ node-clustering-coefficient ] of turtles
@@ -259,8 +245,6 @@ reset-ticks
 ;set mincc min [node-clustering-coefficient] of turtles
 ;set mindeg min [degree] of turtles
 ;set original-degrees [degree] of turtles
-
-
 end
 
 
@@ -268,18 +252,123 @@ end
 ;;; Open Mole Routines ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-to-report go-stop? [tmax]
-;ifelse all? turtles [shape = "face happy"]
-ifelse ticks > tmax
-[report true]
-[report false]
-end
 
 to run-to-grid [tmax]
 common-setup
-while [not go-stop? tmax ]
-[go]
+while [not condition and ticks < tmax ][go]
+set-last-measures
+reset-ticks
+end 
 
+to run-Logo [tmax]  
+while [not condition and ticks < tmax] [go]
+set-last-measures
+end
+
+
+to-report go-stop?
+let res true
+let a1 max (list avg1 avg2)
+let a2 min (list avg1 avg2)
+let v1 max (list var1 var2)
+let v2 min (list var1 var2)
+
+let c1 (a1 - a2)   
+let c2 (v1 - v2) 
+
+ifelse  c1 < .03 and c2 < .005 [set res true][set res false]
+if  c2 = 0 and c2 = 0 [set res true ] 
+if  majority != 3 and replacement? [set res false] 
+
+report res
+end
+
+to-report majority
+let lista (list maxi mini conf anti)
+let lista2 sort lista
+report (( position (item  3 lista2 ) lista ) + 1)
+end
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Measures ;;;;;;;;;; ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+to set-outputs
+  ;populations
+let turtles-maxi turtles with [ my.rule  = 1]
+let turtles-mini turtles with [ my.rule  = 2]
+let turtles-conf turtles with [ my.rule  = 3]
+let turtles-anti turtles with [ my.rule  = 4]
+
+
+set maxi count turtles-maxi  
+set mini count turtles-mini  
+set conf count turtles-conf  
+set anti count turtles-anti   
+
+set cooperation-rate count turtles with [cooperate] / Num-Agents
+;set satisfaction-rate count turtles with [shape = "face happy"] / Num-Agents
+set satisfaction-rate2  mean [satisfaction2] of turtles
+
+;;;##FILL STOP CONDITION MEASURES
+ifelse length cooperation-list < lAvg
+[set cooperation-list fput cooperation-rate cooperation-list]
+[
+ set cooperation-list fput cooperation-rate cooperation-list
+ set cooperation-list remove-item (lAvg - 1) cooperation-list
+if ticks = 150 [set avg1 mean cooperation-list
+                set var1 sqrt variance cooperation-list
+               ]
+
+if ticks = 200 [
+               set avg2 mean cooperation-list
+               set var2 sqrt variance cooperation-list
+               set condition go-stop?
+               ]
+if ticks mod 50 = 0 and ticks > 200 [
+               set avg1 avg2
+               set var1 var2
+               set avg2 mean cooperation-list
+               set var2 sqrt variance cooperation-list
+               set condition go-stop?
+               ]
+]  
+end
+
+to export-graphL
+let name (word FileOut "_graph.graphml")
+nw:save-graphml name
+end 
+to export-coopL
+let name (word FileOut "_coop.csv")
+export-plot "Cooperation and Satisfaction" name 
+end
+to export-propL
+let name (word FileOut "_popul.csv")
+export-plot "Population" name
+end
+to export-agesL
+let name (word FileOut "_ages.csv")
+export-plot "Age Plot" name 
+end
+
+to export-graph
+nw:save-graphml "graph.graphml"
+end 
+
+to export-coop
+export-plot "Cooperation and Satisfaction" "coop.csv" 
+end
+
+to export-prop
+export-plot "Population" "popul.csv"
+end
+
+to export-ages
+export-plot "Age Plot" "ages.csv" 
+end
+
+to set-last-measures
 ask turtles 
 [
 set rule.history lput my.rule rule.history
@@ -287,10 +376,7 @@ set time.history lput (age - counter.age) time.history
 set ticks.history lput (ticks - counter.ticks) ticks.history 
 set age.history lput age age.history 
 ]
-
-reset-ticks
-end 
-
+end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Setup Turtles ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -357,31 +443,26 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 to go
-
-
 ;;;;;;;;;;;;;;;;;;;;;
 ;uncomment to change dynamically on widget
 ;set Strength-of-Dilemma *-strength-of-dilemma
 ;set inicoop *-inicoop
 ;set replacement? *-replacement?
 ;set cultural-constant *-cultural-constant
-;;;;;;;;;;;;;;;;;;;;;
-
-
 ;if replacement? [set-life-distribution-USA2010]
+;;;;;;;;;;;;;;;;;;;;;
 
 ask turtles [interact]
 decision-stage
 learn-stage
 
 ;;;;;;;;;;;;;;;;;;;;;;;
-;uncomment to change dynamically on widget
+;uncomment to view changes widget
 ;ask turtles [establish-color]
 ;ask turtles [set-faces]
 ;;;;;;;;;;;;;;;;;;;;;;;
 
 ask turtles [set satisfaction2 satisfaction-2]
-;ask turtles [set-perception]
 
 set-outputs            
 my-update-plots
@@ -1428,37 +1509,13 @@ end
 
 
 
-to-report global-clustering-coefficient
-  let closed-triplets sum [ nw:clustering-coefficient * count my-links * (count my-links - 1) ] of turtles
-  let triplets sum [ count my-links * (count my-links - 1) ] of turtles
-  report closed-triplets / triplets
-end
+;to-report global-clustering-coefficient
+;  let closed-triplets sum [ nw:clustering-coefficient * count my-links * (count my-links - 1) ] of turtles
+;  let triplets sum [ count my-links * (count my-links - 1) ] of turtles
+;  report closed-triplets / triplets
+;end
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Measures ;;;;;;;;;; ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-
-to set-outputs
-set cooperation-rate count turtles with [cooperate] / Num-Agents
-;set satisfaction-rate count turtles with [shape = "face happy"] / Num-Agents
-set satisfaction-rate2  mean [satisfaction2] of turtles
-  
-  ;populations
-  
-let turtles-maxi turtles with [ my.rule  = 1]
-let turtles-mini turtles with [ my.rule  = 2]
-let turtles-conf turtles with [ my.rule  = 3]
-let turtles-anti turtles with [ my.rule  = 4]
-
-
-set maxi count turtles-maxi  
-set mini count turtles-mini  
-set conf count turtles-conf  
-set anti count turtles-anti   
-end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; Outputs and Plots ;; ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1897,23 +1954,6 @@ end
 ;end
 ;
 ;
-
-to export-graph
-;let name word (FileName) ".graphml"
-nw:save-graphml "graph.graphml"
-end 
-
-to export-coop
-export-plot "Cooperation and Satisfaction" "coop.csv" 
-end
-
-to export-prop
-export-plot "Population" "popul.csv" 
-end
-  
-to export-ages
-export-plot "Age Plot" "ages.csv" 
-end
 @#$#@#$#@
 GRAPHICS-WINDOW
 32
@@ -1995,7 +2035,7 @@ SLIDER
 *-strength-of-dilemma
 0
 0.5
-0.14
+0.5
 0.01
 1
 NIL
@@ -2050,7 +2090,7 @@ SLIDER
 *-inicoop
 0
 100
-45
+50
 1
 1
 NIL
@@ -2077,7 +2117,7 @@ INPUTBOX
 572
 293
 *-Num-Agents
-700
+500
 1
 0
 Number
@@ -2131,7 +2171,7 @@ SLIDER
 *-Rewiring-Probability
 0
 1
-0.104
+1
 .001
 1
 NIL
@@ -2189,10 +2229,10 @@ SLIDER
 395
 *-Initial-Neighbours
 *-Initial-Neighbours
-2
+1
 *-Num-Agents - 1
-156
-2
+75
+1
 1
 NIL
 HORIZONTAL
@@ -2449,7 +2489,7 @@ SWITCH
 542
 Load-Topology
 Load-Topology
-0
+1
 1
 -1000
 
@@ -2458,7 +2498,7 @@ INPUTBOX
 545
 513
 605
-file
+*-fileIn
 NIL
 1
 0
@@ -2595,15 +2635,15 @@ TEXTBOX
 1
 
 SLIDER
-409
+407
 175
-611
+556
 208
 *-cultural-constant
 *-cultural-constant
 .001
 20
-0.964
+1
 .001
 1
 NIL
@@ -2984,860 +3024,177 @@ NetLogo 5.1.0
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="RandomNets" repetitions="30" runMetricsEveryStep="false">
+  <experiment name="ASW" repetitions="10" runMetricsEveryStep="true">
     <setup>setup</setup>
-    <go>go</go>
-    <final>export-data</final>
-    <exitCondition>all? turtles [shape = "face happy"] and ticks &gt; 1</exitCondition>
-    <enumeratedValueSet variable="*-inicoop">
-      <value value="0"/>
-      <value value="20"/>
-      <value value="60"/>
-      <value value="100"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-strength-of-dilemma">
-      <value value="0"/>
-      <value value="0.1"/>
-      <value value="0.3"/>
-      <value value="0.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="FileName">
-      <value value="&quot;R015.txt&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="load-topology?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-random-init-u?">
+    <go>run-Logo 500</go>
+    <final>export-graphL
+export-coopL
+export-propL
+export-agesL</final>
+    <exitCondition>condition or ticks &gt; 500</exitCondition>
+    <enumeratedValueSet variable="Load-Topology">
       <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Asynchronous-Updating?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-prob-update-behavior">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-prob-update-rule">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Num-Agents">
-      <value value="400"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Transcription-error">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Random-Types?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Copy-Error-Random?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Behavior">
-      <value value="0.05"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Rule">
-      <value value="0.05"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Topology">
-      <value value="&quot;Random&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Rewiring-Probability">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Neighbours">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Scale-Free-Exponent">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Connection-Probability">
-      <value value="0"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="Colormap-View">
       <value value="&quot;Strategies&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Conf-%">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Maxi-%">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Mini-%">
-      <value value="0"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="SWNets" repetitions="30" runMetricsEveryStep="false">
-    <setup>setup</setup>
-    <go>go</go>
-    <final>export-data</final>
-    <exitCondition>(all? turtles [shape = "face happy"] and ticks &gt; 1) or ticks  &gt; 500</exitCondition>
-    <enumeratedValueSet variable="*-inicoop">
-      <value value="0"/>
-      <value value="20"/>
-      <value value="60"/>
-      <value value="100"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-strength-of-dilemma">
-      <value value="0"/>
-      <value value="0.1"/>
-      <value value="0.3"/>
-      <value value="0.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="FileName">
-      <value value="&quot;SW2005.txt&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="load-topology?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-random-init-u?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Asynchronous-Updating?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-prob-update-behavior">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-prob-update-rule">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Num-Agents">
-      <value value="400"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Transcription-error">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Random-Types?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Copy-Error-Random?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Behavior">
-      <value value="0.05"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Rule">
-      <value value="0.05"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Topology">
-      <value value="&quot;Random&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Rewiring-Probability">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Neighbours">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Scale-Free-Exponent">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Connection-Probability">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Colormap-View">
-      <value value="&quot;Strategies&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Conf-%">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Maxi-%">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Mini-%">
-      <value value="0"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="SFNets" repetitions="30" runMetricsEveryStep="false">
-    <setup>setup</setup>
-    <go>go</go>
-    <final>export-data</final>
-    <exitCondition>(all? turtles [shape = "face happy"] and ticks &gt; 1) or ticks  &gt; 500</exitCondition>
-    <enumeratedValueSet variable="*-inicoop">
-      <value value="0"/>
-      <value value="20"/>
-      <value value="60"/>
-      <value value="100"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-strength-of-dilemma">
-      <value value="0"/>
-      <value value="0.1"/>
-      <value value="0.3"/>
-      <value value="0.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="FileName">
-      <value value="&quot;SF21.txt&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="load-topology?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-random-init-u?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Asynchronous-Updating?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-prob-update-behavior">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-prob-update-rule">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Num-Agents">
-      <value value="400"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Transcription-error">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Random-Types?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Copy-Error-Random?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Behavior">
-      <value value="0.05"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Rule">
-      <value value="0.05"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Topology">
-      <value value="&quot;Random&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Rewiring-Probability">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Neighbours">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Scale-Free-Exponent">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Connection-Probability">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Colormap-View">
-      <value value="&quot;Strategies&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Conf-%">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Maxi-%">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Mini-%">
-      <value value="0"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="RandomNets?issing" repetitions="30" runMetricsEveryStep="false">
-    <setup>setup</setup>
-    <go>go</go>
-    <final>export-data</final>
-    <exitCondition>(all? turtles [shape = "face happy"] and ticks &gt; 1) or ticks  &gt; 500</exitCondition>
-    <enumeratedValueSet variable="*-inicoop">
-      <value value="60"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-strength-of-dilemma">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="FileName">
-      <value value="&quot;R015.txt&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="load-topology?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-random-init-u?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Asynchronous-Updating?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-prob-update-behavior">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-prob-update-rule">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Num-Agents">
-      <value value="400"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Transcription-error">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Random-Types?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Copy-Error-Random?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Behavior">
-      <value value="0.05"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Rule">
-      <value value="0.05"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Topology">
-      <value value="&quot;Random&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Rewiring-Probability">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Neighbours">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Scale-Free-Exponent">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Connection-Probability">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Colormap-View">
-      <value value="&quot;Strategies&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Conf-%">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Maxi-%">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Mini-%">
-      <value value="0"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="SWFinalFEB" repetitions="50" runMetricsEveryStep="false">
-    <setup>setup</setup>
-    <go>go</go>
-    <final>export-data
-export-network-data</final>
-    <exitCondition>(all? turtles [shape = "face happy"] and ticks &gt; 1) or ticks  &gt; 100</exitCondition>
-    <enumeratedValueSet variable="Colormap-View">
-      <value value="&quot;Strategies&quot;"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="*-strength-of-dilemma" first="0" step="0.1" last="0.5"/>
-    <enumeratedValueSet variable="*-inicoop">
-      <value value="50"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Random-Types?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Num-Agents">
-      <value value="500"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="error_on_satisfaction">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Innovate?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Behavior">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Rule">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Copy-Thetas?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="load-topology?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Neighbours">
-      <value value="4"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="FileName">
-      <value value="&quot;FEB15&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Topology">
-      <value value="&quot;Small-World&quot;"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="*-Rewiring-Probability" first="0.025" step="0.025" last="0.975"/>
-  </experiment>
-  <experiment name="Lattice" repetitions="20" runMetricsEveryStep="false">
-    <setup>setup</setup>
-    <go>go</go>
-    <exitCondition>(all? turtles [shape = "face happy"] and ticks &gt; 1) or ticks  &gt; 200</exitCondition>
-    <metric>count turtles with [rule = 1]</metric>
-    <metric>count turtles with [rule = 2]</metric>
-    <metric>count turtles with [rule = 3]</metric>
-    <metric>count turtles with [rule = 4]</metric>
-    <enumeratedValueSet variable="*-Initial-Random-Types?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Topology">
-      <value value="&quot;Lattice&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Rule">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Innovate?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Behavior">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Colormap-View">
-      <value value="&quot;Strategies&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Copy-Thetas?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="error_on_satisfaction">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="load-topology?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="FileName">
-      <value value="&quot;lattice.txt&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-strength-of-dilemma">
-      <value value="0"/>
-      <value value="0.1"/>
-      <value value="0.25"/>
-      <value value="0.4"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-inicoop">
-      <value value="50"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="Lattice2" repetitions="20" runMetricsEveryStep="false">
-    <setup>setup</setup>
-    <go>go</go>
-    <exitCondition>(all? turtles [shape = "face happy"] and ticks &gt; 1) or ticks  &gt; 300</exitCondition>
-    <metric>count turtles with [rule = 1]</metric>
-    <metric>count turtles with [rule = 2]</metric>
-    <metric>count turtles with [rule = 3]</metric>
-    <metric>count turtles with [rule = 4]</metric>
-    <enumeratedValueSet variable="*-Initial-Random-Types?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Topology">
-      <value value="&quot;Lattice&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Rule">
-      <value value="0.05"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Innovate?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Behavior">
-      <value value="0.01"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Colormap-View">
-      <value value="&quot;Strategies&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Copy-Thetas?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="error_on_satisfaction">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="load-topology?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="FileName">
-      <value value="&quot;lattice.txt&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-strength-of-dilemma">
-      <value value="0"/>
-      <value value="0.1"/>
-      <value value="0.25"/>
-      <value value="0.4"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-inicoop">
-      <value value="50"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="Lattice3" repetitions="20" runMetricsEveryStep="false">
-    <setup>setup</setup>
-    <go>go</go>
-    <exitCondition>(all? turtles [shape = "face happy"] and ticks &gt; 1) or ticks  &gt; 300</exitCondition>
-    <metric>count turtles with [rule = 1] / count turtles</metric>
-    <metric>count turtles with [rule = 2] / count turtles</metric>
-    <metric>count turtles with [rule = 3] / count turtles</metric>
-    <metric>count turtles with [rule = 4] / count turtles</metric>
-    <enumeratedValueSet variable="*-Initial-Random-Types?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Topology">
-      <value value="&quot;Lattice&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Rule">
-      <value value="0.02"/>
-      <value value="0.05"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Innovate?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Behavior">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Colormap-View">
-      <value value="&quot;Strategies&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Copy-Thetas?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="error_on_satisfaction">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="load-topology?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="FileName">
-      <value value="&quot;lattice3.txt&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-strength-of-dilemma">
-      <value value="0.25"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-inicoop">
-      <value value="50"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="experiment" repetitions="10" runMetricsEveryStep="false">
-    <setup>setup</setup>
-    <go>go</go>
-    <final>export-data
-export-network</final>
-    <exitCondition>(all? turtles [shape = "face happy"] and ticks &gt; 1) or ticks  &gt; 100</exitCondition>
-    <enumeratedValueSet variable="Colormap-View">
-      <value value="&quot;Strategies&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-strength-of-dilemma">
-      <value value="0.25"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-inicoop">
-      <value value="50"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Random-Types?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Num-Agents">
-      <value value="500"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="error_on_satisfaction">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Innovate?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Behavior">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Rule">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Copy-Thetas?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="load-topology?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Neighbours">
-      <value value="4"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="FileName">
-      <value value="&quot;experimento&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Topology">
-      <value value="&quot;Small-World&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Rewiring-Probability">
-      <value value="0.3"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="SWFinalRun" repetitions="100" runMetricsEveryStep="false">
-    <setup>setup</setup>
-    <go>go</go>
-    <final>export-data
-export-network</final>
-    <exitCondition>(all? turtles [shape = "face happy"] and ticks &gt; 1) or ticks  &gt; 100</exitCondition>
-    <enumeratedValueSet variable="Colormap-View">
-      <value value="&quot;Strategies&quot;"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="*-strength-of-dilemma" first="0" step="0.1" last="0.5"/>
-    <enumeratedValueSet variable="*-inicoop">
-      <value value="50"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Random-Types?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Num-Agents">
-      <value value="500"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="error_on_satisfaction">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Innovate?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Behavior">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Rule">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Copy-Thetas?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="load-topology?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Neighbours">
-      <value value="4"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="FileName">
-      <value value="&quot;FinalFeb15&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="*-Topology">
       <value value="&quot;Small-World&quot;"/>
     </enumeratedValueSet>
     <steppedValueSet variable="*-Rewiring-Probability" first="0" step="0.025" last="1"/>
-  </experiment>
-  <experiment name="SWSuffling" repetitions="50" runMetricsEveryStep="false">
-    <setup>setup</setup>
-    <go>go</go>
-    <final>export-network</final>
-    <exitCondition>(all? turtles [shape = "face happy"] and ticks &gt; 1) or ticks  &gt; 100</exitCondition>
-    <enumeratedValueSet variable="Colormap-View">
-      <value value="&quot;Strategies&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-strength-of-dilemma">
-      <value value="0.25"/>
+    <enumeratedValueSet variable="*-Initial-Neighbours">
+      <value value="25"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="*-inicoop">
       <value value="50"/>
     </enumeratedValueSet>
+    <steppedValueSet variable="*-strength-of-dilemma" first="0" step="0.025" last="0.5"/>
     <enumeratedValueSet variable="*-Initial-Random-Types?">
       <value value="true"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="*-Num-Agents">
       <value value="500"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="error_on_satisfaction">
-      <value value="false"/>
+    <enumeratedValueSet variable="*-fileIn">
+      <value value="&quot;&quot;"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="Innovate?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Behavior">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Rule">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Copy-Thetas?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="load-topology?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Neighbours">
-      <value value="4"/>
-      <value value="8"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="FileName">
-      <value value="&quot;Shuffling&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Topology">
-      <value value="&quot;Small-World&quot;"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="*-Rewiring-Probability" first="0" step="0.05" last="0.5"/>
-  </experiment>
-  <experiment name="SWShufflingExperiment" repetitions="1" runMetricsEveryStep="false">
-    <setup>setup</setup>
-    <go>go</go>
-    <final>export-network</final>
-    <exitCondition>(all? turtles [shape = "face happy"] and ticks &gt; 1) or ticks  &gt; 100</exitCondition>
-    <enumeratedValueSet variable="Colormap-View">
-      <value value="&quot;Strategies&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-strength-of-dilemma">
-      <value value="0.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-inicoop">
-      <value value="50"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Random-Types?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Num-Agents">
-      <value value="500"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="error_on_satisfaction">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Innovate?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Behavior">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Rule">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Copy-Thetas?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="load-topology?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Neighbours">
-      <value value="8"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="FileName">
-      <value value="&quot;experimento&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Topology">
-      <value value="&quot;Small-World&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Rewiring-Probability">
+    <enumeratedValueSet variable="*-cultural-constant">
       <value value="1"/>
     </enumeratedValueSet>
+    <enumeratedValueSet variable="*-Scale-Free-Exponent">
+      <value value="2"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-Initial-Conf-%">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-Initial-Mini-%">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-Initial-Maxi-%">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-replacement?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-Connection-Probability">
+      <value value="0.076"/>
+    </enumeratedValueSet>
   </experiment>
-  <experiment name="SWShuffling2" repetitions="50" runMetricsEveryStep="false">
+  <experiment name="ASW2" repetitions="10" runMetricsEveryStep="true">
     <setup>setup</setup>
-    <go>go</go>
-    <final>export-network</final>
-    <exitCondition>(all? turtles [shape = "face happy"] and ticks &gt; 1) or ticks  &gt; 100</exitCondition>
+    <go>run-Logo 500</go>
+    <final>export-graphL
+export-coopL
+export-propL
+export-agesL</final>
+    <exitCondition>condition or ticks &gt; 500</exitCondition>
+    <enumeratedValueSet variable="Load-Topology">
+      <value value="false"/>
+    </enumeratedValueSet>
     <enumeratedValueSet variable="Colormap-View">
       <value value="&quot;Strategies&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-strength-of-dilemma">
-      <value value="0.25"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-inicoop">
-      <value value="50"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Random-Types?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Num-Agents">
-      <value value="500"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="error_on_satisfaction">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Innovate?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Behavior">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Rule">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Copy-Thetas?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="load-topology?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Initial-Neighbours">
-      <value value="4"/>
-      <value value="8"/>
-      <value value="16"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="FileName">
-      <value value="&quot;Shuffling2&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="*-Topology">
       <value value="&quot;Small-World&quot;"/>
     </enumeratedValueSet>
-    <steppedValueSet variable="*-Rewiring-Probability" first="0" step="0.01" last="0.2"/>
-  </experiment>
-  <experiment name="LatticeMinis" repetitions="20" runMetricsEveryStep="false">
-    <setup>setup</setup>
-    <go>go</go>
-    <exitCondition>(all? turtles [shape = "face happy"] and ticks &gt; 1) or ticks  &gt; 100</exitCondition>
-    <metric>count turtles with [rule = 1] / count turtles</metric>
-    <metric>count turtles with [rule = 2] / count turtles</metric>
-    <metric>count turtles with [rule = 3] / count turtles</metric>
-    <metric>count turtles with [rule = 4] / count turtles</metric>
+    <steppedValueSet variable="*-Rewiring-Probability" first="0" step="0.1" last="1"/>
+    <enumeratedValueSet variable="*-Initial-Neighbours">
+      <value value="25"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-inicoop">
+      <value value="0"/>
+      <value value="5"/>
+      <value value="100"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="*-strength-of-dilemma" first="0" step="0.1" last="0.5"/>
     <enumeratedValueSet variable="*-Initial-Random-Types?">
       <value value="true"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="*-Num-Agents">
       <value value="500"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Topology">
-      <value value="&quot;Lattice&quot;"/>
+    <enumeratedValueSet variable="*-fileIn">
+      <value value="&quot;&quot;"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Rule">
+    <enumeratedValueSet variable="*-cultural-constant">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-Scale-Free-Exponent">
+      <value value="2"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-Initial-Conf-%">
       <value value="0"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="Innovate?">
+    <enumeratedValueSet variable="*-Initial-Mini-%">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-Initial-Maxi-%">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-replacement?">
       <value value="false"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Behavior">
-      <value value="0"/>
+    <enumeratedValueSet variable="*-Connection-Probability">
+      <value value="0.076"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="ASW3" repetitions="10" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>run-Logo 500</go>
+    <final>export-graphL
+export-coopL
+export-propL
+export-agesL</final>
+    <exitCondition>condition or ticks &gt; 500</exitCondition>
+    <enumeratedValueSet variable="Load-Topology">
+      <value value="false"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="Colormap-View">
       <value value="&quot;Strategies&quot;"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="Copy-Thetas?">
-      <value value="false"/>
+    <enumeratedValueSet variable="*-Topology">
+      <value value="&quot;Small-World&quot;"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="error_on_satisfaction">
-      <value value="false"/>
+    <steppedValueSet variable="*-Rewiring-Probability" first="0" step="0.1" last="1"/>
+    <enumeratedValueSet variable="*-Initial-Neighbours">
+      <value value="12"/>
+      <value value="50"/>
+      <value value="75"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="load-topology?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="FileName">
-      <value value="&quot;latticeMinis.txt&quot;"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="*-strength-of-dilemma" first="0" step="0.01" last="0.5"/>
     <enumeratedValueSet variable="*-inicoop">
       <value value="50"/>
     </enumeratedValueSet>
-  </experiment>
-  <experiment name="LatticeMinisCoop" repetitions="10" runMetricsEveryStep="false">
-    <setup>setup</setup>
-    <go>go</go>
-    <exitCondition>(all? turtles [shape = "face happy"] and ticks &gt; 1) or ticks  &gt; 100</exitCondition>
-    <metric>count turtles with [rule = 1] / count turtles</metric>
-    <metric>count turtles with [rule = 2] / count turtles</metric>
-    <metric>count turtles with [rule = 3] / count turtles</metric>
-    <metric>count turtles with [rule = 4] / count turtles</metric>
-    <metric>count turtles with [cooperate? = TRUE] / count turtles</metric>
-    <metric>count turtles with [rule = 1 and cooperate? = TRUE] / count turtles with [rule = 1]</metric>
-    <metric>count turtles with [rule = 2 and cooperate? = TRUE] / count turtles with [rule = 2]</metric>
-    <metric>count turtles with [rule = 3 and cooperate? = TRUE] / count turtles with [rule = 3]</metric>
-    <metric>count turtles with [rule = 4 and cooperate? = TRUE] / count turtles with [rule = 4]</metric>
+    <steppedValueSet variable="*-strength-of-dilemma" first="0" step="0.1" last="0.5"/>
     <enumeratedValueSet variable="*-Initial-Random-Types?">
       <value value="true"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="*-Num-Agents">
       <value value="500"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="*-Topology">
-      <value value="&quot;Lattice&quot;"/>
+    <enumeratedValueSet variable="*-fileIn">
+      <value value="&quot;&quot;"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Rule">
+    <enumeratedValueSet variable="*-cultural-constant">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-Scale-Free-Exponent">
+      <value value="2"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-Initial-Conf-%">
       <value value="0"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="Innovate?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="*-p-Error-Copy-Behavior">
+    <enumeratedValueSet variable="*-Initial-Mini-%">
       <value value="0"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="Colormap-View">
-      <value value="&quot;Strategies&quot;"/>
+    <enumeratedValueSet variable="*-Initial-Maxi-%">
+      <value value="100"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="Copy-Thetas?">
+    <enumeratedValueSet variable="*-replacement?">
       <value value="false"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="error_on_satisfaction">
-      <value value="false"/>
+    <enumeratedValueSet variable="*-Connection-Probability">
+      <value value="0.076"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="load-topology?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="FileName">
-      <value value="&quot;latticeMinisCop.txt&quot;"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="*-strength-of-dilemma" first="0" step="0.1" last="0.5"/>
-    <steppedValueSet variable="*-inicoop" first="0" step="15" last="100"/>
   </experiment>
 </experiments>
 @#$#@#$#@
