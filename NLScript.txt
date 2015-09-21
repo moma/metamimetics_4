@@ -1,0 +1,212 @@
+
+
+/* Preprocessing */
+
+
+val graphName = Val[String]
+val graphName2 = Val[String]
+
+val graphFile = Val[File]
+val graphFile2 = Val[File]
+
+val statisticFile1 = Val[File]
+val statisticFile2 = Val[File]
+
+
+val RulesNL = Val[File]
+val BehaviorNL = Val[File]
+val SatisfactionNL = Val[File]
+val ScoresNL = Val[File]
+val BestNL = Val[File]
+val AgesNL = Val[File]
+val MaxiNL = Val[File]
+val MiniNL = Val[File]
+val ConfNL = Val[File]
+val AntiNL = Val[File]
+val GlobalNL = Val[File]
+
+
+
+val packagingPath= "rootfs/iscpif/users/sifuentes/"
+
+val basePath = "/iscpif/users/sifuentes/"
+val InputGraphPath = basePath + "GraphFiles/SmallWorldSmall/"
+
+
+ 
+val graphExploration = 
+  ExplorationTask(
+(graphFile in ListFilesDomain(  InputGraphPath) zipWithName graphName)  take 4
+)
+
+
+
+
+
+
+/*  Task to get graphName2 */
+
+
+
+
+val getName2 = ScalaTask( "val graphName2 = graphFile.toString ") set (
+  inputs += graphName,
+  inputs += graphFile,
+  outputs += graphFile,
+  outputs += graphName,
+  outputs += graphName2
+ )
+
+
+
+
+/* NetLogo Task */
+
+
+
+
+
+
+val topology = Val[String]
+val numAgents = Val[Double]
+val connectionProbability = Val[Double]
+val initialNeighbours = Val[Double]
+val rewiringProbability = Val[Double]
+val scaleFreeExponent = Val[Double]
+val initialRandomTypes = Val[Boolean]
+val initialMaxi = Val[Double]
+val initialMini = Val[Double]
+val initialConf = Val[Double]
+val strengthOfDilemma = Val[Double]
+val inicoop = Val[Double]
+val replacement = Val[Boolean]
+val culturalConstant = Val[Double]
+val loadtopology = Val[Boolean]
+val graphNL = Val[File]
+val filein = Val[String]
+val seed = Val[Int]
+
+
+val parameterExploration = ExplorationTask (
+      (seed in (UniformDistribution[Int]() take 10 ))x
+      (strengthOfDilemma in (0.0 to 0.5 by 0.025))x
+      (inicoop in (0.0 to 100.0 by  25.0))        
+     take 2) set (
+    inputs +=  graphFile,
+    inputs += graphName2,
+    inputs += graphName,
+    outputs += graphFile, 
+    outputs += graphName2, 
+    outputs += graphName
+    )
+
+
+
+
+
+val cmds = List( 
+"random-seed ${seed}",
+"run-to-grid 1501", 
+"show ticks",
+"show Binterval",
+"export-rules",
+"export-behavior",
+"export-satisfaction",
+"export-scores",
+"export-best",
+"export-age",
+"export-prop1",
+"export-prop2",
+"export-prop3",
+"export-prop4",
+"export-global"
+)
+
+
+
+
+
+   /*strengthOfDilemma  inicoop  */
+
+
+
+  
+val LogoModel = NetLogo5Task( basePath + "metamimetic/model/OM_Metamimetic_Networks.nlogo", cmds, true) set (
+    inputs += graphName,
+    inputs += seed,
+    topology := "MyTopology",
+    numAgents := 0.0,
+    connectionProbability := 0.0,
+    rewiringProbability := 0.0,
+    initialNeighbours := 0.0,  
+    scaleFreeExponent := 0.0,
+    initialRandomTypes := true,
+    initialMaxi := 0.0,
+    initialMini := 0.0,
+    initialConf := 0.0,
+    culturalConstant := 2.0,
+    replacement := true, 
+    loadtopology := true,
+    filein := "graphIn.graphml",
+    netLogoInputs += (topology, "Topology"),
+    netLogoInputs += (numAgents, "Num-Agents"),
+    netLogoInputs += (connectionProbability, "Connection-Probability"),
+    netLogoInputs += (initialNeighbours, "Initial-Neighbours"),
+    netLogoInputs += (rewiringProbability, "Rewiring-Probability"),
+    netLogoInputs += (scaleFreeExponent, "Scale-Free-Exponent"),
+    netLogoInputs += (initialRandomTypes, "Initial-Random-Types?"),
+    netLogoInputs += (initialMaxi, "Initial-Maxi-%"),
+    netLogoInputs += (initialMini, "Initial-Mini-%"),
+    netLogoInputs += (initialConf, "Initial-Conf-%"),
+    netLogoInputs += (strengthOfDilemma, "Strength-of-Dilemma"),
+    netLogoInputs += (inicoop, "inicoop"),
+    netLogoInputs += (replacement, "replacement?"),
+    netLogoInputs += (culturalConstant, "cultural-constant"),
+    netLogoInputs += (loadtopology, "Load-Topology?"),    
+    netLogoInputs += ( graphName2 , "FileIn"),
+    inputFiles  += (graphFile, "graphIn.graphml"),
+    outputFiles += ("Rules.csv", RulesNL),
+    outputFiles += ("Behavior.csv", BehaviorNL),
+    outputFiles += ("Satisfaction.csv", SatisfactionNL),
+    outputFiles += ("Scores.csv", ScoresNL),
+    outputFiles += ("Best.csv", BestNL),
+    outputFiles += ("Ages.csv", AgesNL),
+    outputFiles += ("Maxi.csv", MaxiNL),
+    outputFiles += ("Mini.csv", MiniNL),
+    outputFiles += ("Conf.csv", ConfNL),
+    outputFiles += ("Anti.csv", AntiNL),
+    outputFiles += ("Global.csv", GlobalNL), 
+   outputs += (inicoop, strengthOfDilemma, culturalConstant , graphName2, graphName, seed))
+
+
+val FileHook1 = CopyFileHook( statisticFile1,   basePath +  "metamimetic/output/csv/Central/" + "${graphName.dropRight(8)}_Central.csv")
+val AppendcsvHook1 = AppendFileHook( statisticFile2,  basePath +  "metamimetic/output/csv/Global/" + "Global.csv")
+
+
+val FileHook2  = CopyFileHook( RulesNL,          basePath +  "metamimetic/output/csv/Rules/" + "${graphName.dropRight(8)}_Rules_${seed}.csv")
+val FileHook3  = CopyFileHook( BehaviorNL,       basePath +  "metamimetic/output/csv/Behavior/" + "${graphName.dropRight(8)}_Behavior_${seed}.csv")
+val FileHook4  = CopyFileHook( SatisfactionNL,   basePath +  "metamimetic/output/csv/Satisfaction/" + "${graphName.dropRight(8)}_Satisfaction_${seed}.csv")
+val FileHook5  = CopyFileHook( ScoresNL,   basePath +  "metamimetic/output/csv/Scores/" + "${graphName.dropRight(8)}_Scores_${seed}.csv")
+val FileHook6  = CopyFileHook( BestNL,     basePath +  "metamimetic/output/csv/Best/" + "${graphName.dropRight(8)}_Best_${seed}.csv")
+val FileHook7  = CopyFileHook( MaxiNL,     basePath +  "metamimetic/output/csv/Maxi/" + "${graphName.dropRight(8)}_Maxi_${seed}.csv")
+val FileHook8  = CopyFileHook( MiniNL,     basePath +  "metamimetic/output/csv/Mini/" + "${graphName.dropRight(8)}_Mini_${seed}.csv")
+val FileHook9  = CopyFileHook( ConfNL,     basePath +  "metamimetic/output/csv/Conf/" + "${graphName.dropRight(8)}_Conf_${seed}.csv")
+val FileHook10 = CopyFileHook( AntiNL,     basePath +  "metamimetic/output/csv/Anti/" + "${graphName.dropRight(8)}_Anti_${seed}.csv")
+val FileHook12 = CopyFileHook( AgesNL,     basePath +  "metamimetic/output/csv/Ages/" + "${graphName.dropRight(8)}_Ages_${seed}.csv")
+
+
+val FileHook11 =     AppendFileHook( GlobalNL,        basePath +  "metamimetic/output/csv/GlobalNL/" + "GlobalNL.csv")
+
+val env2 = EGIEnvironment("vo.complex-systems.eu")
+
+val env3 = LocalEnvironment(4)
+val env4 = EGIEnvironment("vo.lal.in2p3.fr")
+
+
+val ex = graphExploration -- getName2 -- parameterExploration -< ( LogoModel hook (FileHook2, FileHook3, FileHook4, FileHook5, FileHook6, FileHook7, FileHook8, FileHook9, FileHook10, FileHook11, FileHook12, ToStringHook()) on env2 ) start 
+
+
+
+
+
+print(ex)

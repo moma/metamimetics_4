@@ -1,0 +1,127 @@
+/* Preprocessing */
+
+
+
+val packagingPath= "rootfs/iscpif/users/sifuentes/"
+
+val basePath = "/iscpif/users/sifuentes/"
+
+val agents   = Val[Double]
+val edges = Val[Double]
+
+val graphFile1   = Val[File]
+val graphFile2   = Val[File]
+val graphFile3   = Val[File]
+val graphFile4   = Val[File]
+val graphFile5   = Val[File]
+val graphFile6   = Val[File]
+val graphFile7   = Val[File]
+val graphFile8   = Val[File]
+val graphFile9   = Val[File]
+val  graphFile10 = Val[File]
+val  graphFile11 = Val[File]
+val  graphFile12 = Val[File]
+val  graphFile13 = Val[File]
+val  graphFile14 = Val[File]
+val  graphFile15 = Val[File]
+val  graphFile16 = Val[File]
+val  graphFile17 = Val[File]
+val  graphFile18 = Val[File]
+val  graphFile19 = Val[File]
+val  graphFile20 = Val[File]
+val  graphFile21 = Val[File]
+val  graphFile22 = Val[File]
+val  graphFile23 = Val[File]
+val  graphFile24 = Val[File]
+val  graphFile25 = Val[File]
+val  graphFile26 = Val[File]
+val  graphFile27 = Val[File]
+val  graphFile28 = Val[File]
+val  graphFile29 = Val[File]
+val  graphFile30 = Val[File]
+
+
+val parameterExploration = ExplorationTask (
+      (edges in List (125000.0))x
+      (agents in List(5000.0))
+      ) 
+
+
+
+val graphCreationRTask = SystemExecTask("ERCreate.bin", "ERCreate/re-execute.sh R --slave -f ERGraph.R --args ${edges} ${agents} ") set (
+resources += basePath + "ERCreate.bin",
+inputs += edges,
+inputs += agents, 
+outputs += edges,
+outputFiles += ("ERCreate/" + packagingPath + "graph1.graphml", graphFile1),    
+outputFiles += ("ERCreate/" + packagingPath + "graph2.graphml", graphFile2),    
+outputFiles += ("ERCreate/" + packagingPath + "graph3.graphml", graphFile3),    
+outputFiles += ("ERCreate/" + packagingPath + "graph4.graphml", graphFile4),    
+outputFiles += ("ERCreate/" + packagingPath + "graph5.graphml", graphFile5),    
+outputFiles += ("ERCreate/" + packagingPath + "graph6.graphml", graphFile6),    
+outputFiles += ("ERCreate/" + packagingPath + "graph7.graphml", graphFile7),    
+outputFiles += ("ERCreate/" + packagingPath + "graph8.graphml", graphFile8),    
+outputFiles += ("ERCreate/" + packagingPath + "graph9.graphml", graphFile9),    
+outputFiles += ("ERCreate/" + packagingPath + "graph10.graphml", graphFile10),  
+outputFiles += ("ERCreate/" + packagingPath + "graph11.graphml", graphFile11),  
+outputFiles += ("ERCreate/" + packagingPath + "graph12.graphml", graphFile12),  
+outputFiles += ("ERCreate/" + packagingPath + "graph13.graphml", graphFile13),  
+outputFiles += ("ERCreate/" + packagingPath + "graph14.graphml", graphFile14),  
+outputFiles += ("ERCreate/" + packagingPath + "graph15.graphml", graphFile15),  
+outputFiles += ("ERCreate/" + packagingPath + "graph16.graphml", graphFile16),  
+outputFiles += ("ERCreate/" + packagingPath + "graph17.graphml", graphFile17),  
+outputFiles += ("ERCreate/" + packagingPath + "graph18.graphml", graphFile18),  
+outputFiles += ("ERCreate/" + packagingPath + "graph19.graphml", graphFile19),  
+outputFiles += ("ERCreate/" + packagingPath + "graph20.graphml", graphFile20),  
+outputFiles += ("ERCreate/" + packagingPath + "graph21.graphml", graphFile21),  
+outputFiles += ("ERCreate/" + packagingPath + "graph22.graphml", graphFile22),  
+outputFiles += ("ERCreate/" + packagingPath + "graph23.graphml", graphFile23),  
+outputFiles += ("ERCreate/" + packagingPath + "graph24.graphml", graphFile24),  
+outputFiles += ("ERCreate/" + packagingPath + "graph25.graphml", graphFile25),  
+outputFiles += ("ERCreate/" + packagingPath + "graph26.graphml", graphFile26),  
+outputFiles += ("ERCreate/" + packagingPath + "graph27.graphml", graphFile27),  
+outputFiles += ("ERCreate/" + packagingPath + "graph28.graphml", graphFile28),  
+outputFiles += ("ERCreate/" + packagingPath + "graph29.graphml", graphFile29),  
+outputFiles += ("ERCreate/" + packagingPath + "graph30.graphml", graphFile30)   
+)
+
+
+
+val graphHook1  = CopyFileHook(graphFile1 , basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_1.graphml")
+val graphHook2  = CopyFileHook(graphFile2 , basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_2.graphml")
+val graphHook3  = CopyFileHook(graphFile3 , basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_3.graphml")
+val graphHook4  = CopyFileHook(graphFile4 , basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_4.graphml")
+val graphHook5  = CopyFileHook(graphFile5 , basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_5.graphml")
+val graphHook6  = CopyFileHook(graphFile6 , basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_6.graphml")
+val graphHook7  = CopyFileHook(graphFile7 , basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_7.graphml")
+val graphHook8  = CopyFileHook(graphFile8 , basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_8.graphml")
+val graphHook9  = CopyFileHook(graphFile9 , basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_9.graphml")
+val graphHook10 = CopyFileHook(graphFile10, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_10.graphml")
+val graphHook11 = CopyFileHook(graphFile11, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_11.graphml")
+val graphHook12 = CopyFileHook(graphFile12, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_12.graphml")
+val graphHook13 = CopyFileHook(graphFile13, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_13.graphml")
+val graphHook14 = CopyFileHook(graphFile14, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_14.graphml")
+val graphHook15 = CopyFileHook(graphFile15, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_15.graphml")
+val graphHook16 = CopyFileHook(graphFile16, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_16.graphml")
+val graphHook17 = CopyFileHook(graphFile17, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_17.graphml")
+val graphHook18 = CopyFileHook(graphFile18, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_18.graphml")
+val graphHook19 = CopyFileHook(graphFile19, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_19.graphml")
+val graphHook20 = CopyFileHook(graphFile20, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_20.graphml")
+val graphHook21 = CopyFileHook(graphFile21, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_21.graphml")
+val graphHook22 = CopyFileHook(graphFile22, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_22.graphml")
+val graphHook23 = CopyFileHook(graphFile23, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_23.graphml")
+val graphHook24 = CopyFileHook(graphFile24, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_24.graphml")
+val graphHook25 = CopyFileHook(graphFile25, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_25.graphml")
+val graphHook26 = CopyFileHook(graphFile26, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_26.graphml")
+val graphHook27 = CopyFileHook(graphFile27, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_27.graphml")
+val graphHook28 = CopyFileHook(graphFile28, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_28.graphml")
+val graphHook29 = CopyFileHook(graphFile29, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_29.graphml")
+val graphHook30 = CopyFileHook(graphFile30, basePath + "GraphFiles/SmallWorldSmall/" + "ER_edges_${edges}_rep_30.graphml")
+
+val env4 = EGIEnvironment("vo.lal.in2p3.fr")
+val env2 = EGIEnvironment("vo.complex-systems.eu")
+val env3 = LocalEnvironment(4)
+
+
+val ex = parameterExploration -< (graphCreationRTask hook (graphHook1, graphHook2, graphHook3, graphHook4, graphHook5, graphHook6, graphHook7, graphHook8, graphHook9, graphHook10, graphHook11, graphHook12, graphHook13, graphHook14, graphHook15, graphHook16, graphHook17, graphHook18, graphHook19, graphHook20, graphHook21, graphHook22, graphHook23, graphHook24, graphHook25, graphHook26, graphHook27, graphHook28, graphHook29, graphHook30 )on env2) start
+

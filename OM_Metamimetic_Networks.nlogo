@@ -1,4 +1,4 @@
-extensions [ nw ]
+extensions [ nw  ]
 
 
 
@@ -10,33 +10,37 @@ extensions [ nw ]
 ;; Globals that come from the widget 
 Topology                    ;type of graph
 Num-Agents                  ;number of turtles
+
 Connection-Probability      ;for random network
 Initial-Neighbours          ;for small world network
 Rewiring-Probability        
 Scale-Free-Exponent         ;for scale-free network
+
+
 Initial-Random-Types?       ;Agents' types initialization
 Initial-Maxi-% 
 Initial-Mini-% 
 Initial-Conf-% 
 Initial-Anti-% 
+
 Strength-of-Dilemma         ;prisoner's dilemma
 inicoop
 replacement?
 cultural-constant
-load-topology?
 
+load-topology?
 
 FileIn
 FileOut
 
 ;stopping condition
-lAvg
-condition
-cooperation-list
-avg1 
-avg2  
-var1 
-var2 
+;lAvg
+;condition
+;cooperation-list
+;avg1 
+;avg2  
+;var1 
+;var2 
 
 ;NETWORK CONSTRUCTION
 ;for scale-free
@@ -45,18 +49,18 @@ sequence
 p_k
 Z
 uniform
-;for connectivity
-success?
+success? ;connectivity
 
 ;;appearance 
 sizeT
-radius
+plot.radius
 
 ;;OUTPUTS
   cooperation-rate
   satisfaction-rate
   satisfaction-rate2
 
+;Life expectancy , death rates 
 life-expectation
 mortality-rate
 prob-to-die 
@@ -64,21 +68,114 @@ prob-die-imitation
 infinity
 
 
-;;IN THE NETWORK CONTEXT
-;  clustering-coefficient               ;; average of clustering coefficients of all turtles
-;  average-path-length                  ;; average path length of the network
-;  network-density
-;  diameter
-;  n-links
-;  clustering-coefficient-2
-
 
 ;TURTLE POPULATION
   maxi
   mini
   conf
   anti
-;perception 
+
+  turtles-maxi
+  turtles-mini
+  turtles-conf
+  turtles-anti
+
+;to export stuff
+mean.scores
+mean.coop
+mean.sat
+mean.max
+mean.min
+mean.conf
+mean.anti
+mean.age.max
+mean.age.min
+mean.age.conf
+mean.age.anti
+coop.maxi
+coop.mini
+coop.conf
+coop.anti
+sat.maxi
+sat.mini
+sat.conf
+sat.anti
+scores.maxi
+scores.mini
+scores.conf
+scores.anti
+
+   
+CH.maxi.prop  
+CH.mini.prop  
+CH.conf.prop  
+CH.anti.prop  
+CU.maxi.prop  
+CU.mini.prop  
+CU.conf.prop  
+CU.anti.prop  
+DH.maxi.prop  
+DH.mini.prop  
+DH.conf.prop  
+DH.anti.prop  
+DU.maxi.prop  
+DU.mini.prop  
+DU.conf.prop  
+DU.anti.prop  
+CH.maxi.sat   
+CH.mini.sat   
+CH.conf.sat   
+CH.anti.sat   
+CU.maxi.sat   
+CU.mini.sat   
+CU.conf.sat   
+CU.anti.sat   
+DH.maxi.sat   
+DH.mini.sat   
+DH.conf.sat   
+DH.anti.sat   
+DU.maxi.sat   
+DU.mini.sat   
+DU.conf.sat   
+DU.anti.sat   
+CH.maxi.scores
+CH.mini.scores
+CH.conf.scores
+CH.anti.scores
+CU.maxi.scores
+CU.mini.scores
+CU.conf.scores
+CU.anti.scores
+DH.maxi.scores
+DH.mini.scores
+DH.conf.scores
+DH.anti.scores
+DU.maxi.scores
+DU.mini.scores
+DU.conf.scores
+DU.anti.scores
+
+maxi-coop-happy  
+mini-coop-happy  
+conf-coop-happy  
+anti-coop-happy  
+maxi-coop-UNhappy
+mini-coop-UNhappy
+conf-coop-UNhappy
+anti-coop-UNhappy
+maxi-def-happy   
+mini-def-happy   
+conf-def-happy   
+anti-def-happy   
+maxi-def-UNhappy 
+mini-def-UNhappy 
+conf-def-UNhappy 
+anti-def-UNhappy 
+
+Binterval
+ticks-read 
+averages-length
+
 ]
 
 
@@ -92,40 +189,92 @@ turtles-own [
   satisfaction2
   age
   chances.imitations  
+myset
 
   rule?
   behavior?
 
-;for network computations
-;%%%%%
-;distance-from-other-turtles
+;come from R
+
+;globalInfo       
+FILEID
+FILESIZE
+NODEID
+SWP
+FILENEI
+GAMMA
+ERP
+
+betwSV
+closeSV
+degSV
+evSV
+meanPath
+clustSV
+powerlaw
+diameter
+girth
+radius
+density
+assDeg
+efficiency
+sw
+key
+alpha.global
+authority.global
+eccentricity.global
+knn.global
+pr.global
+power.global
+gcent.global
+lcent.global
+scent.global
+
+
+;nodeInfo
+
+
+alpha.centr
+authority      
+eccent         
+knn            
+pr             
+power          
+gcent          
+lcent          
+scent          
+clustNV        
+constraint     
+betwNV         
+closeNV        
+degNV          
+evNV           
+
+
+;go out to identify on R
+filePars
+
 degree
 free-stubs
-;node-clustering-coefficient
-;betweenness-centrality
-;eigenvector-centrality
-;page-rank
-;closeness-centrality
-;longest-path
-;mean-path
-
-;time since last changes 
-time.rule
-time.behavior
-n.changes
-n.changes.behavior
-n.changes.list 
-time.rule.list 
-time.behavior.list
-rule.at.death.list
-age.at.death.list
 
 rule.history
-time.history
-ticks.history
-counter.age 
-counter.ticks
+behavior.history
+satisfaction.history
+scores.history
+best.history
 age.history 
+
+;neighbors' type
+n.maxi
+n.mini
+n.anti
+n.conf
+
+;neighbors' type
+n.maxi.list
+n.mini.list
+n.anti.list
+n.conf.list
 
 ;for outputs
 ;  theta_1
@@ -135,6 +284,8 @@ age.history
 ;  copy-error-behavior
  
 run.info 
+
+my.neighbors
 ]
 
 links-own[
@@ -142,6 +293,120 @@ links-own[
  rewired?
   ]
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; To Go ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+to go-automatic
+;;;;;;;;;;;;;;;;;;;;;
+;uncomment to change dynamically on widget
+;set Strength-of-Dilemma *-strength-of-dilemma
+;set inicoop *-inicoop
+;set replacement? *-replacement?
+;set cultural-constant *-cultural-constant
+;if replacement? [set-life-distribution-USA2010]
+;;;;;;;;;;;;;;;;;;;;;
+ask turtles [interact]
+decision-stage
+learn-stage
+ask turtles [set satisfaction2 satisfaction-2]
+set-outputs-1
+
+
+if ticks > ticks-read [
+ask turtles [
+             fill.state.info
+             set-outputs-2
+            ]            
+calculate-Neighbors
+                      ]
+
+;;;;;;;;;;;;;;;;;;;;;;;
+;uncomment to view changes widget
+;ask turtles [establish-color]
+;ask turtles [set-faces]
+my-update-plots1
+;my-update-plots2
+;;;;;;;;;;;;;;;;;;;;;;;
+reset-change
+ask turtles [set chances.imitations chances.imitations + 1
+             
+             ifelse replacement? 
+             [
+             if  chances.imitations >= cultural-constant   [set age age + 1
+                                                            set chances.imitations 0
+                                                     ]
+             ][set age age + 1]
+            ]
+if replacement? [replacement]
+tick
+end
+
+to go
+;;;;;;;;;;;;;;;;;;;;;
+;uncomment to change dynamically on widget
+set Strength-of-Dilemma *-strength-of-dilemma
+set inicoop *-inicoop
+set replacement? *-replacement?
+set cultural-constant *-cultural-constant
+if replacement? [set-life-distribution-USA2010]
+;;;;;;;;;;;;;;;;;;;;;
+
+ask turtles [interact]
+decision-stage
+learn-stage
+ask turtles [fill.state.info2]
+ask turtles [set satisfaction2 satisfaction-2]
+ask turtles [set-outputs-1
+  ;set-outputs-2
+  ]
+            
+;calculate-Neighbors
+;;;;;;;;;;;;;;;;;;;;;;;
+;uncomment to view changes widget
+ask turtles [establish-color]
+ask turtles [set-faces]
+;;;;;;;;;;;;;;;;;;;;;;;
+my-update-plots1
+;my-update-plots2
+reset-change
+ask turtles [set chances.imitations chances.imitations + 1
+             
+             ifelse replacement? 
+             [
+             if  chances.imitations >= cultural-constant   [set age age + 1
+                                                            set chances.imitations 0
+                                                     ]
+             ][set age age + 1]
+            ]
+if replacement? [replacement]
+tick
+end
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Open Mole Routines ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+to run-to-grid [tmax ticks-to-read time-series-output-length averages-N-length]
+
+common-setup
+set ticks-read ticks-to-read
+set Binterval time-series-output-length
+set averages-length averages-N-length
+repeat tmax [go-automatic]
+reset-ticks
+end 
+
+to run-Logo [tmax ticks-to-read time-series-output-length averages-N-length]
+setup   
+set ticks-read ticks-to-read
+set Binterval time-series-output-length
+set averages-length averages-N-length
+repeat tmax [go-automatic]
+end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -165,17 +430,20 @@ random-seed seed
 
 
 ;only setup if RN
+if not load-topology? [
+
 if Topology = "Random" [set Connection-Probability *-Connection-Probability]
 
 ;only setup if SW
-if Topology = "Small-World" [
+if Topology = "Small-World"    [
                                set Initial-Neighbours  *-Initial-Neighbours 
                                set Rewiring-Probability *-Rewiring-Probability
                                ]
 
 if Topology = "Scale-Free" [set Scale-Free-Exponent *-Scale-Free-Exponent]
-     
- 
+]
+
+
 set Initial-Random-Types? *-Initial-Random-Types?
 ifelse not Initial-Random-Types?
       [
@@ -195,34 +463,43 @@ ifelse not Initial-Random-Types?
 ;set PER *-p-Error-Copy-Rule
 ;set PEB *-p-Error-Copy-Behavior
 
-set radius ( ( min (list world-width world-height) ) / 2 - 1)  
-set FileOut (word Rewiring-Probability  "_" inicoop "_" seed "_" Strength-of-Dilemma "_" cultural-constant "_" Initial-Neighbours "_" replacement? )
+set plot.radius ( ( min (list world-width world-height) ) / 2 - 1)  
 common-setup
 end
+
+
 
 to common-setup
 set Initial-Anti-% (100 - Initial-Conf-% - Initial-Mini-% - Initial-Maxi-%)
 set infinity Num-Agents * 100
 set success? false
-set condition false
-set cooperation-list []
-set avg1 0
-set avg2 0 
-set var1 0
-set var2 0
-set lAvg 50
+;set condition false
+;set cooperation-list []
+;set avg1 0
+;set avg2 0 
+;set var1 0
+;set var2 0
+;set lAvg 50
 
 ifelse not load-topology? [setup-Topology] 
-;[nw:load-matrix FileName turtles links
-;; ask links [set color gray]
-;]
 [
- nw:load-graphml FileIn 
- nw:set-context turtles links
+ifelse (last FileIn) = "t"   [
+                                nw:load-matrix FileIn turtles links
+                                ask links [set color gray]
+                               ]
+                               [  
+                               ;show FileIn
+                               ;show "reading"
+                               nw:load-graphml FileIn 
+                               nw:set-context turtles links
+                               ;show FileIn
+                               ]
+
 ]
 
-set Num-Agents count turtles
 
+
+set Num-Agents count turtles
 setup-init-turtles
 
 if Topology != "Lattice" [ask turtles [set size 3]]
@@ -233,150 +510,91 @@ set-life-distribution-USA2010
 ;                 init-age-USA2010
 ;                ]
 
+ask turtles [set degree count link-neighbors]
+set FileOut (word ( remove ".graphml" FileIn ) "_" inicoop "_" Strength-of-Dilemma  "_"  cultural-constant "_" replacement? )
+ask turtles [set filePars  FileOut ]
+
+
+set mean.coop    [] 
+set mean.sat     [] 
+set mean.scores  [] 
+set mean.max     [] 
+set mean.min     [] 
+set mean.conf    [] 
+set mean.anti    [] 
+set mean.age.max  [] 
+set mean.age.min  [] 
+set mean.age.conf [] 
+set mean.age.anti [] 
+
+set coop.maxi      []
+set coop.mini      []
+set coop.conf      []
+set coop.anti      []
+set sat.maxi       []
+set sat.mini       []
+set sat.conf       []
+set sat.anti       []
+set scores.maxi    []
+set scores.mini    []
+set scores.conf    []
+set scores.anti    []
+set CH.maxi.prop   []
+set CH.mini.prop   []
+set CH.conf.prop   []
+set CH.anti.prop   []
+set CU.maxi.prop   []
+set CU.mini.prop   []
+set CU.conf.prop   []
+set CU.anti.prop   []
+set DH.maxi.prop   []
+set DH.mini.prop   []
+set DH.conf.prop   []
+set DH.anti.prop   []
+set DU.maxi.prop   []
+set DU.mini.prop   []
+set DU.conf.prop   []
+set DU.anti.prop   []
+set CH.maxi.sat    []
+set CH.mini.sat    []
+set CH.conf.sat    []
+set CH.anti.sat    []
+set CU.maxi.sat    []
+set CU.mini.sat    []
+set CU.conf.sat    []
+set CU.anti.sat    []
+set DH.maxi.sat    []
+set DH.mini.sat    []
+set DH.conf.sat    []
+set DH.anti.sat    []
+set DU.maxi.sat    []
+set DU.mini.sat    []
+set DU.conf.sat    []
+set DU.anti.sat    []
+set CH.maxi.scores []
+set CH.mini.scores []
+set CH.conf.scores []
+set CH.anti.scores []
+set CU.maxi.scores []
+set CU.mini.scores []
+set CU.conf.scores []
+set CU.anti.scores []
+set DH.maxi.scores []
+set DH.mini.scores []
+set DH.conf.scores []
+set DH.anti.scores []
+set DU.maxi.scores []
+set DU.mini.scores []
+set DU.conf.scores []
+set DU.anti.scores []
+
+ask turtles [set-outputs-1]
+;resize-nodes
 reset-ticks
-;set average-path-length nw:mean-path-length
-;set diameter max [longest-path] of turtles  
-;set clustering-coefficient mean  [ node-clustering-coefficient ] of turtles
-;set clustering-coefficient-2 global-clustering-coefficient
-;set network-density count links * 2 / ( (Num-Agents - 1) * (Num-Agents))
-;set shuffled2? false
-;set n-links count links 
-;set repetitions 0
-;set mincc min [node-clustering-coefficient] of turtles
-;set mindeg min [degree] of turtles
-;set original-degrees [degree] of turtles
 end
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Open Mole Routines ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
-to run-to-grid [tmax]
-common-setup
-while [not condition and ticks < tmax ][go]
-set-last-measures
-reset-ticks
-end 
-
-to run-Logo [tmax]  
-while [not condition and ticks < tmax] [go]
-set-last-measures
-end
-
-
-to-report go-stop?
-let res true
-let a1 max (list avg1 avg2)
-let a2 min (list avg1 avg2)
-let v1 max (list var1 var2)
-let v2 min (list var1 var2)
-
-let c1 (a1 - a2)   
-let c2 (v1 - v2) 
-
-ifelse  c1 < .03 and c2 < .005 [set res true][set res false]
-if  c2 = 0 and c2 = 0 [set res true ] 
-if  majority != 3 and replacement? [set res false] 
-
-report res
-end
-
-to-report majority
-let lista (list maxi mini conf anti)
-let lista2 sort lista
-report (( position (item  3 lista2 ) lista ) + 1)
-end
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Measures ;;;;;;;;;; ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-to set-outputs
-  ;populations
-let turtles-maxi turtles with [ my.rule  = 1]
-let turtles-mini turtles with [ my.rule  = 2]
-let turtles-conf turtles with [ my.rule  = 3]
-let turtles-anti turtles with [ my.rule  = 4]
-
-
-set maxi count turtles-maxi  
-set mini count turtles-mini  
-set conf count turtles-conf  
-set anti count turtles-anti   
-
-set cooperation-rate count turtles with [cooperate] / Num-Agents
-;set satisfaction-rate count turtles with [shape = "face happy"] / Num-Agents
-set satisfaction-rate2  mean [satisfaction2] of turtles
-
-;;;##FILL STOP CONDITION MEASURES
-ifelse length cooperation-list < lAvg
-[set cooperation-list fput cooperation-rate cooperation-list]
-[
- set cooperation-list fput cooperation-rate cooperation-list
- set cooperation-list remove-item (lAvg - 1) cooperation-list
-if ticks = 150 [set avg1 mean cooperation-list
-                set var1 sqrt variance cooperation-list
-               ]
-
-if ticks = 200 [
-               set avg2 mean cooperation-list
-               set var2 sqrt variance cooperation-list
-               set condition go-stop?
-               ]
-if ticks mod 50 = 0 and ticks > 200 [
-               set avg1 avg2
-               set var1 var2
-               set avg2 mean cooperation-list
-               set var2 sqrt variance cooperation-list
-               set condition go-stop?
-               ]
-]  
-end
-
-to export-graphL
-let name (word FileOut "_graph.graphml")
-nw:save-graphml name
-end 
-to export-coopL
-let name (word FileOut "_coop.csv")
-export-plot "Cooperation and Satisfaction" name 
-end
-to export-propL
-let name (word FileOut "_popul.csv")
-export-plot "Population" name
-end
-to export-agesL
-let name (word FileOut "_ages.csv")
-export-plot "Age Plot" name 
-end
-
-to export-graph
-nw:save-graphml "graph.graphml"
-end 
-
-to export-coop
-export-plot "Cooperation and Satisfaction" "coop.csv" 
-end
-
-to export-prop
-export-plot "Population" "popul.csv"
-end
-
-to export-ages
-export-plot "Age Plot" "ages.csv" 
-end
-
-to set-last-measures
-ask turtles 
-[
-set rule.history lput my.rule rule.history
-set time.history lput (age - counter.age) time.history
-set ticks.history lput (ticks - counter.ticks) ticks.history 
-set age.history lput age age.history 
-]
-end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Setup Turtles ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -393,7 +611,8 @@ if-else Initial-Random-Types? [ask turtles [set my.rule (random 4) + 1]]
  
 ask turtles [      
      set shape "face sad"
-     set size sizeT
+     set label ""
+;     set size 1
      set age 0
      set satisfaction2 1
      ifelse random-float 1.0 < (inicoop / 100)
@@ -404,88 +623,54 @@ ask turtles [
      set rule? false
      set behavior? false
 
-set time.rule 0
-set time.behavior 0
-set n.changes 0
-set n.changes.behavior 0
 
 set chances.imitations 0
-;set perception 0 
 
-set n.changes.list []
-set time.rule.list []
-set rule.at.death.list []
-set time.behavior.list []
-set age.at.death.list  []
-set run.info (word Topology  "*" Strength-of-Dilemma "*" inicoop "*" replacement? "*" cultural-constant "*" Rewiring-Probability "*" Initial-Neighbours "*" Connection-Probability "*" Scale-Free-Exponent "*" Initial-Random-Types? "*" load-topology? "*" Num-Agents )
+set run.info (word FILEID "_" "Dilemma" "_" Strength-of-Dilemma  "_"  "inicoop" "_" inicoop  "_" "replace"  "_" replacement?  "_" "cc"  "_" cultural-constant)  
+                       
+set rule.history (list 0)
+set behavior.history  (list 0)
+set satisfaction.history  (list 0)
+set scores.history  (list 0)
+set best.history  (list 0)
+set age.history  (list 0)
 
-set rule.history []
-set time.history []
-set ticks.history []
-set age.history []
-set counter.ticks 0 
-set counter.age 0 
-
-       
-;set betweenness-centrality nw:betweenness-centrality
-;set eigenvector-centrality nw:eigenvector-centrality
-;set page-rank nw:page-rank
-;set closeness-centrality nw:closeness-centrality
-;set node-clustering-coefficient nw:clustering-coefficient 
+set n.maxi.list  (list 0)
+set n.mini.list  (list 0)
+set n.anti.list  (list 0)
+set n.conf.list  (list 0)
+set my.neighbors link-neighbors
+set myset (turtle-set my.neighbors self)
 ]
 end
-
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; To Go ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-to go
-;;;;;;;;;;;;;;;;;;;;;
-;uncomment to change dynamically on widget
-;set Strength-of-Dilemma *-strength-of-dilemma
-;set inicoop *-inicoop
-;set replacement? *-replacement?
-;set cultural-constant *-cultural-constant
-;if replacement? [set-life-distribution-USA2010]
-;;;;;;;;;;;;;;;;;;;;;
-
-ask turtles [interact]
-decision-stage
-learn-stage
-
-;;;;;;;;;;;;;;;;;;;;;;;
-;uncomment to view changes widget
-;ask turtles [establish-color]
-;ask turtles [set-faces]
-;;;;;;;;;;;;;;;;;;;;;;;
-
-ask turtles [set satisfaction2 satisfaction-2]
-
-set-outputs            
-my-update-plots
-reset-change
-
-ask turtles [set chances.imitations chances.imitations + 1
-             
-             ifelse replacement? 
-             [
-             if  chances.imitations >= cultural-constant   [set age age + 1
-                                                      set chances.imitations 0
-                                                     ]
-             ][set age age + 1]
-            ]
-if replacement? [replacement]
-tick
-end
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;              Go Routines ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+to fill.state.info
+set rule.history lput my.rule rule.history
+set behavior.history lput cooperate behavior.history 
+set satisfaction.history lput satisfaction2 satisfaction.history 
+set scores.history lput score scores.history
+set best.history lput am-i-the-best? best.history 
+set age.history lput age age.history 
+end
+
+to fill.state.info2
+set rule.history remove-item 0 rule.history 
+set rule.history lput my.rule rule.history
+set behavior.history remove-item 0 behavior.history 
+set behavior.history lput cooperate behavior.history 
+set satisfaction.history remove-item 0 satisfaction.history 
+set satisfaction.history lput satisfaction2 satisfaction.history 
+set scores.history remove-item 0 scores.history 
+set scores.history lput score scores.history
+set best.history remove-item 0 best.history 
+set best.history lput am-i-the-best? best.history 
+set age.history remove-item 0 age.history 
+set age.history lput age age.history 
+end
 
 to reset-change
 ask turtles   [
@@ -500,11 +685,11 @@ ifelse am-i-the-best?   [set shape "face happy"]
 end
 
 to interact  ;; calculates the agents' payoffs for Prisioner's Dilema.
-let total-cooperators count link-neighbors with [cooperate]
+let total-cooperators count my.neighbors with [cooperate]
 set inst.score 0
 ifelse cooperate
-    [set inst.score (total-cooperators * (1 - Strength-of-Dilemma) / count link-neighbors)]
-    [set inst.score ((total-cooperators + (count link-neighbors - total-cooperators) * Strength-of-Dilemma ) / count link-neighbors)]  
+    [set inst.score (total-cooperators * (1 - Strength-of-Dilemma) / degree)]
+    [set inst.score ((total-cooperators + (degree - total-cooperators) * Strength-of-Dilemma ) / degree)]  
 set last.score score
 set score inst.score
 end
@@ -512,10 +697,10 @@ end
 
 to-report am-i-the-best? ;; reports true if the agent is the best in its neighborhood
  let test false  
- if ( my.rule  = 1) and  (score >= [score] of max-one-of link-neighbors [score]  * 0.99)  [set test true]
- if ( my.rule  = 2) and  (score <= [score] of min-one-of link-neighbors [score] * 1.01)     [set test true]
+ if ( my.rule  = 1) and  (score >= [score] of max-one-of my.neighbors [score]  * 0.99)  [set test true]
+ if ( my.rule  = 2) and  (score <= [score] of min-one-of my.neighbors [score] * 1.01)     [set test true]
  if ( my.rule  = 3) and  (member? my.rule majority-rules)                                      [set test true]
- if ( my.rule  = 4) and  (member? my.rule minority-rules) and not all? (link-neighbors) [ my.rule  = 4]  [set test true]    
+ if ( my.rule  = 4) and  (member? my.rule minority-rules) and not all? (my.neighbors) [ my.rule  = 4]  [set test true]    
  report test
 end
 
@@ -576,18 +761,10 @@ to select-rule
    ;]
 end
 
-
-
 to copy-strategy [temp-agent]
 ;;;RULE STEP
 ;ifelse random-float 1.0 > copy-error-rule ; some agents do the right thing
 ;       [
-       set rule.history lput my.rule rule.history
-       set time.history lput (age - counter.age ) time.history
-       set age.history lput age age.history  
-       set ticks.history lput (ticks - counter.ticks ) ticks.history 
-       set counter.age age 
-       set counter.ticks ticks
 
        set my.rule [my.rule] of temp-agent
 
@@ -600,17 +777,13 @@ to copy-strategy [temp-agent]
 ;       ]     
 ;       [set my.rule random 4 + 1 ] ;do a random thing
 ;       
-       set n.changes (n.changes + 1)
        set rule? false
-       set time.rule age
-
-
-             
 end
 
 
 
 to select-behavior 
+  
 ;ifelse random-float 1 > copy-error-behavior ;only some agents do the right thing 
 ;       [ 
        if ( my.rule  = 1) or ( my.rule  = 2) [set cooperate [cooperate] of one-of best-elements ]
@@ -621,19 +794,16 @@ to select-behavior
 ;      ifelse random-float 1.0 < .5  [set cooperate true] [set cooperate false] ;choose random behaviour
 ;      ]
 set behavior? false
-set n.changes.behavior (n.changes.behavior + 1)
-set time.behavior age
 end 
 
 
 to-report majority-behavior
-  let mylist [cooperate] of (turtle-set link-neighbors self)
+  let mylist [cooperate] of myset
   report one-of modes mylist
 end
 
 to-report satisfaction-2
 let sat2 0
-let myset (turtle-set link-neighbors self)
  
 if my.rule = 1 [
             ifelse abs(max [score] of myset - min [score] of myset) = 0
@@ -648,14 +818,14 @@ if my.rule = 2 [
             ]              
 
 if my.rule = 3 [
-            let my-frequency ( count link-neighbors with [ my.rule  = 3] + 1 ) / (count link-neighbors + 1)
+            let my-frequency ( count my.neighbors with [ my.rule  = 3] + 1 ) / (degree + 1)
             ifelse abs(min-frequency - max-frequency) = 0 
                                                          [set sat2 1]
                                                          [set sat2  (my-frequency - min-frequency) / (max-frequency - min-frequency)]
             ]
 
 if my.rule = 4 [
-            let my-frequency (count link-neighbors with [ my.rule  = 4]  + 1) / ( count link-neighbors + 1)
+            let my-frequency (count my.neighbors with [ my.rule  = 4]  + 1) / ( degree + 1)
             ifelse abs( max-frequency - min-frequency ) = 0 
                                                        [set sat2 1]
                                                        [set sat2  ( max-frequency - my-frequency ) / (  max-frequency - min-frequency)]
@@ -667,14 +837,14 @@ end
 
 to-report majority-rules  ;; reports a set with the number of the most frequent rules in agent's neighborhood (agent included)
                           ;; be careful when use in an ask cycle as the command is applied to "self"
-  let mylist [ my.rule ] of (turtle-set link-neighbors self)
+  let mylist [ my.rule ] of myset
   set mylist modes mylist
   report mylist
 end
 
 to-report minority-rules ;; reports a set with the number of the less frequent rules in agent's neighborhood (agent included)
                          ;; be careful when use in an ask cycle as the command is applied to "self"
-  let mylist_1 [ my.rule ] of (turtle-set link-neighbors self)
+  let mylist_1 [ my.rule ] of myset
   let mylist []
   let j 1
   while [empty? mylist] [
@@ -690,23 +860,23 @@ end
 
 
 to-report best-elements ;; report a list with the agents with the best performance according to agents  
-  let myset (turtle-set link-neighbors self)
-  if my.rule = 1 [set myset myset with [score >= [score] of max-one-of myset [score] * 0.99]]
+let bestel (turtle-set link-neighbors self)
+  if my.rule = 1 [set bestel bestel with [score >= [score] of max-one-of bestel [score] * 0.99]]
   
-  if my.rule = 2 [set myset myset with [score <= [score] of min-one-of myset [score] * 1.01]]
+  if my.rule = 2 [set bestel bestel with [score <= [score] of min-one-of bestel [score] * 1.01]]
   
   if my.rule = 3 [
               let rules-list majority-rules
-              set myset myset with [member? my.rule rules-list]
+              set bestel bestel with [member? my.rule rules-list]
               ] 
   if my.rule = 4 [
               let rules-list minority-rules
               if not empty? rules-list [
-                                        set myset myset with [member? my.rule rules-list]
+                                        set bestel bestel with [member? my.rule rules-list]
                                        ]  
               ]
   
-  report myset
+  report bestel
 end  
 
 to-report add-noise [value noise-std]
@@ -722,12 +892,12 @@ end
 
 to-report min-frequency
 let l item 0 minority-rules
-report count (turtle-set link-neighbors self) with [ my.rule  = l] / (count link-neighbors + 1)
+report count (turtle-set my.neighbors self) with [ my.rule  = l] / (degree + 1)
 end
 
 to-report max-frequency
 let l item 0 majority-rules
-report count (turtle-set link-neighbors self) with [ my.rule  = l] / (count link-neighbors + 1)
+report count (turtle-set my.neighbors self) with [ my.rule  = l] / (degree + 1)
 end
 
 
@@ -768,7 +938,7 @@ end
 to set-life-distribution-USA2010 ;;Life expectation for ages according data colected by the Centers for Disease Control
                                  ;and Prevention’s National Center for Health Statistics (NCHS) USA 2010
                                  ;Murphy, Xu, and Kochanek 'Deaths: preliminary data 2010' National Vital Stat. Reports 60-4
-                                 ;Reported ages have an interval of 5 years starting from 0 until 100 years
+                                 ;Reported ages have an- averages-length of 5 years starting from 0 until 100 years
 
 set life-expectation (list 78.7 74.3 69.3 64.4 59.5 54.8 50.0 45.3 40.6 36.0 31.5 27.2 23.1 19.2 15.5 12.2 9.2 6.6 4.7 3.3 2.4) 
 set mortality-rate map [1 / ?] life-expectation
@@ -795,34 +965,21 @@ to replacement
   ask turtles [    
   if      random-float 1  < prob-die 
              [
-             set-info-death
+             ;set ticks.at.death.list lput ticks ticks.at.death.list
              replace
-             set shape "target"
+             ;set shape "target"
              ]
        ]
 end   
 
-to set-info-death
-set n.changes.list lput n.changes n.changes.list
-set time.rule.list lput time.rule time.rule.list
-set time.behavior.list lput time.behavior time.behavior.list
-
-set rule.at.death.list lput my.rule rule.at.death.list
-set age.at.death.list lput age age.at.death.list
-
-set rule.history lput my.rule rule.history
-set time.history lput (age - counter.age) time.history
-set ticks.history lput (ticks - counter.ticks + 1) ticks.history 
-set age.history lput (age ) age.history 
-end
 
 to replace  
     set age 0
     set rule? false
     set behavior? false
     set my.rule (random 4) + 1 
-    set shape "face sad"
-    set size sizeT
+;    set shape "face sad"
+;    set size sizeT
     set satisfaction2 1
     ifelse random-float 1.0 < .5 ;(inicoop / 100)
         [set cooperate true]
@@ -832,15 +989,2000 @@ to replace
     set rule? false
     set behavior? false
 set chances.imitations 0
-set time.rule 0
-set n.changes 0
-set n.changes.behavior 0
-set time.behavior 0
 ;set shuffled? false
-
-set counter.age age 
-set counter.ticks ticks
 end
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Measures ;;;;;;;;;; ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+to calculate-Neighbors
+ask turtles [
+set n.maxi count my.neighbors with  [my.rule = 1]  / degree
+set n.mini count my.neighbors with  [my.rule = 2]  / degree
+set n.conf count my.neighbors with  [my.rule = 3]  / degree
+set n.anti count my.neighbors with  [my.rule = 4]  / degree
+
+set n.maxi.list lput n.maxi n.maxi.list
+set n.mini.list lput n.mini n.mini.list
+set n.anti.list lput n.anti n.anti.list
+set n.conf.list lput n.conf n.conf.list
+]
+end
+
+to set-outputs-1
+  ;populations
+set turtles-maxi turtles with [ my.rule  = 1]
+set turtles-mini turtles with [ my.rule  = 2]
+set turtles-conf turtles with [ my.rule  = 3]
+set turtles-anti turtles with [ my.rule  = 4]
+
+set maxi count turtles-maxi  
+set mini count turtles-mini  
+set conf count turtles-conf  
+set anti count turtles-anti   
+
+set cooperation-rate count turtles with [cooperate] / Num-Agents
+;set satisfaction-rate count turtles with [shape = "face happy"] / Num-Agents
+set satisfaction-rate2  mean [satisfaction2] of turtles
+
+
+end
+
+
+to set-outputs-2  
+;intersections
+set mean.coop     lput   cooperation-rate        mean.coop
+set mean.sat      lput   satisfaction-rate2      mean.sat
+set mean.scores   lput   (mean [score] of turtles)  mean.scores
+
+set mean.max      lput   (maxi / Num-Agents)     mean.max
+ifelse count turtles-maxi with [age > 15 ] > 0 
+[
+set mean.age.max  lput   (mean [age] of turtles-maxi with [age > 15])    mean.age.max
+set coop.maxi     lput ((count turtles-maxi with [cooperate = TRUE and age > 15]) / count turtles-maxi with [age > 15] ) coop.maxi
+set sat.maxi      lput  (mean [satisfaction2] of turtles-maxi with [age > 15])  sat.maxi
+set scores.maxi   lput (mean [score] of turtles-maxi with [age > 15])   scores.maxi
+]
+[
+set mean.age.max  lput   -1    mean.age.max
+set coop.maxi     lput   -1 coop.maxi
+set sat.maxi      lput   -1  sat.maxi
+set scores.maxi   lput   -1  scores.maxi
+]
+
+set mean.min      lput   (mini / Num-Agents)     mean.min
+ifelse count turtles-mini with [age > 15] > 0 
+[
+set mean.age.min  lput   (mean [age] of turtles-mini with [age > 15])    mean.age.min
+set coop.mini lput ((count turtles-mini with [cooperate = TRUE and age > 15]) / count turtles-mini with [age > 15]) coop.mini
+set sat.mini  lput  (mean [satisfaction2] of turtles-mini with [age > 15])  sat.mini
+set scores.mini    lput (mean [score] of turtles-mini with [age > 15])   scores.mini
+]
+[
+set mean.age.min  lput   -1    mean.age.min
+set coop.mini     lput   -1 coop.mini
+set sat.mini      lput   -1  sat.mini
+set scores.mini   lput   -1   scores.mini
+]
+
+set mean.conf     lput   (conf / Num-Agents)     mean.conf
+ifelse count turtles-conf with [age > 15] > 0
+[
+set mean.age.conf lput   (mean [age] of turtles-conf with [age > 15])   mean.age.conf
+set coop.conf     lput ((count turtles-conf with [cooperate = TRUE and age > 15]) / count turtles-conf with [age > 15]) coop.conf
+set sat.conf      lput  (mean [satisfaction2] of turtles-conf with [age > 15] )  sat.conf
+set scores.conf   lput (mean [score] of turtles-conf with [age > 15])   scores.conf
+]
+[
+set mean.age.conf lput   -1  mean.age.conf
+set coop.conf     lput   -1  coop.conf
+set sat.conf      lput   -1  sat.conf
+set scores.conf   lput   -1  scores.conf
+]
+
+set mean.anti     lput   (anti / Num-Agents)     mean.anti
+ifelse count turtles-anti with [age > 15] > 0
+[
+set mean.age.anti lput   (mean [age] of turtles-anti with [age > 15])   mean.age.anti
+set coop.anti     lput ((count turtles-anti with [cooperate = TRUE and age > 15]) / count turtles-anti with [age > 15] ) coop.anti
+set sat.anti      lput  (mean [satisfaction2] of turtles-anti with [age > 15])  sat.anti
+set scores.anti   lput (mean [score] of turtles-anti with [age > 15])   scores.anti
+]
+[
+set mean.age.anti lput   -1 mean.age.anti
+set coop.anti     lput   -1 coop.anti
+set sat.anti      lput   -1 sat.anti
+set scores.anti   lput   -1 scores.anti
+]
+
+
+
+;;;;;;;;;;COOP HAPPY
+set maxi-coop-happy    turtles-maxi with [cooperate = TRUE and am-i-the-best? = TRUE and age > 15]  
+set mini-coop-happy    turtles-mini with [cooperate = TRUE and am-i-the-best? = TRUE and age > 15]       
+set conf-coop-happy    turtles-conf with [cooperate = TRUE and am-i-the-best? = TRUE and age > 15]       
+set anti-coop-happy    turtles-anti with [cooperate = TRUE and am-i-the-best? = TRUE and age > 15]       
+
+ifelse count maxi-coop-happy > 0
+[
+set CH.maxi.prop   lput  (count maxi-coop-happy / count turtles-maxi with [age > 15])  CH.maxi.prop
+set CH.maxi.sat    lput  (mean [satisfaction2] of maxi-coop-happy) CH.maxi.sat
+set CH.maxi.scores lput  (mean [score] of maxi-coop-happy) CH.maxi.scores
+]
+[
+set CH.maxi.prop   lput  -1  CH.maxi.prop
+set CH.maxi.sat    lput  -1  CH.maxi.sat
+set CH.maxi.scores lput  -1  CH.maxi.scores
+]
+
+
+ifelse count mini-coop-happy > 0
+[
+set CH.mini.prop   lput  (count mini-coop-happy / count turtles-mini with [age > 15])  CH.mini.prop
+set CH.mini.sat    lput  (mean [satisfaction2] of mini-coop-happy) CH.mini.sat
+set CH.mini.scores lput  (mean [score] of mini-coop-happy) CH.mini.scores
+]
+[
+set CH.mini.prop   lput  -1  CH.mini.prop
+set CH.mini.sat    lput  -1  CH.mini.sat
+set CH.mini.scores lput  -1  CH.mini.scores
+]
+
+
+ifelse count conf-coop-happy > 0
+[
+set CH.conf.prop   lput  (count conf-coop-happy / count turtles-conf with [age > 15])  CH.conf.prop
+set CH.conf.sat    lput  (mean [satisfaction2] of conf-coop-happy) CH.conf.sat
+set CH.conf.scores lput  (mean [score] of conf-coop-happy) CH.conf.scores
+]
+[
+set CH.conf.prop   lput  -1  CH.conf.prop
+set CH.conf.sat    lput  -1  CH.conf.sat
+set CH.conf.scores lput  -1  CH.conf.scores
+]
+
+
+ifelse count anti-coop-happy > 0
+[
+set CH.anti.prop   lput  (count anti-coop-happy / count turtles-anti with [age > 15])  CH.anti.prop
+set CH.anti.sat    lput  (mean [satisfaction2] of anti-coop-happy) CH.anti.sat
+set CH.anti.scores lput  (mean [score] of anti-coop-happy) CH.anti.scores
+]
+[
+set CH.anti.prop   lput  -1  CH.anti.prop
+set CH.anti.sat    lput  -1  CH.anti.sat
+set CH.anti.scores lput  -1  CH.anti.scores
+]
+
+;;;;;;;;;;COOP UNHAPPY
+
+set maxi-coop-UNhappy  turtles-maxi with [cooperate = TRUE and am-i-the-best? = FALSE and age > 15]      
+set mini-coop-UNhappy  turtles-mini with [cooperate = TRUE and am-i-the-best? = FALSE and age > 15]      
+set conf-coop-UNhappy  turtles-conf with [cooperate = TRUE and am-i-the-best? = FALSE and age > 15]      
+set anti-coop-UNhappy  turtles-anti with [cooperate = TRUE and am-i-the-best? = FALSE and age > 15]      
+
+
+ifelse count maxi-coop-UNhappy > 0
+[
+set CU.maxi.prop   lput  (count maxi-coop-UNhappy / count turtles-maxi with [age > 15])  CU.maxi.prop
+set CU.maxi.sat    lput  (mean [satisfaction2] of maxi-coop-UNhappy) CU.maxi.sat
+set CU.maxi.scores lput  (mean [score] of maxi-coop-UNhappy) CU.maxi.scores
+]
+[
+set CU.maxi.prop   lput  -1  CU.maxi.prop
+set CU.maxi.sat    lput  -1  CU.maxi.sat
+set CU.maxi.scores lput  -1  CU.maxi.scores
+]
+
+
+ifelse count mini-coop-UNhappy > 0
+[
+set CU.mini.prop   lput  (count mini-coop-UNhappy / count turtles-mini with [age > 15])  CU.mini.prop
+set CU.mini.sat    lput  (mean [satisfaction2] of mini-coop-UNhappy) CU.mini.sat
+set CU.mini.scores lput  (mean [score] of mini-coop-UNhappy) CU.mini.scores
+]
+[
+set CU.mini.prop   lput  -1  CU.mini.prop
+set CU.mini.sat    lput  -1  CU.mini.sat
+set CU.mini.scores lput  -1  CU.mini.scores
+]
+
+
+ifelse count conf-coop-UNhappy > 0
+[
+set CU.conf.prop   lput  (count conf-coop-UNhappy / count turtles-conf with [age > 15])  CU.conf.prop
+set CU.conf.sat    lput  (mean [satisfaction2] of conf-coop-UNhappy) CU.conf.sat
+set CU.conf.scores lput  (mean [score] of conf-coop-UNhappy) CU.conf.scores
+]
+[
+set CU.conf.prop   lput  -1  CU.conf.prop
+set CU.conf.sat    lput  -1  CU.conf.sat
+set CU.conf.scores lput  -1  CU.conf.scores
+]
+
+
+ifelse count anti-coop-UNhappy > 0
+[
+set CU.anti.prop   lput  (count anti-coop-UNhappy / count turtles-anti with [age > 15])  CU.anti.prop
+set CU.anti.sat    lput  (mean [satisfaction2] of anti-coop-UNhappy) CU.anti.sat
+set CU.anti.scores lput  (mean [score] of anti-coop-UNhappy) CU.anti.scores
+]
+[
+set CU.anti.prop   lput  -1  CU.anti.prop
+set CU.anti.sat    lput  -1  CU.anti.sat
+set CU.anti.scores lput  -1  CU.anti.scores
+]
+
+
+;;;;;;;;;;;;;DEFECTING HAPPY
+set maxi-def-happy     turtles-maxi with [cooperate = FALSE and am-i-the-best? = TRUE and age > 15]      
+set mini-def-happy     turtles-mini with [cooperate = FALSE and am-i-the-best? = TRUE and age > 15]      
+set conf-def-happy     turtles-conf with [cooperate = FALSE and am-i-the-best? = TRUE and age > 15]      
+set anti-def-happy     turtles-anti with [cooperate = FALSE and am-i-the-best? = TRUE and age > 15]      
+
+
+ifelse count maxi-def-happy > 0
+[
+set DH.maxi.prop   lput  (count maxi-def-happy / count turtles-maxi with [age > 15])  DH.maxi.prop
+set DH.maxi.sat    lput  (mean [satisfaction2] of maxi-def-happy) DH.maxi.sat
+set DH.maxi.scores lput  (mean [score] of maxi-def-happy) DH.maxi.scores
+]
+[
+set DH.maxi.prop   lput  -1  DH.maxi.prop
+set DH.maxi.sat    lput  -1  DH.maxi.sat
+set DH.maxi.scores lput  -1  DH.maxi.scores
+]
+
+
+ifelse count mini-def-happy > 0
+[
+set DH.mini.prop   lput  (count mini-def-happy / count turtles-mini with [age > 15])  DH.mini.prop
+set DH.mini.sat    lput  (mean [satisfaction2] of mini-def-happy) DH.mini.sat
+set DH.mini.scores lput  (mean [score] of mini-def-happy) DH.mini.scores
+]
+[
+set DH.mini.prop   lput  -1  DH.mini.prop
+set DH.mini.sat    lput  -1  DH.mini.sat
+set DH.mini.scores lput  -1  DH.mini.scores
+]
+
+
+ifelse count conf-def-happy > 0
+[
+set DH.conf.prop   lput  (count conf-def-happy / count turtles-conf with [age > 15])  DH.conf.prop
+set DH.conf.sat    lput  (mean [satisfaction2] of conf-def-happy) DH.conf.sat
+set DH.conf.scores lput  (mean [score] of conf-def-happy) DH.conf.scores
+]
+[
+set DH.conf.prop   lput  -1  DH.conf.prop
+set DH.conf.sat    lput  -1  DH.conf.sat
+set DH.conf.scores lput  -1  DH.conf.scores
+]
+
+
+ifelse count anti-def-happy > 0
+[
+set DH.anti.prop   lput  (count anti-def-happy / count turtles-anti with [age > 15])  DH.anti.prop
+set DH.anti.sat    lput  (mean [satisfaction2] of anti-def-happy) DH.anti.sat
+set DH.anti.scores lput  (mean [score] of anti-def-happy) DH.anti.scores
+]
+[
+set DH.anti.prop   lput -1  DH.anti.prop
+set DH.anti.sat    lput -1  DH.anti.sat
+set DH.anti.scores lput -1  DH.anti.scores
+]
+
+;;;;;;;;;;;;;DEFECTING UNHAPPY
+set maxi-def-UNhappy   turtles-maxi with [cooperate = FALSE and am-i-the-best? = FALSE and age > 15]     
+set mini-def-UNhappy   turtles-mini with [cooperate = FALSE and am-i-the-best? = FALSE and age > 15]     
+set conf-def-UNhappy   turtles-conf with [cooperate = FALSE and am-i-the-best? = FALSE and age > 15]     
+set anti-def-UNhappy   turtles-anti with [cooperate = FALSE and am-i-the-best? = FALSE and age > 15]   
+
+
+
+ifelse count maxi-def-UNhappy > 0
+[
+set DU.maxi.prop   lput  (count maxi-def-UNhappy / count turtles-maxi with [age > 15])  DU.maxi.prop
+set DU.maxi.sat    lput  (mean [satisfaction2] of maxi-def-UNhappy) DU.maxi.sat
+set DU.maxi.scores lput  (mean [score] of maxi-def-UNhappy) DU.maxi.scores
+]
+[
+set DU.maxi.prop   lput -1  DU.maxi.prop
+set DU.maxi.sat    lput -1  DU.maxi.sat
+set DU.maxi.scores lput -1  DU.maxi.scores
+]
+
+
+ifelse count mini-def-UNhappy > 0
+[
+set DU.mini.prop   lput  (count mini-def-UNhappy / count turtles-mini with [age > 15])  DU.mini.prop
+set DU.mini.sat    lput  (mean [satisfaction2] of mini-def-UNhappy) DU.mini.sat
+set DU.mini.scores lput  (mean [score] of mini-def-UNhappy) DU.mini.scores
+]
+[
+set DU.mini.prop   lput -1  DU.mini.prop
+set DU.mini.sat    lput -1  DU.mini.sat
+set DU.mini.scores lput -1  DU.mini.scores
+]
+
+
+ifelse count conf-def-UNhappy > 0
+[
+set DU.conf.prop   lput  (count conf-def-UNhappy / count turtles-conf with [age > 15])  DU.conf.prop
+set DU.conf.sat    lput  (mean [satisfaction2] of conf-def-UNhappy) DU.conf.sat
+set DU.conf.scores lput  (mean [score] of conf-def-UNhappy) DU.conf.scores
+]
+[
+set DU.conf.prop   lput -1  DU.conf.prop
+set DU.conf.sat    lput -1  DU.conf.sat
+set DU.conf.scores lput -1  DU.conf.scores
+]
+
+
+ifelse count anti-def-UNhappy > 0
+[
+set DU.anti.prop   lput  (count anti-def-UNhappy / count turtles-anti with [age > 15])  DU.anti.prop
+set DU.anti.sat    lput  (mean [satisfaction2] of anti-def-UNhappy) DU.anti.sat
+set DU.anti.scores lput  (mean [score] of anti-def-UNhappy) DU.anti.scores
+]
+[
+set DU.anti.prop   lput -1  DU.anti.prop
+set DU.anti.sat    lput -1  DU.anti.sat
+set DU.anti.scores lput -1  DU.anti.scores
+]
+
+end
+
+to export-graph
+;nw:save-graphml (word "nl_" Strength-of-Dilemma "_" inicoop "_" cultural-constant "_"
+; ( remove ".graphml" FileIn ) ".graphml")
+nw:save-graphml "graph.graphml" 
+end 
+
+
+to export-rules
+let file.name "Rules.csv"
+let spacer ","
+let l sort-on [NODEID] turtles
+let p length [rule.history] of turtle 1 
+foreach l
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist rule.history (p - Binterval) (p - 1 ) ) )
+      file-close
+      ]
+]
+end
+
+
+
+to export-behavior
+let file.name "Behavior.csv"
+let spacer ","
+let l sort-on [NODEID] turtles
+let p length [rule.history] of turtle 1 
+foreach l
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist behavior.history (p - Binterval) (p - 1) ) )
+     file-close
+      ]
+]
+end
+
+to export-satisfaction
+let file.name "Satisfaction.csv"
+let spacer ","
+let l sort-on [NODEID] turtles
+let p length [rule.history] of turtle 1 
+foreach l
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist satisfaction.history (p - Binterval) (p - 1) ) )
+     file-close
+      ]
+]
+end
+
+to export-scores
+let file.name "Scores.csv"
+let spacer ","
+let l sort-on [NODEID] turtles
+let p length [rule.history] of turtle 1 
+foreach l
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist scores.history (p - Binterval) (p - 1) ) )
+      file-close
+      ]
+]
+end
+
+to export-best
+let file.name "Best.csv"
+let spacer ","
+let l sort-on [NODEID] turtles
+let p length [rule.history] of turtle 1 
+foreach l
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist best.history (p - Binterval) (p - 1) ) )
+      file-close
+      ]
+]
+end
+
+to export-age
+let file.name "Ages.csv"
+let spacer ","
+let l sort-on [NODEID] turtles
+let p length [rule.history] of turtle 1 
+foreach l
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist age.history (p - Binterval) (p - 1) ) )
+      file-close
+      ]
+]
+end
+
+to export-prop1
+let file.name "Maxi.csv"
+let spacer ","
+let l sort-on [NODEID] turtles
+let p length [rule.history] of turtle 1 
+foreach l
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist n.maxi.list (p - Binterval) (p - 1) ) )
+      file-close
+      ]
+]
+end
+
+to export-prop2
+let file.name "Mini.csv"
+let spacer ","
+let l sort-on [NODEID] turtles
+let p length [rule.history] of turtle 1 
+foreach l
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist n.mini.list (p - Binterval) (p - 1) ) )
+      file-close
+      ]
+]
+end
+
+
+to export-prop3
+let file.name "Conf.csv"
+let spacer ","
+let l sort-on [NODEID] turtles
+let p length [rule.history] of turtle 1 
+foreach l
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist n.conf.list (p - Binterval) (p - 1) ) )
+      file-close
+      ]
+]
+end
+
+
+to export-prop4
+let file.name "Anti.csv"
+let spacer ","
+let l sort-on [NODEID] turtles
+let p length [rule.history] of turtle 1 
+foreach l
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist n.anti.list (p - Binterval) (p - 1) ) )
+      file-close
+      ]
+]
+end
+
+
+to export-global
+let file.name "Global.csv"
+let spacer ","
+let info [run.info] of turtle 1
+let lista1    []
+let lista2    []
+let lista3    []
+let lista4    []
+let lista5    []
+let lista6    []
+let lista7    []
+let lista8    []
+let lista9    []
+let lista10   []
+let lista11   []
+let lista12   []
+let lista13  []
+let lista14  []
+let lista15  []
+let lista16  []
+let lista17  []
+let lista18  []
+let lista19  []
+let lista20  []
+let lista21  []
+let lista22  []
+let lista23  []
+let lista24  []
+let lista25  []
+let lista26  []
+let lista27  []
+let lista28  []
+let lista29  []
+let lista30  []
+let lista31  []
+let lista32  []
+let lista33  []
+let lista34  []
+let lista35  []
+let lista36  []
+let lista37  []
+let lista38  []
+let lista39  []
+let lista40  []
+let lista41  []
+let lista42  []
+let lista43  []
+let lista44  []
+let lista45  []
+let lista46  []
+let lista47  []
+let lista48  []
+let lista49  []
+let lista50  []
+let lista51  []
+let lista52  []
+let lista53  []
+let lista54  []
+let lista55  []
+let lista56  []
+let lista57  []
+let lista58  []
+let lista59  []
+let lista60  []
+let lista61  []
+let lista62  []
+let lista63  []
+let lista64  []
+let lista65  []
+let lista66  []
+let lista67  []
+let lista68  []
+let lista69  []
+let  lista1b  []       
+let  lista2b  []       
+let  lista3b  []       
+let  lista4b  []       
+let  lista5b  []       
+let  lista6b  []       
+let  lista7b  []       
+let  lista8b  []       
+let  lista9b  []       
+let  lista10b  []      
+let  lista11b  []      
+let  lista12b  []      
+ let lista13b  []      
+ let lista14b  []      
+ let lista15b  []      
+ let lista16b  []      
+ let lista17b  []      
+ let lista18b  []      
+ let lista19b  []      
+ let lista20b  []      
+ let lista21b  []      
+ let lista22b  []      
+ let lista23b  []      
+ let lista24b  []      
+ let lista25b  []      
+ let lista26b  []      
+ let lista27b  []      
+ let lista28b  []      
+ let lista29b  []      
+ let lista30b  []      
+ let lista31b  []      
+ let lista32b  []      
+ let lista33b  []      
+ let lista34b  []      
+ let lista35b  []      
+ let lista36b  []      
+ let lista37b  []      
+ let lista38b  []      
+ let lista39b  []      
+ let lista40b  []      
+ let lista41b  []      
+ let lista42b  []      
+ let lista43b  []      
+ let lista44b  []      
+ let lista45b  []      
+ let lista46b  []      
+ let lista47b  []      
+ let lista48b  []      
+ let lista49b  []      
+ let lista50b  []      
+ let lista51b  []      
+ let lista52b  []      
+ let lista53b  []      
+ let lista54b  []      
+ let lista55b  []      
+ let lista56b  []      
+ let lista57b  []      
+ let lista58b  []      
+ let lista59b  []      
+ let lista60b  []      
+ let lista61b  []      
+ let lista62b  []      
+ let lista63b  []      
+ let lista64b  []      
+ let lista65b  []      
+ let lista66b  []      
+ let lista67b  []      
+ let lista68b  []      
+ let lista69b  []      
+
+let p length [rule.history] of turtle 1 
+
+let lista filter [? > -1] (sublist mean.max       (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista1 "NA"] [set lista1 mean lista]
+ifelse length lista < 2 [set lista1b "NA"] [set lista1b sqrt variance lista]
+
+set lista filter [? > -1] (sublist mean.min       (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista2 "NA" ][set lista2 mean lista]
+ifelse length lista < 2 [set lista2b "NA" ][set lista2b sqrt variance lista]
+
+set lista filter [? > -1] (sublist mean.conf      (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista3 "NA" ][set lista3 mean lista]
+ifelse length lista < 2 [set lista3b "NA" ][set lista3b sqrt variance lista]
+
+set lista filter [? > -1] (sublist mean.anti      (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista4 "NA" ][set lista4 mean lista]
+ifelse length lista < 2 [set lista4b "NA" ][set lista4b sqrt variance lista]
+
+set lista filter [? > -1] (sublist mean.age.max   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista5 "NA" ][set lista5 mean lista]
+ifelse length lista < 2 [set lista5b "NA" ][set lista5b sqrt variance lista]
+
+set lista filter [? > -1] (sublist mean.age.min   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista6 "NA" ][set lista6 mean lista]
+ifelse length lista < 2 [set lista6b "NA" ][set lista6b sqrt variance lista]
+
+set lista filter [? > -1] (sublist mean.age.conf  (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista7 "NA" ][set lista7 mean lista]
+ifelse length lista < 2 [set lista7b "NA" ][set lista7b sqrt variance lista]
+
+set lista filter [? > -1] (sublist mean.age.anti  (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista8 "NA" ][set lista8 mean lista]
+ifelse length lista < 2 [set lista8b "NA" ][set lista8b sqrt variance lista]
+
+set lista filter [? > -1] (sublist coop.maxi      (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista9 "NA" ][set lista9 mean lista]
+ifelse length lista < 2 [set lista9b "NA" ][set lista9b sqrt variance lista]
+
+set lista filter [? > -1] (sublist coop.mini      (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista10 "NA" ][set lista10 mean lista]
+ifelse length lista < 2 [set lista10b "NA" ][set lista10b sqrt variance lista]
+
+set lista filter [? > -1] (sublist coop.conf      (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista11 "NA" ][set lista11 mean lista]
+ifelse length lista < 2 [set lista11b "NA" ][set lista11b sqrt variance lista]
+
+set lista filter [? > -1] (sublist coop.anti      (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista12 "NA" ][set lista12 mean lista]
+ifelse length lista < 2 [set lista12b "NA" ][set lista12b sqrt variance lista]
+
+set lista filter [? > -1] (sublist sat.maxi       (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista13 "NA" ][set lista13 mean lista]
+ifelse length lista < 2 [set lista13b "NA" ][set lista13b sqrt variance lista]
+
+set lista filter [? > -1] (sublist mean.sat       (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista14 "NA" ][set lista14 mean lista]
+ifelse length lista < 2 [set lista14b "NA" ][set lista14b sqrt variance lista]
+
+set lista filter [? > -1] (sublist sat.mini       (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista15 "NA" ][set lista15 mean lista]
+ifelse length lista < 2 [set lista15b "NA" ][set lista15b sqrt variance lista]
+
+set lista filter [? > -1] (sublist sat.conf       (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista16 "NA" ][set lista16 mean lista]
+ifelse length lista < 2 [set lista16b "NA" ][set lista16b sqrt variance lista]
+
+set lista filter [? > -1] (sublist sat.anti       (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista17 "NA" ][set lista17 mean lista]
+ifelse length lista < 2 [set lista17b "NA" ][set lista17b sqrt variance lista]
+
+set lista filter [? > -1] (sublist scores.maxi    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista18 "NA" ][set lista18 mean lista]
+ifelse length lista < 2 [set lista18b "NA" ][set lista18b sqrt variance lista]
+
+set lista filter [? > -1] (sublist scores.mini    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista19 "NA" ][set lista19 mean lista]
+ifelse length lista < 2 [set lista19b "NA" ][set lista19b sqrt variance lista]
+
+set lista filter [? > -1] (sublist scores.conf    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista20 "NA" ][set lista20 mean lista]
+ifelse length lista < 2[set lista20b "NA" ][set lista20b sqrt variance lista]
+
+set lista filter [? > -1] (sublist scores.anti    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista21 "NA" ][set lista21 mean lista]
+ifelse length lista < 2[set lista21b "NA" ][set lista21b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.maxi.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista22 "NA" ][set lista22 mean lista]
+ifelse length lista < 2[set lista22b "NA" ][set lista22b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.mini.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista23 "NA" ][set lista23 mean lista]
+ifelse length lista < 2[set lista23b "NA" ][set lista23b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.conf.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista24 "NA" ][set lista24 mean lista]
+ifelse length lista < 2[set lista24b "NA" ][set lista24b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.anti.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista25 "NA" ][set lista25 mean lista]
+ifelse length lista < 2[set lista25b "NA" ][set lista25b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.maxi.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista26 "NA" ][set lista26 mean lista]
+ifelse length lista < 2[set lista26b "NA" ][set lista26b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.mini.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista27 "NA" ][set lista27 mean lista]
+ifelse length lista < 2[set lista27b "NA" ][set lista27b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.conf.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista28 "NA" ][set lista28 mean lista]
+ifelse length lista < 2[set lista28b "NA" ][set lista28b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.anti.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista29 "NA" ][set lista29 mean lista]
+ifelse length lista < 2[set lista29b "NA" ][set lista29b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.maxi.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista30 "NA" ][set lista30 mean lista]
+ifelse length lista < 2[set lista30b "NA" ][set lista30b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.mini.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista31 "NA" ][set lista31 mean lista]
+ifelse length lista < 2[set lista31b "NA" ][set lista31b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.conf.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista32 "NA" ][set lista32 mean lista]
+ifelse length lista < 2[set lista32b "NA" ][set lista32b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.anti.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista33 "NA" ][set lista33 mean lista]
+ifelse length lista < 2[set lista33b "NA" ][set lista33b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.maxi.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista34 "NA" ][set lista34 mean lista]
+ifelse length lista < 2[set lista34b "NA" ][set lista34b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.mini.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista35 "NA" ][set lista35 mean lista]
+ifelse length lista < 2[set lista35b "NA" ][set lista35b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.conf.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista36 "NA" ][set lista36 mean lista]
+ifelse length lista < 2[set lista36b "NA" ][set lista36b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.anti.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista37 "NA" ][set lista37 mean lista]
+ifelse length lista < 2[set lista37b "NA" ][set lista37b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.maxi.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista38 "NA" ][set lista38 mean lista]
+ifelse length lista < 2[set lista38b "NA" ][set lista38b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.mini.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista39 "NA" ][set lista39 mean lista]
+ifelse length lista < 2[set lista39b "NA" ][set lista39b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.conf.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista40 "NA" ][set lista40 mean lista]
+ifelse length lista < 2[set lista40b "NA" ][set lista40b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.anti.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista41 "NA" ][set lista41 mean lista]
+ifelse length lista < 2[set lista41b "NA" ][set lista41b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.maxi.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista42 "NA" ][set lista42 mean lista]
+ifelse length lista < 2[set lista42b "NA" ][set lista42b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.mini.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista43 "NA" ][set lista43 mean lista]
+ifelse length lista < 2[set lista43b "NA" ][set lista43b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.conf.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista44 "NA" ][set lista44 mean lista]
+ifelse length lista < 2[set lista44b "NA" ][set lista44b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.anti.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista45 "NA" ][set lista45 mean lista]
+ifelse length lista < 2[set lista45b "NA" ][set lista45b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.maxi.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista46 "NA" ][set lista46 mean lista]
+ifelse length lista < 2[set lista46b "NA" ][set lista46b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.mini.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista47 "NA" ][set lista47 mean lista]
+ifelse length lista < 2[set lista47b "NA" ][set lista47b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.conf.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista48 "NA" ][set lista48 mean lista]
+ifelse length lista < 2[set lista48b "NA" ][set lista48b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.anti.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista49 "NA" ][set lista49 mean lista]
+ifelse length lista < 2[set lista49b "NA" ][set lista49b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.maxi.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista50 "NA" ][set lista50 mean lista]
+ifelse length lista < 2[set lista50b "NA" ][set lista50b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.mini.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista51 "NA" ][set lista51 mean lista]
+ifelse length lista < 2[set lista51b "NA" ][set lista51b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.conf.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista52 "NA" ][set lista52 mean lista]
+ifelse length lista < 2[set lista52b "NA" ][set lista52b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.anti.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista53 "NA" ][set lista53 mean lista]
+ifelse length lista < 2[set lista53b "NA" ][set lista53b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.maxi.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista54 "NA" ][set lista54 mean lista]
+ifelse length lista < 2[set lista54b "NA" ][set lista54b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.mini.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista55 "NA" ][set lista55 mean lista]
+ifelse length lista < 2[set lista55b "NA" ][set lista55b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.conf.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista56 "NA" ][set lista56 mean lista]
+ifelse length lista < 2[set lista56b "NA" ][set lista56b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.anti.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista57 "NA" ][set lista57 mean lista]
+ifelse length lista < 2[set lista57b "NA" ][set lista57b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.maxi.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista58 "NA" ][set lista58 mean lista]
+ifelse length lista < 2[set lista58b "NA" ][set lista58b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.mini.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista59 "NA" ][set lista59 mean lista]
+ifelse length lista < 2[set lista59b "NA" ][set lista59b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.conf.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista60 "NA" ][set lista60 mean lista]
+ifelse length lista < 2[set lista60b "NA" ][set lista60b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.anti.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista61 "NA" ][set lista61 mean lista]
+ifelse length lista < 2[set lista61b "NA" ][set lista61b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.maxi.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista62 "NA" ][set lista62 mean lista]
+ifelse length lista < 2[set lista62b "NA" ][set lista62b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.mini.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista63 "NA" ][set lista63 mean lista]
+ifelse length lista < 2[set lista63b "NA" ][set lista63b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.conf.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista64 "NA" ][set lista64 mean lista]
+ifelse length lista < 2[set lista64b "NA" ][set lista64b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.anti.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista65 "NA" ][set lista65 mean lista]
+ifelse length lista < 2[set lista65b "NA" ][set lista65b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.maxi.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista66 "NA" ][set lista66 mean lista]
+ifelse length lista < 2[set lista66b "NA" ][set lista66b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.mini.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista67 "NA" ][set lista67 mean lista]
+ifelse length lista < 2[set lista67b "NA" ][set lista67b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.conf.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista68 "NA" ][set lista68 mean lista]
+ifelse length lista < 2[set lista68b "NA" ][set lista68b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.anti.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista69 "NA" ][set lista69 mean lista]
+ifelse length lista < 2[set lista69b "NA" ][set lista69b sqrt variance lista]
+
+file-open file.name
+file-print (list  info spacer 
+mean (sublist mean.scores    (p - averages-length) (p - 1) ) spacer 
+mean (sublist mean.coop      (p - averages-length) (p - 1) ) spacer  
+lista1    spacer  lista2    spacer  lista3    spacer lista4    spacer 
+lista5    spacer  lista6    spacer  lista7    spacer lista8    spacer 
+lista9    spacer  lista10   spacer  lista11   spacer lista12   spacer 
+lista13  spacer   lista14  spacer  lista15  spacer  lista16  spacer 
+lista17  spacer   lista18  spacer  lista19  spacer  lista20  spacer 
+lista21  spacer   lista22  spacer  lista23  spacer  lista24  spacer 
+lista25  spacer   lista26  spacer  lista27  spacer  lista28  spacer 
+lista29  spacer   lista30  spacer  lista31  spacer  lista32  spacer 
+lista33  spacer   lista34  spacer  lista35  spacer  lista36  spacer 
+lista37  spacer   lista38  spacer  lista39  spacer  lista40  spacer 
+lista41  spacer  lista42  spacer  lista43  spacer  lista44  spacer 
+lista45  spacer  lista46  spacer  lista47  spacer  lista48  spacer 
+lista49  spacer  lista50  spacer  lista51  spacer  lista52  spacer 
+lista53  spacer  lista54  spacer  lista55  spacer  lista56  spacer 
+lista57  spacer  lista58  spacer  lista59  spacer  lista60  spacer 
+lista61  spacer  lista62  spacer  lista63  spacer  lista64  spacer 
+lista65  spacer  lista66  spacer  lista67  spacer  lista68  spacer 
+lista69  spacer  sqrt variance (sublist mean.scores    (p - averages-length) (p - 1) ) spacer 
+sqrt variance (sublist mean.coop      (p - averages-length) (p - 1) ) spacer  
+lista1b    spacer  lista2b    spacer  lista3b    spacer lista4b    spacer 
+lista5b    spacer  lista6b    spacer  lista7b    spacer lista8b    spacer 
+lista9b    spacer  lista10b   spacer  lista11b   spacer lista12b   spacer 
+lista13b  spacer   lista14b  spacer  lista15b spacer  lista16b  spacer 
+lista17b  spacer   lista18b  spacer  lista19b  spacer  lista20b  spacer 
+lista21b  spacer   lista22b  spacer  lista23b  spacer  lista24b  spacer 
+lista25b  spacer   lista26b  spacer  lista27b  spacer  lista28b  spacer 
+lista29b  spacer   lista30b  spacer  lista31b  spacer  lista32b  spacer 
+lista33b  spacer   lista34b  spacer  lista35b  spacer  lista36b  spacer 
+lista37b  spacer   lista38b  spacer  lista39b  spacer  lista40b  spacer 
+lista41b  spacer  lista42b  spacer  lista43b  spacer  lista44b  spacer 
+lista45b  spacer  lista46b  spacer  lista47b  spacer  lista48b  spacer 
+lista49b  spacer  lista50b  spacer  lista51b  spacer  lista52b  spacer 
+lista53b  spacer  lista54b  spacer  lista55b  spacer  lista56b  spacer 
+lista57b  spacer  lista58b  spacer  lista59b  spacer  lista60b  spacer 
+lista61b  spacer  lista62b  spacer  lista63b  spacer  lista64b  spacer 
+lista65b  spacer  lista66b  spacer  lista67b  spacer  lista68b  spacer 
+lista69b ) 
+
+file-close
+
+end
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; Outputs and Plots ;; ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+to my-update-plots1  
+  set-current-plot "Cooperation and Satisfaction"
+  set-current-plot-pen "Cooperation" 
+  plot cooperation-rate
+;  set-current-plot-pen "satisfaction"
+;  plot satisfaction-rate
+  set-current-plot-pen "Satisfaction"
+  plot satisfaction-rate2
+;  set-current-plot-pen "Happy and Cooperating"
+;  plot count turtles with [shape = "face happy" and cooperate] / Num-Agents
+set-current-plot-pen "Scores"
+  plot mean [score] of turtles 
+;  set-current-plot-pen "Happy and Cooperating"
+;  plot count turtles with [shape = "face happy" and cooperate] / Num-Agents
+ 
+  set-current-plot "Population"
+  set-current-plot-pen "Maxi"
+  plot maxi / Num-Agents
+  set-current-plot-pen "Mini"
+  plot mini / Num-Agents
+  set-current-plot-pen "Conf"
+  plot conf / Num-Agents
+  set-current-plot-pen "Anti"
+  plot anti / Num-Agents
+  
+
+  set-current-plot "Age Plot"
+  set-current-plot-pen "maxi"
+  ifelse maxi > 0 [plot mean [age] of turtles with [ my.rule  = 1 ]][plot 0]
+  set-current-plot-pen "mini"
+  ifelse mini > 0 [plot mean [age] of turtles with [ my.rule  = 2 ]][plot 0]
+  set-current-plot-pen "conf"
+  ifelse conf > 0 [plot mean [age] of turtles with [ my.rule  = 3 ]][plot 0]
+  set-current-plot-pen "anti"
+  ifelse anti > 0 [plot mean [age] of turtles with [ my.rule  = 4 ]][plot 0]
+  set-current-plot-pen "all"
+  plot mean [age] of turtles
+end
+
+to my-update-plots2  
+
+  let maxi-t turtles-maxi with [ cooperate = TRUE]
+  let maxi-f turtles-maxi with [ cooperate = FALSE]
+  let maxi-h turtles-maxi with [ last best.history  = TRUE]
+  let maxi-s turtles-maxi with [ last best.history  = FALSE]
+  let maxi-sc turtles-maxi with [ last best.history  = FALSE and cooperate = TRUE]
+  let maxi-hc turtles-maxi with [ last best.history  = TRUE and cooperate = TRUE]
+  let maxi-sd turtles-maxi with [ last best.history  = FALSE and cooperate = FALSE]
+  let maxi-hd turtles-maxi with [ last best.history  = TRUE and cooperate = FALSE]
+  
+  
+  
+  let mini-t turtles-mini with [ cooperate = TRUE]
+  let mini-f turtles-mini with [ cooperate = FALSE]
+  let mini-h turtles-mini with [ last best.history  = TRUE]
+  let mini-s turtles-mini with [ last best.history  = FALSE]
+ 
+ 
+  let conf-t turtles-conf with [ cooperate = TRUE]
+  let conf-f turtles-conf with [ cooperate = FALSE]
+  let conf-h turtles-conf with [ last best.history  = TRUE]
+  let conf-s turtles-conf with [ last best.history  = FALSE]
+ 
+ 
+  let anti-t turtles-anti with [ cooperate = TRUE]
+  let anti-f turtles-anti with [ cooperate = FALSE]
+  let anti-h turtles-anti with [ last best.history  = TRUE]
+  let anti-s turtles-anti with [ last best.history  = FALSE]
+  
+  let mini-sc turtles-mini with [ last best.history  = FALSE and cooperate = TRUE]
+  let conf-sc turtles-conf with [ last best.history  = FALSE and cooperate = TRUE]
+  let anti-sc turtles-anti with [ last best.history  = FALSE and cooperate = TRUE]
+  
+  let mini-hc turtles-mini with [ last best.history  = TRUE and cooperate = TRUE]
+  let conf-hc turtles-conf with [ last best.history  = TRUE and cooperate = TRUE]
+  let anti-hc turtles-anti with [ last best.history  = TRUE and cooperate = TRUE]
+  
+  
+  let mini-sd turtles-mini with [ last best.history  = FALSE and cooperate = FALSE]
+  let conf-sd turtles-conf with [ last best.history  = FALSE and cooperate = FALSE]
+  let anti-sd turtles-anti with [ last best.history  = FALSE and cooperate = FALSE]
+
+  
+  let mini-hd turtles-mini with [ last best.history  = TRUE and cooperate = FALSE]
+  let conf-hd turtles-conf with [ last best.history  = TRUE and cooperate = FALSE]
+  let anti-hd turtles-anti with [ last best.history  = TRUE and cooperate = FALSE]
+ 
+
+  set-current-plot "Scores Coop"
+  set-current-plot-pen "mini"
+  ifelse count mini-t > 0 [plot mean [score] of mini-t ][plot 0]
+
+  set-current-plot "Scores Coop"
+  set-current-plot-pen "conf"
+  ifelse count conf-t > 0 [plot mean [score] of conf-t ][plot 0]  
+
+  set-current-plot "Scores Coop"
+  set-current-plot-pen "anti"
+  ifelse count anti-t > 0 [plot mean [score] of anti-t ][plot 0]
+
+  set-current-plot "Scores Defecting"
+  set-current-plot-pen "maxi"
+  ifelse count maxi-f > 0 [plot mean [score] of maxi-f ][plot 0]
+
+  set-current-plot "Scores Defecting"
+  set-current-plot-pen "mini"
+  ifelse count mini-f > 0 [plot mean [score] of mini-f ][plot 0]
+
+  set-current-plot "Scores Defecting"
+  set-current-plot-pen "conf"
+  ifelse count conf-f > 0 [plot mean [score] of conf-f ][plot 0]  
+
+  set-current-plot "Scores Defecting"
+  set-current-plot-pen "anti"
+  ifelse count anti-f > 0 [plot mean [score] of anti-f ][plot 0]
+
+  set-current-plot "Scores Happy"
+  set-current-plot-pen "maxi"
+  ifelse count maxi-h > 0 [plot mean [score] of maxi-h ][plot 0]
+  set-current-plot "Scores Happy"
+  set-current-plot-pen "mini"
+  ifelse count mini-h > 0 [plot mean [score] of mini-h ][plot 0]
+  set-current-plot "Scores Happy"
+  set-current-plot-pen "conf"
+  ifelse count conf-h > 0 [plot mean [score] of conf-h ][plot 0]  
+  set-current-plot "Scores Happy"
+  set-current-plot-pen "anti"
+  ifelse count anti-h > 0 [plot mean [score] of anti-h ][plot 0]
+
+
+  set-current-plot "Scores UnHappy"
+  set-current-plot-pen "maxi"
+  ifelse count maxi-s > 0 [plot mean [score] of maxi-s ][plot 0]
+  set-current-plot "Scores UnHappy"
+  set-current-plot-pen "mini"
+  ifelse count mini-s > 0 [plot mean [score] of mini-s ][plot 0]
+  set-current-plot "Scores UnHappy"
+  set-current-plot-pen "conf"
+  ifelse count conf-s > 0 [plot mean [score] of conf-s ][plot 0]  
+  set-current-plot "Scores UnHappy"
+  set-current-plot-pen "anti"
+  ifelse count anti-s > 0 [plot mean [score] of anti-s ][plot 0]
+
+
+  set-current-plot "S&C"
+  set-current-plot-pen "maxi"
+  ifelse count maxi-sc > 0[plot mean [score] of maxi-sc][plot 0]
+  set-current-plot "S&C"
+  set-current-plot-pen "mini"
+  ifelse count mini-sc > 0[plot mean [score] of mini-sc][plot 0]
+  set-current-plot "S&C"
+  set-current-plot-pen "conf"
+  ifelse count conf-sc > 0[plot mean [score] of conf-sc][plot 0]
+  set-current-plot "S&C"
+  set-current-plot-pen "anti"
+  ifelse count anti-sc > 0[plot mean [score] of anti-sc][plot 0]
+
+
+set-current-plot "H&C"
+  set-current-plot-pen "maxi"
+  ifelse count maxi-hc > 0[plot mean [score] of maxi-hc][plot 0]
+set-current-plot "H&C"
+  set-current-plot-pen "mini"
+  ifelse count mini-hc > 0[plot mean [score] of mini-hc][plot 0]
+set-current-plot "H&C"
+  set-current-plot-pen "conf"
+  ifelse count conf-hc > 0 [plot mean [score] of conf-hc][plot 0]
+set-current-plot "H&C"
+  set-current-plot-pen "anti"
+  ifelse count anti-hc > 0 [plot mean [score] of anti-hc][plot 0]
+
+set-current-plot "S&D"
+  set-current-plot-pen "maxi"
+  ifelse count maxi-sd > 0[plot mean [score] of maxi-sd][plot 0]
+set-current-plot "S&D"
+  set-current-plot-pen "mini"
+  ifelse count mini-sd > 0[plot mean [score] of mini-sd][plot 0]
+set-current-plot "S&D"
+  set-current-plot-pen "conf"
+  ifelse count conf-sd > 0[plot mean [score] of conf-sd][plot 0]
+set-current-plot "S&D"
+  set-current-plot-pen "anti"
+  ifelse count anti-sd > 0[plot mean [score] of anti-sd][plot 0]
+
+set-current-plot "H&D"
+  set-current-plot-pen "maxi"
+  ifelse count maxi-hd > 0[plot mean [score] of maxi-hd][plot 0]
+set-current-plot "H&D"
+  set-current-plot-pen "mini"
+  ifelse count mini-hd > 0[plot mean [score] of mini-hd][plot 0]
+set-current-plot "H&D"
+  set-current-plot-pen "conf"
+  ifelse count conf-hd > 0[plot mean [score] of conf-hd][plot 0]
+set-current-plot "H&D"
+  set-current-plot-pen "anti"
+  ifelse count anti-hd > 0[plot mean [score] of anti-hd][plot 0]
+
+set-current-plot "Sat S&C"
+  set-current-plot-pen "maxi"
+  ifelse count maxi-sc > 0[plot mean [satisfaction2] of maxi-sc][plot 0]
+set-current-plot "Sat S&C"
+  set-current-plot-pen "mini"
+  ifelse count mini-sc > 0[plot mean [satisfaction2] of mini-sc][plot 0]
+set-current-plot "Sat S&C"
+  set-current-plot-pen "conf"
+  ifelse count conf-sc > 0[plot mean [satisfaction2] of conf-sc][plot 0]
+set-current-plot "Sat S&C"
+  set-current-plot-pen "anti"
+  ifelse count anti-sc > 0[plot mean [satisfaction2] of anti-sc][plot 0]
+
+
+set-current-plot "Sat H&C"
+  set-current-plot-pen "maxi"
+  ifelse count maxi-hc > 0[plot mean [satisfaction2] of maxi-hc][plot 0]
+set-current-plot "Sat H&C"
+  set-current-plot-pen "mini"
+  ifelse count mini-hc > 0[plot mean [satisfaction2] of mini-hc][plot 0]
+set-current-plot "Sat H&C"
+  set-current-plot-pen "conf"
+  ifelse count conf-hc > 0 [plot mean [satisfaction2] of conf-hc][plot 0]
+set-current-plot "Sat H&C"
+  set-current-plot-pen "anti"
+  ifelse count anti-hc > 0 [plot mean [satisfaction2] of anti-hc][plot 0]
+
+set-current-plot "Sat S&D"
+  set-current-plot-pen "maxi"
+  ifelse count maxi-sd > 0[plot mean [satisfaction2] of maxi-sd][plot 0]
+set-current-plot "Sat S&D"
+  set-current-plot-pen "mini"
+  ifelse count mini-sd > 0[plot mean [satisfaction2] of mini-sd][plot 0]
+set-current-plot "Sat S&D"
+  set-current-plot-pen "conf"
+  ifelse count conf-sd > 0[plot mean [satisfaction2] of conf-sd][plot 0]
+set-current-plot "Sat S&D"
+  set-current-plot-pen "anti"
+  ifelse count anti-sd > 0[plot mean [satisfaction2] of anti-sd][plot 0]
+
+set-current-plot "Sat H&D"
+  set-current-plot-pen "maxi"
+  ifelse count maxi-hd > 0[plot mean [satisfaction2] of maxi-hd][plot 0]
+set-current-plot "Sat H&D"
+  set-current-plot-pen "mini"
+  ifelse count mini-hd > 0[plot mean [satisfaction2] of mini-hd][plot 0]
+set-current-plot "Sat H&D"
+  set-current-plot-pen "conf"
+  ifelse count conf-hd > 0[plot mean [satisfaction2] of conf-hd][plot 0]
+set-current-plot "Sat H&D"
+  set-current-plot-pen "anti"
+  ifelse count anti-hd > 0[plot mean [satisfaction2] of anti-hd][plot 0]
+
+set-current-plot "Sat Coop"
+  set-current-plot-pen "maxi"
+  ifelse count maxi-t > 0 [plot mean [satisfaction2] of maxi-t ][plot 0]
+set-current-plot "Sat Coop"
+  set-current-plot-pen "mini"
+  ifelse count mini-t > 0 [plot mean [satisfaction2] of mini-t ][plot 0]
+set-current-plot "Sat Coop"
+  set-current-plot-pen "conf"
+  ifelse count conf-t > 0 [plot mean [satisfaction2] of conf-t ][plot 0]  
+set-current-plot "Sat Coop"
+  set-current-plot-pen "anti"
+  ifelse count anti-t > 0 [plot mean [satisfaction2] of anti-t ][plot 0]
+
+  set-current-plot "Sat Defecting"
+  set-current-plot-pen "maxi"
+  ifelse count maxi-f > 0 [plot mean [satisfaction2] of maxi-f ][plot 0]
+  set-current-plot "Sat Defecting"
+  set-current-plot-pen "mini"
+  ifelse count mini-f > 0 [plot mean [satisfaction2] of mini-f ][plot 0]
+  set-current-plot "Sat Defecting"
+  set-current-plot-pen "conf"
+  ifelse count conf-f > 0 [plot mean [satisfaction2] of conf-f ][plot 0]  
+  set-current-plot "Sat Defecting"
+  set-current-plot-pen "anti"
+  ifelse count anti-f > 0 [plot mean [satisfaction2] of anti-f ][plot 0]
+
+  set-current-plot "Sat Happy"
+  set-current-plot-pen "maxi"
+  ifelse count maxi-h > 0 [plot mean [satisfaction2] of maxi-h ][plot 0]
+  set-current-plot "Sat Happy"
+  set-current-plot-pen "mini"
+  ifelse count mini-h > 0 [plot mean [satisfaction2] of mini-h ][plot 0]
+  set-current-plot "Sat Happy"
+  set-current-plot-pen "conf"
+  ifelse count conf-h > 0 [plot mean [satisfaction2] of conf-h ][plot 0]  
+  set-current-plot "Sat Happy"
+  set-current-plot-pen "anti"
+  ifelse count anti-h > 0 [plot mean [satisfaction2] of anti-h ][plot 0]
+
+
+  set-current-plot "Sat UnHappy"
+  set-current-plot-pen "maxi"
+  ifelse count maxi-s > 0 [plot mean [satisfaction2] of maxi-s ][plot 0]
+  set-current-plot "Sat UnHappy"
+  set-current-plot-pen "mini"
+  ifelse count mini-s > 0 [plot mean [satisfaction2] of mini-s ][plot 0]
+  set-current-plot "Sat UnHappy"
+  set-current-plot-pen "conf"
+  ifelse count conf-s > 0 [plot mean [satisfaction2] of conf-s ][plot 0]  
+  set-current-plot "Sat UnHappy"
+  set-current-plot-pen "anti"
+  ifelse count anti-s > 0 [plot mean [satisfaction2] of anti-s ][plot 0]
+
+
+  set-current-plot "Maxi Neighbors"
+  set-current-plot-pen "maxi"
+  ifelse  maxi > 0 [plot   mean [n.maxi]  of turtles-maxi][plot 0]
+  set-current-plot "Maxi Neighbors"
+  set-current-plot-pen "mini"
+  ifelse  mini > 0 [plot mean [n.mini]  of turtles-maxi][plot 0]
+  set-current-plot "Maxi Neighbors"
+  set-current-plot-pen "conf"
+  ifelse  conf > 0 [plot mean [n.conf]  of turtles-maxi][plot 0]  
+  set-current-plot "Maxi Neighbors"
+  set-current-plot-pen "anti"
+  ifelse  anti > 0 [plot mean [n.anti]  of turtles-maxi ][plot 0]
+
+  set-current-plot "Mini Neighbors"
+  set-current-plot-pen "maxi"
+  ifelse  maxi > 0 [plot   mean [n.maxi]  of turtles-mini][plot 0]
+  set-current-plot "Mini Neighbors"
+  set-current-plot-pen "mini"
+  ifelse  mini > 0 [plot mean [n.mini]  of turtles-mini][plot 0]
+  set-current-plot "Mini Neighbors"
+  set-current-plot-pen "conf"
+  ifelse  conf > 0 [plot mean [n.conf]  of turtles-mini][plot 0]  
+  set-current-plot "Mini Neighbors"
+  set-current-plot-pen "anti"
+  ifelse  anti > 0 [plot mean [n.anti]  of turtles-mini ][plot 0]
+
+  set-current-plot "Conf Neighbors"
+  set-current-plot-pen "maxi"
+  ifelse  maxi > 0 [plot   mean [n.maxi]  of turtles-conf][plot 0]
+  set-current-plot "Conf Neighbors"
+  set-current-plot-pen "mini"
+  ifelse  mini > 0 [plot mean [n.mini]  of turtles-conf][plot 0]
+  set-current-plot "Conf Neighbors"
+  set-current-plot-pen "conf"
+  ifelse  conf > 0 [plot mean [n.conf]  of turtles-conf][plot 0]  
+  set-current-plot "Conf Neighbors"
+  set-current-plot-pen "anti"
+  ifelse  anti > 0 [plot mean [n.anti]  of turtles-conf ][plot 0]
+
+  set-current-plot "Anti Neighbors"
+  set-current-plot-pen "maxi"
+  ifelse  maxi > 0 [plot   mean [n.maxi]  of turtles-anti][plot 0]
+  set-current-plot "Anti Neighbors"
+  set-current-plot-pen "mini"
+  ifelse  mini > 0 [plot mean [n.mini]  of turtles-anti][plot 0]
+  set-current-plot "Anti Neighbors"
+  set-current-plot-pen "conf"
+  ifelse  conf > 0 [plot mean [n.conf]  of turtles-anti][plot 0]  
+  set-current-plot "Anti Neighbors"
+  set-current-plot-pen "anti"
+  ifelse  anti > 0 [plot mean [n.anti]  of turtles-anti ][plot 0]
+  end
+
+
+
+to establish-color  ;; agent procedure
+if-else Colormap-View = "Strategies"
+[  if-else my.rule = 1        [set color red]
+    [if-else my.rule = 2      [set color green]
+      [if-else my.rule = 3    [set color blue]
+                           [set color white]]]
+]
+[
+  if-else cooperate [set color blue] [set color orange]
+]
+end
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; EXPORT LOGO;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+to export-rules-L
+let file.name (word run.info "Rules.csv")
+let spacer ","
+let l sort-on [NODEID] turtles
+let p length [rule.history] of turtle 1 
+foreach l
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist rule.history (p - Binterval) (p - 1 ) ) )
+      file-close
+      ]
+]
+end
+
+
+to export-behavior-L
+let spacer ","
+let p length [rule.history] of turtle 1 
+let str [run.info] of turtle 1
+let file.name (word str "Behavior.csv")
+foreach sort-on [NODEID] turtles
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist behavior.history (p - Binterval) (p - 1) ) )
+      file-close
+      ]
+]
+end
+
+to export-satisfaction-L
+let p length [rule.history] of turtle 1 
+let str [run.info] of turtle 1
+let file.name (word str "Satisfaction.csv")
+
+let spacer ","
+let l sort-on [NODEID] turtles
+foreach l
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist satisfaction.history (p - Binterval) (p - 1) ) )
+     file-close
+      ]
+]
+end
+
+to export-scores-L
+let p length [rule.history] of turtle 1 
+let str [run.info] of turtle 1
+let file.name (word str "Scores.csv")
+let spacer ","
+let l sort-on [NODEID] turtles
+foreach l
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist scores.history (p - Binterval) (p - 1) ) )
+      file-close
+      ]
+]
+end
+
+to export-best-L
+let p length [rule.history] of turtle 1 
+let str [run.info] of turtle 1
+let file.name (word str "Best.csv")
+let spacer ","
+let l sort-on [NODEID] turtles
+foreach l
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist best.history (p - Binterval) (p - 1) ) )
+      file-close
+      ]
+]
+end
+
+to export-age-L
+let p length [rule.history] of turtle 1 
+let str [run.info] of turtle 1
+let file.name (word str "Ages.csv")
+let spacer ","
+let l sort-on [NODEID] turtles
+foreach l
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist age.history (p - Binterval) (p - 1) ) )
+      file-close
+      ]
+]
+end
+
+to export-prop1-L
+let p length [rule.history] of turtle 1 
+let str [run.info] of turtle 1
+let file.name (word str "Maxi.csv")
+let spacer ","
+let l sort-on [NODEID] turtles
+foreach l
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist n.maxi.list (p - Binterval) (p - 1) ) )
+      file-close
+      ]
+]
+end
+
+to export-prop2-L 
+let p length [rule.history] of turtle 1 
+let str [run.info] of turtle 1
+let file.name (word str "Mini.csv")
+let spacer ","
+let l sort-on [NODEID] turtles
+foreach l
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist n.mini.list (p - Binterval) (p - 1) ) )
+      file-close
+      ]
+]
+end
+
+
+to export-prop3-L
+let p length [rule.history] of turtle 1 
+let str [run.info] of turtle 1
+let file.name (word str  "Conf.csv")
+let spacer ","
+let l sort-on [NODEID] turtles
+foreach l
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist n.conf.list (p - Binterval) (p - 1) ) )
+      file-close
+      ]
+]
+end
+
+
+to export-prop4-L
+let p length [rule.history] of turtle 1 
+let str [run.info] of turtle 1
+let file.name (word str "Anti.csv")
+let spacer ","
+let l sort-on [NODEID] turtles
+foreach l
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist n.anti.list (p - Binterval) (p - 1) ) )
+      file-close
+      ]
+]
+end
+
+
+to export-global-L
+let p length [rule.history] of turtle 1 
+let str [run.info] of turtle 1
+let file.name (word str "Global.csv")
+let spacer ","
+let info [run.info] of turtle 1
+let lista1    []
+let lista2    []
+let lista3    []
+let lista4    []
+let lista5    []
+let lista6    []
+let lista7    []
+let lista8    []
+let lista9    []
+let lista10   []
+let lista11   []
+let lista12   []
+let lista13  []
+let lista14  []
+let lista15  []
+let lista16  []
+let lista17  []
+let lista18  []
+let lista19  []
+let lista20  []
+let lista21  []
+let lista22  []
+let lista23  []
+let lista24  []
+let lista25  []
+let lista26  []
+let lista27  []
+let lista28  []
+let lista29  []
+let lista30  []
+let lista31  []
+let lista32  []
+let lista33  []
+let lista34  []
+let lista35  []
+let lista36  []
+let lista37  []
+let lista38  []
+let lista39  []
+let lista40  []
+let lista41  []
+let lista42  []
+let lista43  []
+let lista44  []
+let lista45  []
+let lista46  []
+let lista47  []
+let lista48  []
+let lista49  []
+let lista50  []
+let lista51  []
+let lista52  []
+let lista53  []
+let lista54  []
+let lista55  []
+let lista56  []
+let lista57  []
+let lista58  []
+let lista59  []
+let lista60  []
+let lista61  []
+let lista62  []
+let lista63  []
+let lista64  []
+let lista65  []
+let lista66  []
+let lista67  []
+let lista68  []
+let lista69  []
+let  lista1b  []       
+let  lista2b  []       
+let  lista3b  []       
+let  lista4b  []       
+let  lista5b  []       
+let  lista6b  []       
+let  lista7b  []       
+let  lista8b  []       
+let  lista9b  []       
+let  lista10b  []      
+let  lista11b  []      
+let  lista12b  []      
+ let lista13b  []      
+ let lista14b  []      
+ let lista15b  []      
+ let lista16b  []      
+ let lista17b  []      
+ let lista18b  []      
+ let lista19b  []      
+ let lista20b  []      
+ let lista21b  []      
+ let lista22b  []      
+ let lista23b  []      
+ let lista24b  []      
+ let lista25b  []      
+ let lista26b  []      
+ let lista27b  []      
+ let lista28b  []      
+ let lista29b  []      
+ let lista30b  []      
+ let lista31b  []      
+ let lista32b  []      
+ let lista33b  []      
+ let lista34b  []      
+ let lista35b  []      
+ let lista36b  []      
+ let lista37b  []      
+ let lista38b  []      
+ let lista39b  []      
+ let lista40b  []      
+ let lista41b  []      
+ let lista42b  []      
+ let lista43b  []      
+ let lista44b  []      
+ let lista45b  []      
+ let lista46b  []      
+ let lista47b  []      
+ let lista48b  []      
+ let lista49b  []      
+ let lista50b  []      
+ let lista51b  []      
+ let lista52b  []      
+ let lista53b  []      
+ let lista54b  []      
+ let lista55b  []      
+ let lista56b  []      
+ let lista57b  []      
+ let lista58b  []      
+ let lista59b  []      
+ let lista60b  []      
+ let lista61b  []      
+ let lista62b  []      
+ let lista63b  []      
+ let lista64b  []      
+ let lista65b  []      
+ let lista66b  []      
+ let lista67b  []      
+ let lista68b  []      
+ let lista69b  []      
+
+
+let lista filter [? > -1] (sublist mean.max       (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista1 "NA"] [set lista1 mean lista]
+ifelse length lista < 2 [set lista1b "NA"] [set lista1b sqrt variance lista]
+
+set lista filter [? > -1] (sublist mean.min       (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista2 "NA" ][set lista2 mean lista]
+ifelse length lista < 2 [set lista2b "NA" ][set lista2b sqrt variance lista]
+
+set lista filter [? > -1] (sublist mean.conf      (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista3 "NA" ][set lista3 mean lista]
+ifelse length lista < 2 [set lista3b "NA" ][set lista3b sqrt variance lista]
+
+set lista filter [? > -1] (sublist mean.anti      (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista4 "NA" ][set lista4 mean lista]
+ifelse length lista < 2 [set lista4b "NA" ][set lista4b sqrt variance lista]
+
+set lista filter [? > -1] (sublist mean.age.max   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista5 "NA" ][set lista5 mean lista]
+ifelse length lista < 2 [set lista5b "NA" ][set lista5b sqrt variance lista]
+
+set lista filter [? > -1] (sublist mean.age.min   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista6 "NA" ][set lista6 mean lista]
+ifelse length lista < 2 [set lista6b "NA" ][set lista6b sqrt variance lista]
+
+set lista filter [? > -1] (sublist mean.age.conf  (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista7 "NA" ][set lista7 mean lista]
+ifelse length lista < 2 [set lista7b "NA" ][set lista7b sqrt variance lista]
+
+set lista filter [? > -1] (sublist mean.age.anti  (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista8 "NA" ][set lista8 mean lista]
+ifelse length lista < 2 [set lista8b "NA" ][set lista8b sqrt variance lista]
+
+set lista filter [? > -1] (sublist coop.maxi      (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista9 "NA" ][set lista9 mean lista]
+ifelse length lista < 2 [set lista9b "NA" ][set lista9b sqrt variance lista]
+
+set lista filter [? > -1] (sublist coop.mini      (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista10 "NA" ][set lista10 mean lista]
+ifelse length lista < 2 [set lista10b "NA" ][set lista10b sqrt variance lista]
+
+set lista filter [? > -1] (sublist coop.conf      (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista11 "NA" ][set lista11 mean lista]
+ifelse length lista < 2 [set lista11b "NA" ][set lista11b sqrt variance lista]
+
+set lista filter [? > -1] (sublist coop.anti      (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista12 "NA" ][set lista12 mean lista]
+ifelse length lista < 2 [set lista12b "NA" ][set lista12b sqrt variance lista]
+
+set lista filter [? > -1] (sublist sat.maxi       (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista13 "NA" ][set lista13 mean lista]
+ifelse length lista < 2 [set lista13b "NA" ][set lista13b sqrt variance lista]
+
+set lista filter [? > -1] (sublist mean.sat       (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista14 "NA" ][set lista14 mean lista]
+ifelse length lista < 2 [set lista14b "NA" ][set lista14b sqrt variance lista]
+
+set lista filter [? > -1] (sublist sat.mini       (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista15 "NA" ][set lista15 mean lista]
+ifelse length lista < 2 [set lista15b "NA" ][set lista15b sqrt variance lista]
+
+set lista filter [? > -1] (sublist sat.conf       (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista16 "NA" ][set lista16 mean lista]
+ifelse length lista < 2 [set lista16b "NA" ][set lista16b sqrt variance lista]
+
+set lista filter [? > -1] (sublist sat.anti       (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista17 "NA" ][set lista17 mean lista]
+ifelse length lista < 2 [set lista17b "NA" ][set lista17b sqrt variance lista]
+
+set lista filter [? > -1] (sublist scores.maxi    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista18 "NA" ][set lista18 mean lista]
+ifelse length lista < 2 [set lista18b "NA" ][set lista18b sqrt variance lista]
+
+set lista filter [? > -1] (sublist scores.mini    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista19 "NA" ][set lista19 mean lista]
+ifelse length lista < 2 [set lista19b "NA" ][set lista19b sqrt variance lista]
+
+set lista filter [? > -1] (sublist scores.conf    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista20 "NA" ][set lista20 mean lista]
+ifelse length lista < 2[set lista20b "NA" ][set lista20b sqrt variance lista]
+
+set lista filter [? > -1] (sublist scores.anti    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista21 "NA" ][set lista21 mean lista]
+ifelse length lista < 2[set lista21b "NA" ][set lista21b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.maxi.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista22 "NA" ][set lista22 mean lista]
+ifelse length lista < 2[set lista22b "NA" ][set lista22b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.mini.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista23 "NA" ][set lista23 mean lista]
+ifelse length lista < 2[set lista23b "NA" ][set lista23b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.conf.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista24 "NA" ][set lista24 mean lista]
+ifelse length lista < 2[set lista24b "NA" ][set lista24b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.anti.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista25 "NA" ][set lista25 mean lista]
+ifelse length lista < 2[set lista25b "NA" ][set lista25b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.maxi.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista26 "NA" ][set lista26 mean lista]
+ifelse length lista < 2[set lista26b "NA" ][set lista26b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.mini.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista27 "NA" ][set lista27 mean lista]
+ifelse length lista < 2[set lista27b "NA" ][set lista27b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.conf.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista28 "NA" ][set lista28 mean lista]
+ifelse length lista < 2[set lista28b "NA" ][set lista28b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.anti.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista29 "NA" ][set lista29 mean lista]
+ifelse length lista < 2[set lista29b "NA" ][set lista29b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.maxi.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista30 "NA" ][set lista30 mean lista]
+ifelse length lista < 2[set lista30b "NA" ][set lista30b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.mini.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista31 "NA" ][set lista31 mean lista]
+ifelse length lista < 2[set lista31b "NA" ][set lista31b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.conf.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista32 "NA" ][set lista32 mean lista]
+ifelse length lista < 2[set lista32b "NA" ][set lista32b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.anti.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista33 "NA" ][set lista33 mean lista]
+ifelse length lista < 2[set lista33b "NA" ][set lista33b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.maxi.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista34 "NA" ][set lista34 mean lista]
+ifelse length lista < 2[set lista34b "NA" ][set lista34b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.mini.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista35 "NA" ][set lista35 mean lista]
+ifelse length lista < 2[set lista35b "NA" ][set lista35b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.conf.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista36 "NA" ][set lista36 mean lista]
+ifelse length lista < 2[set lista36b "NA" ][set lista36b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.anti.prop   (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista37 "NA" ][set lista37 mean lista]
+ifelse length lista < 2[set lista37b "NA" ][set lista37b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.maxi.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista38 "NA" ][set lista38 mean lista]
+ifelse length lista < 2[set lista38b "NA" ][set lista38b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.mini.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista39 "NA" ][set lista39 mean lista]
+ifelse length lista < 2[set lista39b "NA" ][set lista39b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.conf.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista40 "NA" ][set lista40 mean lista]
+ifelse length lista < 2[set lista40b "NA" ][set lista40b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.anti.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista41 "NA" ][set lista41 mean lista]
+ifelse length lista < 2[set lista41b "NA" ][set lista41b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.maxi.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista42 "NA" ][set lista42 mean lista]
+ifelse length lista < 2[set lista42b "NA" ][set lista42b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.mini.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista43 "NA" ][set lista43 mean lista]
+ifelse length lista < 2[set lista43b "NA" ][set lista43b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.conf.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista44 "NA" ][set lista44 mean lista]
+ifelse length lista < 2[set lista44b "NA" ][set lista44b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.anti.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista45 "NA" ][set lista45 mean lista]
+ifelse length lista < 2[set lista45b "NA" ][set lista45b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.maxi.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista46 "NA" ][set lista46 mean lista]
+ifelse length lista < 2[set lista46b "NA" ][set lista46b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.mini.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista47 "NA" ][set lista47 mean lista]
+ifelse length lista < 2[set lista47b "NA" ][set lista47b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.conf.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista48 "NA" ][set lista48 mean lista]
+ifelse length lista < 2[set lista48b "NA" ][set lista48b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.anti.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista49 "NA" ][set lista49 mean lista]
+ifelse length lista < 2[set lista49b "NA" ][set lista49b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.maxi.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista50 "NA" ][set lista50 mean lista]
+ifelse length lista < 2[set lista50b "NA" ][set lista50b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.mini.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista51 "NA" ][set lista51 mean lista]
+ifelse length lista < 2[set lista51b "NA" ][set lista51b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.conf.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista52 "NA" ][set lista52 mean lista]
+ifelse length lista < 2[set lista52b "NA" ][set lista52b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.anti.sat    (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista53 "NA" ][set lista53 mean lista]
+ifelse length lista < 2[set lista53b "NA" ][set lista53b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.maxi.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista54 "NA" ][set lista54 mean lista]
+ifelse length lista < 2[set lista54b "NA" ][set lista54b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.mini.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista55 "NA" ][set lista55 mean lista]
+ifelse length lista < 2[set lista55b "NA" ][set lista55b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.conf.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista56 "NA" ][set lista56 mean lista]
+ifelse length lista < 2[set lista56b "NA" ][set lista56b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CH.anti.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista57 "NA" ][set lista57 mean lista]
+ifelse length lista < 2[set lista57b "NA" ][set lista57b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.maxi.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista58 "NA" ][set lista58 mean lista]
+ifelse length lista < 2[set lista58b "NA" ][set lista58b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.mini.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista59 "NA" ][set lista59 mean lista]
+ifelse length lista < 2[set lista59b "NA" ][set lista59b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.conf.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista60 "NA" ][set lista60 mean lista]
+ifelse length lista < 2[set lista60b "NA" ][set lista60b sqrt variance lista]
+
+set lista filter [? > -1] (sublist CU.anti.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista61 "NA" ][set lista61 mean lista]
+ifelse length lista < 2[set lista61b "NA" ][set lista61b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.maxi.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista62 "NA" ][set lista62 mean lista]
+ifelse length lista < 2[set lista62b "NA" ][set lista62b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.mini.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista63 "NA" ][set lista63 mean lista]
+ifelse length lista < 2[set lista63b "NA" ][set lista63b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.conf.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista64 "NA" ][set lista64 mean lista]
+ifelse length lista < 2[set lista64b "NA" ][set lista64b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DH.anti.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista65 "NA" ][set lista65 mean lista]
+ifelse length lista < 2[set lista65b "NA" ][set lista65b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.maxi.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista66 "NA" ][set lista66 mean lista]
+ifelse length lista < 2[set lista66b "NA" ][set lista66b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.mini.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista67 "NA" ][set lista67 mean lista]
+ifelse length lista < 2[set lista67b "NA" ][set lista67b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.conf.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista68 "NA" ][set lista68 mean lista]
+ifelse length lista < 2[set lista68b "NA" ][set lista68b sqrt variance lista]
+
+set lista filter [? > -1] (sublist DU.anti.scores (p - averages-length) (p - 1) )
+ifelse empty? lista [set lista69 "NA" ][set lista69 mean lista]
+ifelse length lista < 2[set lista69b "NA" ][set lista69b sqrt variance lista]
+
+file-open file.name
+file-print (list  info spacer 
+mean (sublist mean.scores    (p - averages-length) (p - 1) ) spacer 
+mean (sublist mean.coop      (p - averages-length) (p - 1) ) spacer  
+lista1    spacer  lista2    spacer  lista3    spacer lista4    spacer 
+lista5    spacer  lista6    spacer  lista7    spacer lista8    spacer 
+lista9    spacer  lista10   spacer  lista11   spacer lista12   spacer 
+lista13  spacer   lista14  spacer  lista15  spacer  lista16  spacer 
+lista17  spacer   lista18  spacer  lista19  spacer  lista20  spacer 
+lista21  spacer   lista22  spacer  lista23  spacer  lista24  spacer 
+lista25  spacer   lista26  spacer  lista27  spacer  lista28  spacer 
+lista29  spacer   lista30  spacer  lista31  spacer  lista32  spacer 
+lista33  spacer   lista34  spacer  lista35  spacer  lista36  spacer 
+lista37  spacer   lista38  spacer  lista39  spacer  lista40  spacer 
+lista41  spacer  lista42  spacer  lista43  spacer  lista44  spacer 
+lista45  spacer  lista46  spacer  lista47  spacer  lista48  spacer 
+lista49  spacer  lista50  spacer  lista51  spacer  lista52  spacer 
+lista53  spacer  lista54  spacer  lista55  spacer  lista56  spacer 
+lista57  spacer  lista58  spacer  lista59  spacer  lista60  spacer 
+lista61  spacer  lista62  spacer  lista63  spacer  lista64  spacer 
+lista65  spacer  lista66  spacer  lista67  spacer  lista68  spacer 
+lista69  spacer  sqrt variance (sublist mean.scores    (p - averages-length) (p - 1) ) spacer 
+sqrt variance (sublist mean.coop      (p - averages-length) (p - 1) ) spacer  
+lista1b    spacer  lista2b    spacer  lista3b    spacer lista4b    spacer 
+lista5b    spacer  lista6b    spacer  lista7b    spacer lista8b    spacer 
+lista9b    spacer  lista10b   spacer  lista11b   spacer lista12b   spacer 
+lista13b  spacer   lista14b  spacer  lista15b spacer  lista16b  spacer 
+lista17b  spacer   lista18b  spacer  lista19b  spacer  lista20b  spacer 
+lista21b  spacer   lista22b  spacer  lista23b  spacer  lista24b  spacer 
+lista25b  spacer   lista26b  spacer  lista27b  spacer  lista28b  spacer 
+lista29b  spacer   lista30b  spacer  lista31b  spacer  lista32b  spacer 
+lista33b  spacer   lista34b  spacer  lista35b  spacer  lista36b  spacer 
+lista37b  spacer   lista38b  spacer  lista39b  spacer  lista40b  spacer 
+lista41b  spacer  lista42b  spacer  lista43b  spacer  lista44b  spacer 
+lista45b  spacer  lista46b  spacer  lista47b  spacer  lista48b  spacer 
+lista49b  spacer  lista50b  spacer  lista51b  spacer  lista52b  spacer 
+lista53b  spacer  lista54b  spacer  lista55b  spacer  lista56b  spacer 
+lista57b  spacer  lista58b  spacer  lista59b  spacer  lista60b  spacer 
+lista61b  spacer  lista62b  spacer  lista63b  spacer  lista64b  spacer 
+lista65b  spacer  lista66b  spacer  lista67b  spacer  lista68b  spacer 
+lista69b ) 
+
+file-close
+
+end
+
+
+
 
 
 
@@ -854,15 +2996,12 @@ end
 
 ;; resize-nodes, change back and forth from size based on degree to a size of 1
 to resize-nodes
-  ifelse all? turtles [size <= 1]
+  ifelse all? turtles [size = 3]
   [
-    ;; a node is a circle with diameter determined by
-    ;; the SIZE variable; using SQRT makes the circle's
-    ;; area proportional to its degree
-    ask turtles [ set size sqrt count link-neighbors ]
+   ask turtles [ set size sqrt degree ]
   ]
   [
-    ask turtles [ set size 1 ]
+    ask turtles [ set size 3 ]
   ]
 end
 
@@ -959,13 +3098,12 @@ ask bottomcorner [create-links-with topcorner with [ pxcor = [pxcor - 1] of myse
 let corners (patch-set  patch minxcor minycor patch minxcor maxycor patch maxxcor maxycor patch maxxcor minycor)
 ask turtles-on corners [create-links-with other turtles-on corners] 
 
-;ask links [set color black]
+ask links [set color black]
 
 set success? true
 ;set average-path-length nw:mean-path-length 
 spread-turtles
-set sizeT [size] of one-of turtles 
-
+;set sizeT [size] of one-of turtles 
 
 end
 
@@ -985,53 +3123,9 @@ ask turtles [
      setxy (x) (y) 
 ] 
 
-;ask turtles [set size ceiling sqrt distance  (  one-of link-neighbors ) * 1.5]
+ask turtles [set size ceiling sqrt distance  (  one-of link-neighbors ) * 1.5]
 ask turtles [set size min (list horizontal-spacing vertical-spacing)]
 end
-
-
-;to resize-turtles
-;let num-rows  length remove-duplicates sort [ycor] of turtles
-;let num-cols  length remove-duplicates sort [xcor] of turtles 
-;
-;let horizontal-spacing (world-width / num-cols) 
-;let vertical-spacing   (world-height / num-rows) 
-;;let min-xpos (min-pxcor - 0.5 + horizontal-spacing / 2) 
-;;let min-ypos (min-pycor - 0.5 + vertical-spacing / 2) 
-;
-;;ask turtles [set size ceiling sqrt distance  (  one-of link-neighbors ) * 1.5]
-;set sizeT min (list horizontal-spacing vertical-spacing)
-;ask turtles [set size sizeT]
-;end
-
-;to lattice-2
-;ask patches [sprout 1] ;Num-Agents
-;ask turtles [create-links-with turtles-on neighbors]
-;
-;let max-x max [pxcor] of patches
-;let min-x min [pxcor] of patches
-;let max-y max [pycor] of patches
-;let min-y min [pycor] of patches
-;;wrap world 
-;ask turtles with [xcor = max-x and ycor < max-y and ycor > min-y] [
-;                                                                  create-links-with turtles-on (patch-set (patch min-x ycor) (patch min-x (ycor + 1)) (patch min-x (ycor - 1)))
-;                                                                  ]
-;ask turtles with [ycor = min-y and xcor < max-x and xcor > min-x] [
-;                                                                  create-links-with turtles-on (patch-set (patch xcor max-y) (patch (xcor - 1) max-y) (patch (xcor + 1) max-y))
-;                                                                  ]
-;ask turtles with [xcor = min-x and ycor < max-y and ycor > min-y and count link-neighbors < 8] [
-;                                                                  create-links-with turtles-on (patch-set (patch max-x ycor) (patch max-x (ycor + 1)) (patch max-x (ycor - 1)))
-;                                                                  ]
-;ask turtles with [ycor = max-y and xcor < max-x and xcor > min-x and count link-neighbors < 8] [
-;                                                                  create-links-with turtles-on (patch-set (patch xcor min-y) (patch (xcor - 1) min-y) (patch (xcor + 1) min-y))
-;                                                                  ]
-;
-;let corners (patch-set  patch min-x min-y patch min-x max-y  patch max-x max-y patch max-x min-y)
-;ask turtles-on corners [create-links-with other turtles-on corners] 
-;ask links [set color black]
-;
-;set success? true
-;end
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1041,7 +3135,7 @@ end
 to Create-Random-Network 
   ;; Make a circle of turtles
   create-turtles Num-Agents
-  layout-circle sort turtles  (radius )
+  layout-circle sort turtles  (plot.radius )
 
 while [not success?]
 [  ;; create links
@@ -1069,7 +3163,7 @@ to Create-Barabasi
 set success? true
   ;; Make a circle of turtles
 create-turtles Num-Agents
-layout-circle sort turtles  (radius )
+layout-circle sort turtles  (plot.radius )
 
 while [not success?]
 [  ;; create links
@@ -1089,7 +3183,7 @@ end
 
 to Create-Small-World ;; taken from the netlogo library
 create-turtles Num-Agents
-layout-circle sort turtles (radius )
+layout-circle sort turtles (plot.radius )
 wire-rewire-them
 end
 
@@ -1108,6 +3202,7 @@ ask links [die]
   ]
  set n (n + 1)
  ]
+;ask turtles [set size 10]
 end
 
 to wire-rewire-them
@@ -1148,7 +3243,7 @@ to wire-rewire-them
     set success? do-calculations
   
   ]
-;ask links [set color gray]
+ask links [set color gray]
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1228,7 +3323,7 @@ ask (turtle-set current-turtle link-turtle) [set free-stubs (free-stubs - 1)]
 ask link-turtle [set free-turtles other free-turtles]
 ]
 ]
-layout-circle turtles radius
+layout-circle turtles plot.radius
 end
 
 to configuration-model ;;star constrained graphicality configuration model more efficient, 
@@ -1457,503 +3552,13 @@ end
 ;;; Connected Network? and Clustering 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; do-calculations reports true if the network is connected, finds path lengths 
-
 to-report do-calculations
   
   let connected? true  
-  
-  ;let num-connected-pairs sum [length remove false (remove 0 distance-from-other-turtles)] of turtles
-  ;;; In a connected network on N nodes, we should have N(N-1) measurements of distances between pairs,
-  ;;; and none of those distances should be infinity.
-  ;ifelse ( num-connected-pairs != (Num-Agents * (Num-Agents - 1) ))
-  ;[set average-path-length infinity
-  ; set connected? false
-  ;]
-  ;[
   let mean-path-length nw:mean-path-length
-  ;]
-  ;;find the clustering coefficient and add to the aggregate for all iterations  
-  ;; report whether the network is connected or not
-if not is-number? mean-path-length [set connected? false]
-report connected?
+  if not is-number? mean-path-length [set connected? false]
+  report connected?
 end
-
-;to distancetoturtles
-;ask turtles set distance-to-other-turtles [nw:distance-to other turtles]
-;end
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Path Length?  ;;;;;;;;;;;;;;;;;;;NOT USED ANYMORE
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Clustering computations ;;; SUBSTITUTED BY Function in LIBRARY NW::: added a new way of computing (yields different value) 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
-;to find-clustering-coefficient
-;  ifelse all? turtles [count link-neighbors <= 1]
-;  [
-;    set clustering-coefficient 0
-;  ]
-;  [
-;   ask turtles [set node-clustering-coefficient nw:clustering-coefficient]
-;   let total 0
-;   set total sum [node-clustering-coefficient] of turtles 
-;   set clustering-coefficient total / count turtles with [count link-neighbors > 1]
-;  ]
-;end
-
-
-
-;to-report global-clustering-coefficient
-;  let closed-triplets sum [ nw:clustering-coefficient * count my-links * (count my-links - 1) ] of turtles
-;  let triplets sum [ count my-links * (count my-links - 1) ] of turtles
-;  report closed-triplets / triplets
-;end
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; Outputs and Plots ;; ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-;
-to my-update-plots  
-  set-current-plot "Cooperation and Satisfaction"
-  set-current-plot-pen "Cooperation" 
-  plot cooperation-rate
-;  set-current-plot-pen "satisfaction"
-;  plot satisfaction-rate
-  set-current-plot-pen "Satisfaction"
-  plot satisfaction-rate2
-;  set-current-plot-pen "Happy and Cooperating"
-;  plot count turtles with [shape = "face happy" and cooperate] / Num-Agents
- 
- 
-  set-current-plot "Population"
-  set-current-plot-pen "Maxi"
-  plot maxi / Num-Agents
-  set-current-plot-pen "Mini"
-  plot mini / Num-Agents
-  set-current-plot-pen "Conf"
-  plot conf / Num-Agents
-  set-current-plot-pen "Anti"
-  plot anti / Num-Agents
-  
-
-  set-current-plot "Age Plot"
-  set-current-plot-pen "maxi"
-  ifelse maxi > 0 [plot mean [age] of turtles with [ my.rule  = 1 ]][plot 0]
-  set-current-plot-pen "mini"
-  ifelse mini > 0 [plot mean [age] of turtles with [ my.rule  = 2 ]][plot 0]
-  set-current-plot-pen "conf"
-  ifelse conf > 0 [plot mean [age] of turtles with [ my.rule  = 3 ]][plot 0]
-  set-current-plot-pen "anti"
-  ifelse anti > 0 [plot mean [age] of turtles with [ my.rule  = 4 ]][plot 0]
-  set-current-plot-pen "all"
-  plot mean [age] of turtles
- 
- 
-;  set-current-plot "Degrees Plot"
-;  set-current-plot-pen "maxi"
-;  ifelse maxi > 0 [plot mean [degree] of turtles with [ my.rule  = 1]][plot 0]
-;  set-current-plot-pen "mini"
-;  ifelse mini > 0 [plot mean [degree] of turtles with [ my.rule  = 2]][plot 0]
-;  set-current-plot-pen "conf"
-;  ifelse conf > 0 [plot mean [degree] of turtles with [ my.rule  = 3]][plot 0]
-;  set-current-plot-pen "anti"
-;  ifelse anti > 0 [plot mean [degree] of turtles with [ my.rule  = 4]][plot 0]
-  
-;  
-;  set-current-plot "Clustering Coefficient Plot"
-;  set-current-plot-pen "maxi"
-;  ifelse maxi > 0 [plot mean [node-clustering-coefficient] of turtles with [ my.rule  = 1]][plot 0]
-;  set-current-plot-pen "mini"
-;  ifelse mini > 0 [plot mean [node-clustering-coefficient] of turtles with [ my.rule  = 2]][plot 0]
-;  set-current-plot-pen "conf"
-;  ifelse conf > 0 [plot mean [node-clustering-coefficient] of turtles with [ my.rule  = 3]][plot 0]
-;  set-current-plot-pen "anti"
-;  ifelse anti > 0 [plot mean [node-clustering-coefficient] of turtles with [ my.rule  = 4]][plot 0]
-;  
-;  set-current-plot "Page Rank Plot"
-;  set-current-plot-pen "maxi"
-;  ifelse maxi > 0 [plot mean [page-rank] of turtles with [ my.rule  = 1]][plot 0]
-;  set-current-plot-pen "mini"
-;  ifelse mini > 0 [plot mean [page-rank] of turtles with [ my.rule  = 2]][plot 0]
-;  set-current-plot-pen "conf"
-;  ifelse conf > 0 [plot mean [page-rank] of turtles with [ my.rule  = 3]][plot 0]
-;  set-current-plot-pen "anti"
-;  ifelse anti > 0 [plot mean [page-rank] of turtles with [ my.rule  = 4]][plot 0]
- 
-
-   
-  end
-
-
-
-to establish-color  ;; agent procedure
-if-else Colormap-View = "Strategies"
-[  if-else my.rule = 1        [set color red]
-    [if-else my.rule = 2      [set color green]
-      [if-else my.rule = 3    [set color blue]
-                           [set color white]]]
-]
-[
-  if-else cooperate [set color blue] [set color orange]
-]
-end
-
-
-;to set-final-outputs
-;  
-;set cooperation-rate count turtles with [cooperate] / Num-Agents
-;set satisfaction-rate count turtles with [shape = "face happy"] / Num-Agents
-;set satisfaction-rate2  mean [satisfaction2] of turtles
-;
-;let turtles-maxi turtles with [rule = 1]
-;let turtles-mini turtles with [rule = 2]
-;let turtles-conf turtles with [rule = 3]
-;let turtles-anti turtles with [rule = 4]
-;
-;
-;set maxi count turtles-maxi  
-;set mini count turtles-mini  
-;set conf count turtles-conf  
-;set anti count turtles-anti   
-;
-;
-;if count turtles-maxi > 0
-;[
-;  set sat-maxi       mean [satisfaction2] of turtles-maxi  
-;  set c-maxi         count turtles-maxi with [cooperate] / count turtles-maxi
-;  set cg-maxi        count turtles-maxi with [cooperate] / Num-Agents
-;  set mean-degree-1  mean [degree] of turtles-maxi  
-;  set max-degree-1   max [degree] of turtles-maxi
-;  set mean-cc-1      mean [node-clustering-coefficient] of turtles-maxi  
-;  set max-cc-1       max [node-clustering-coefficient] of turtles-maxi
-;  set mean-bc-1      mean [betweenness-centrality] of turtles-maxi  
-;  set max-bc-1       max [betweenness-centrality] of turtles-maxi 
-;  set mean-ec-1      mean [eigenvector-centrality] of turtles-maxi  
-;  set max-ec-1       max [eigenvector-centrality] of turtles-maxi
-;  set mean-pr-1      mean [page-rank] of turtles-maxi  
-;  set max-pr-1       max [page-rank] of turtles-maxi 
-;  set mean-close-1   mean [closeness-centrality] of turtles-maxi     
-;  set max-close-1    max [closeness-centrality] of turtles-maxi  
-;  set max-tr-1       max [time.rule] of turtles-maxi  
-;  set min-tr-1       min [time.rule] of turtles-maxi  
-;  set mean.changes-1 mean [n.changes] of turtles-maxi  
-;  
-;  if count turtles-maxi > 1
-;    [
-;      set sd-degree-1    standard-deviation [degree] of turtles-maxi  
-;      set sd-cc-1        standard-deviation [node-clustering-coefficient] of turtles-maxi  
-;      set sd-bc-1        standard-deviation [betweenness-centrality] of turtles-maxi  
-;      set sd-ec-1        standard-deviation [eigenvector-centrality] of turtles-maxi  
-;      set sd-pr-1        standard-deviation [page-rank] of turtles-maxi  
-;      set sd-close-1    standard-deviation [closeness-centrality] of turtles-maxi  
-;      set sd-sat-maxi    standard-deviation [satisfaction2] of turtles-maxi  
-;      set sd-changes-1   standard-deviation [n.changes] of turtles-maxi  
-;      ]]
-;
-;
-;
-;if count turtles-mini > 0
-;[
-;  set sat-mini       mean [satisfaction2] of turtles-mini  
-;  set c-mini         count turtles-mini with [cooperate] / count turtles-mini
-;  set cg-mini        count turtles-mini with [cooperate] / Num-Agents
-;  set mean-degree-2  mean [degree] of turtles-mini  
-;  set max-degree-2   max [degree] of turtles-mini
-;  set mean-cc-2      mean [node-clustering-coefficient] of turtles-mini  
-;  set max-cc-2       max [node-clustering-coefficient] of turtles-mini
-;  set mean-bc-2      mean [betweenness-centrality] of turtles-mini  
-;  set max-bc-2       max [betweenness-centrality] of turtles-mini 
-;  set mean-ec-2      mean [eigenvector-centrality] of turtles-mini  
-;  set max-ec-2       max [eigenvector-centrality] of turtles-mini
-;  set mean-pr-2      mean [page-rank] of turtles-mini  
-;  set max-pr-2       max [page-rank] of turtles-mini 
-;  set mean-close-2   mean [closeness-centrality] of turtles-mini     
-;  set max-close-2    max [closeness-centrality] of turtles-mini  
-;  set max-tr-2       max [time.rule] of turtles-mini  
-;  set min-tr-2       min [time.rule] of turtles-mini  
-;  set mean.changes-2 mean [n.changes] of turtles-mini  
-;  
-;  if count turtles-mini > 1
-;    [
-;      set sd-degree-2    standard-deviation [degree] of turtles-mini  
-;      set sd-cc-2        standard-deviation [node-clustering-coefficient] of turtles-mini  
-;      set sd-bc-2        standard-deviation [betweenness-centrality] of turtles-mini  
-;      set sd-ec-2        standard-deviation [eigenvector-centrality] of turtles-mini  
-;      set sd-pr-2        standard-deviation [page-rank] of turtles-mini  
-;      set sd-close-2    standard-deviation [closeness-centrality] of turtles-mini  
-;      set sd-sat-mini    standard-deviation [satisfaction2] of turtles-mini  
-;      set sd-changes-2   standard-deviation [n.changes] of turtles-mini  
-;      ]]
-;
-;
-;
-;
-;if count turtles-conf > 0
-;[
-;  set sat-conf       mean [satisfaction2] of turtles-conf  
-;  set c-conf         count turtles-conf with [cooperate] / count turtles-conf
-;  set cg-conf        count turtles-conf with [cooperate] / Num-Agents
-;  set mean-degree-3  mean [degree] of turtles-conf  
-;  set max-degree-3   max [degree] of turtles-conf
-;  set mean-cc-3      mean [node-clustering-coefficient] of turtles-conf  
-;  set max-cc-3       max [node-clustering-coefficient] of turtles-conf
-;  set mean-bc-3      mean [betweenness-centrality] of turtles-conf  
-;  set max-bc-3       max [betweenness-centrality] of turtles-conf 
-;  set mean-ec-3      mean [eigenvector-centrality] of turtles-conf  
-;  set max-ec-3       max [eigenvector-centrality] of turtles-conf
-;  set mean-pr-3      mean [page-rank] of turtles-conf  
-;  set max-pr-3       max [page-rank] of turtles-conf 
-;  set mean-close-3   mean [closeness-centrality] of turtles-conf     
-;  set max-close-3    max [closeness-centrality] of turtles-conf  
-;  set max-tr-3       max [time.rule] of turtles-conf  
-;  set min-tr-3       min [time.rule] of turtles-conf  
-;  set mean.changes-3 mean [n.changes] of turtles-conf  
-;  
-;  if count turtles-conf > 1
-;    [
-;      set sd-degree-3    standard-deviation [degree] of turtles-conf  
-;      set sd-cc-3        standard-deviation [node-clustering-coefficient] of turtles-conf  
-;      set sd-bc-3        standard-deviation [betweenness-centrality] of turtles-conf  
-;      set sd-ec-3        standard-deviation [eigenvector-centrality] of turtles-conf  
-;      set sd-pr-3        standard-deviation [page-rank] of turtles-conf  
-;      set sd-close-3    standard-deviation [closeness-centrality] of turtles-conf  
-;      set sd-sat-conf    standard-deviation [satisfaction2] of turtles-conf  
-;      set sd-changes-3   standard-deviation [n.changes] of turtles-conf  
-;      ]]
-;
-;
-;if count turtles-anti > 0
-;[
-;  set sat-anti       mean [satisfaction2] of turtles-anti  
-;  set c-anti         count turtles-anti with [cooperate] / count turtles-anti
-;  set cg-anti        count turtles-anti with [cooperate] / Num-Agents
-;  set mean-degree-4  mean [degree] of turtles-anti  
-;  set max-degree-4   max [degree] of turtles-anti
-;  set mean-cc-4      mean [node-clustering-coefficient] of turtles-anti  
-;  set max-cc-4       max [node-clustering-coefficient] of turtles-anti
-;  set mean-bc-4      mean [betweenness-centrality] of turtles-anti  
-;  set max-bc-4       max [betweenness-centrality] of turtles-anti 
-;  set mean-ec-4      mean [eigenvector-centrality] of turtles-anti  
-;  set max-ec-4       max [eigenvector-centrality] of turtles-anti
-;  set mean-pr-4      mean [page-rank] of turtles-anti  
-;  set max-pr-4       max [page-rank] of turtles-anti 
-;  set mean-close-4   mean [closeness-centrality] of turtles-anti     
-;  set max-close-4    max [closeness-centrality] of turtles-anti  
-;  set max-tr-4       max [time.rule] of turtles-anti  
-;  set min-tr-4       min [time.rule] of turtles-anti  
-;  set mean.changes-4 mean [n.changes] of turtles-anti  
-;  
-;  if count turtles-anti > 1
-;    [
-;      set sd-degree-4    standard-deviation [degree] of turtles-anti  
-;      set sd-cc-4        standard-deviation [node-clustering-coefficient] of turtles-anti  
-;      set sd-bc-4        standard-deviation [betweenness-centrality] of turtles-anti  
-;      set sd-ec-4        standard-deviation [eigenvector-centrality] of turtles-anti  
-;      set sd-pr-4        standard-deviation [page-rank] of turtles-anti  
-;      set sd-close-4     standard-deviation [closeness-centrality] of turtles-anti  
-;      set sd-sat-anti    standard-deviation [satisfaction2] of turtles-anti  
-;      set sd-changes-4   standard-deviation [n.changes] of turtles-anti  
-;      ]]
-;
-;
-;
-;
-;
-;
-;set mean-degree    mean [degree] of turtles  
-;set median-degree  median [degree] of turtles
-;
-;set mean-cc        mean [node-clustering-coefficient] of turtles  
-;set median-cc      median [node-clustering-coefficient] of turtles
-;
-;set mean-bc        mean [betweenness-centrality] of turtles  
-;set median-bc      median [betweenness-centrality] of turtles 
-;
-;set mean-ec        mean [eigenvector-centrality] of turtles  
-;set median-ec      median [eigenvector-centrality] of turtles
-;
-;set mean-pr        mean [page-rank] of turtles  
-;set median-pr      median [page-rank] of turtles 
-;
-;set mean-close     mean [closeness-centrality] of turtles     
-;set median-close   median [closeness-centrality] of turtles  
-;
-;set mean-tr        mean   [time.rule] of turtles    
-;set median-tr      median    [time.rule] of turtles    
-;
-;set mean.changes   mean   [n.changes] of turtles
-;set median.changes median [n.changes] of turtles  
-;
-;
-;
-;end
-;
-;
-;
-;
-;
-;
-;to shuffle-turtles
-;set shuffled2? true  ;indicate we're shuffling turtles
-;;shuffle
-;ask n-of maxi-before-shuffle turtles with [shuffled? = false][
-;                                              set my.rule  1
-;                                              set shuffled? true 
-;                                              ] 
-;ask n-of mini-before-shuffle turtles with [shuffled? = false]     [
-;                                              set my.rule  2
-;                                              set shuffled? true 
-;                                              ] 
-;ask n-of conf-before-shuffle turtles with [shuffled? = false]     [
-;                                              set my.rule  3
-;                                              set shuffled? true 
-;                                              ] 
-;ask n-of anti-before-shuffle turtles with [shuffled? = false]     [
-;                                              set my.rule  4
-;                                              set shuffled? true 
-;                                              ] 
-;
-;ask turtles [set shuffled? false]
-;end
-;
-;to count-before-shuffle
-;set maxi-before-shuffle count turtles with [rule = 1]  
-;set mini-before-shuffle count turtles with [rule = 2]  
-;set conf-before-shuffle count turtles with [rule = 3]  
-;set anti-before-shuffle count turtles with [rule = 4]   
-;end
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Export ;;;;;;;;;; ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;create files 
-
-
-;to create-new-file [prefix]
-;set file.name word (word prefix FileName ) ".csv"
-;;set-current-directory ""
-;end
-;
-;
-;to print-data-in-file
-;;; write the information to the file
-;let spacer ","
-;file-open file.name
-;file-print  (list  FileName spacer inicoop  spacer  strength-of-dilemma  spacer  cooperation-rate  spacer  satisfaction-rate  spacer  satisfaction-rate2  spacer
-;                      maxi  spacer     mini  spacer  conf  spacer    anti  spacer 
-;                      sat-maxi  spacer   sat-mini  spacer   sat-conf  spacer  sat-anti  spacer  
-;                      sd-sat-maxi  spacer  sd-sat-mini  spacer  sd-sat-conf  spacer    sd-sat-anti  spacer
-;                      c-maxi  spacer     c-mini  spacer     c-conf  spacer     c-anti  spacer   
-;                      cg-maxi  spacer     cg-mini  spacer     cg-conf  spacer  cg-anti  spacer 
-;                      mean-degree-1  spacer   mean-degree-2  spacer   mean-degree-3  spacer  mean-degree-4  spacer 
-;                       sd-degree-1  spacer   sd-degree-2  spacer  sd-degree-3  spacer   sd-degree-4  spacer 
-;  mean-cc-1  spacer   mean-cc-2  spacer   mean-cc-3  spacer   mean-cc-4  spacer 
-;  sd-cc-1  spacer   sd-cc-2  spacer   sd-cc-3  spacer   sd-cc-4  spacer 
-;  mean-bc-1  spacer   mean-bc-2  spacer   mean-bc-3  spacer   mean-bc-4  spacer  
-;  sd-bc-1  spacer   sd-bc-2  spacer   sd-bc-3  spacer   sd-bc-4  spacer  
-;  mean-ec-1  spacer   mean-ec-2  spacer   mean-ec-3  spacer   mean-ec-4  spacer  
-;  sd-ec-1  spacer   sd-ec-2  spacer   sd-ec-3  spacer   sd-ec-4  spacer  
-;  mean-pr-1  spacer   mean-pr-2  spacer   mean-pr-3  spacer   mean-pr-4  spacer 
-;  sd-pr-1  spacer   sd-pr-2  spacer   sd-pr-3  spacer   sd-pr-4  spacer 
-;  mean-close-1  spacer   mean-close-2  spacer   mean-close-3  spacer   mean-close-4  spacer  
-;  sd-close-1  spacer   sd-close-2  spacer   sd-close-3  spacer   sd-close-4  spacer
-;  max-tr-1  spacer   max-tr-2  spacer   max-tr-3  spacer   max-tr-4   spacer
-;  min-tr-1 spacer  min-tr-2 spacer  min-tr-3 spacer  min-tr-4   spacer
-;mean.changes-1 spacer  mean.changes-2 spacer  mean.changes-3 spacer  mean.changes-4 spacer  
-;sd-changes-1 spacer  sd-changes-2 spacer  sd-changes-3 spacer  sd-changes-4 spacer ticks spacer Rewiring-Probability spacer 
-;max-cc-1 spacer  max-bc-1 spacer  max-ec-1 spacer  max-pr-1 spacer  
-;max-cc-2 spacer  max-bc-2 spacer  max-ec-2 spacer  max-pr-2 spacer
-;max-cc-3 spacer  max-bc-3 spacer   max-ec-3 spacer  max-pr-3 spacer
-;max-cc-4 spacer  max-bc-4 spacer   max-ec-4 spacer  max-pr-4 spacer
-;max-close-1 spacer max-close-2 spacer max-close-3 spacer max-close-4 spacer 
-;mean-degree spacer median-degree  spacer
-;mean-cc spacer median-cc spacer
-;mean-bc spacer median-bc spacer
-;mean-ec spacer median-ec spacer
-;mean-pr spacer median-pr spacer
-;mean-close spacer median-close spacer
-;mean-tr spacer median-tr spacer
-;mean.changes spacer median.changes spacer
-;shuffled2? spacer repetitions spacer
-;Initial-Neighbours spacer Num-Agents spacer diameter spacer network-density spacer average-path-length spacer clustering-coefficient spacer clustering-coefficient-2 spacer n-links 
-;spacer equivalent-clustering-coefficient spacer equivalent-clustering-coefficient-2 spacer equivalent-path-length spacer lambdaSW spacer gammaSW spacer Sdelta spacer SWtest spacer omega)
-;file-close
-;end
-;
-;
-
-
-;end
-;
-;
-;to export-ages-test
-;set file.name "Initages.csv"
-;;set-current-directory ""
-;
-;let spacer ","
-;let l [age] of turtles
-;file-open file.name
-;file-print   l 
-;file-close
-;end
-;
-;to print-ages
-;let l [age] of turtles
-;show  l
-;end
-
-
-;to export-data
-;;;set the directory where the file will be stored
-;create-new-file ""
-;set-final-outputs
-;print-data-in-file
-;
-;count-before-shuffle
-;shuffle-turtles
-;set-final-outputs
-;print-data-in-file
-;end
-;
-;to export-network
-;set-final-outputs
-;ask turtles [set neighbors-who  [who] of  turtle-set (sort-on [who] link-neighbors) ]
-;ask turtles [set neighbors-type [rule] of turtle-set (sort-on [who] link-neighbors) ]
-;
-;;;set the directory where the file will be stored
-;create-new-file "Network"
-;
-;let spacer "," 
-;foreach sort turtles 
-;[
-;ask ? [
-;      file-open file.name
-;      file-print (list  who spacer cooperate    spacer my.rule spacer satisfaction2 spacer
-;                        node-clustering-coefficient spacer betweenness-centrality spacer
-;                        eigenvector-centrality  spacer page-rank spacer closeness-centrality spacer
-;                        longest-path spacer mean-path spacer time.rule spacer time.behavior spacer
-;                        n.changes spacer strength-of-dilemma spacer inicoop spacer Rewiring-Probability spacer 
-;                        Num-Agents spacer Initial-Neighbours spacer FileName spacer 
-;                        clustering-coefficient spacer average-path-length spacer degree spacer n-links spacer 
-;                        neighbors-type spacer neighbors-who spacer)
-;      file-close
-;      ]
-;]
-;end
-;
-;
 @#$#@#$#@
 GRAPHICS-WINDOW
 32
@@ -2018,9 +3623,9 @@ NIL
 
 TEXTBOX
 25
-491
+461
 163
-577
+547
 *Strategies colormap\n\nRed        Maxi\nGreen     Mini\nBlue     Conformist\nWhite      Anti-conf\n                      \n                       
 9
 0.0
@@ -2028,14 +3633,14 @@ TEXTBOX
 
 SLIDER
 402
-44
+32
 583
-77
+65
 *-strength-of-dilemma
 *-strength-of-dilemma
 0
 0.5
-0.5
+0.22
 0.01
 1
 NIL
@@ -2059,6 +3664,7 @@ true
 PENS
 "Cooperation" 1.0 0 -2674135 true "" ""
 "Satisfaction" 1.0 0 -13345367 true "" ""
+"Scores" 1.0 0 -10899396 true "" ""
 
 PLOT
 807
@@ -2083,9 +3689,9 @@ PENS
 
 SLIDER
 404
-82
+70
 579
-115
+103
 *-inicoop
 *-inicoop
 0
@@ -2097,106 +3703,106 @@ NIL
 HORIZONTAL
 
 SLIDER
-385
-313
-586
-346
+392
+468
+593
+501
 *-Connection-Probability
 *-Connection-Probability
-0.0
+0.01
 1
-0.076
+0.636
 .001
 1
 NIL
 HORIZONTAL
 
 INPUTBOX
-496
-233
-572
-293
+493
+394
+569
+454
 *-Num-Agents
-500
+100
 1
 0
 Number
 
 TEXTBOX
-386
-207
-560
-225
+393
+378
+567
+396
 *Choose Topology\n
 10
 15.0
 1
 
 CHOOSER
-400
-234
-492
-279
+398
+406
+490
+451
 *-Topology
 *-Topology
 "Random" "Small-World" "Scale-Free" "Lattice"
-1
+3
 
 TEXTBOX
-388
-301
-598
-319
+395
+456
+605
+474
 Random Network Connection Probability
 9
 0.0
 1
 
 TEXTBOX
-389
-351
-539
-369
+396
+506
+546
+524
 Small World Parameters
 9
 0.0
 1
 
 SLIDER
-386
-398
-584
-431
+393
+553
+591
+586
 *-Rewiring-Probability
 *-Rewiring-Probability
 0
 1
-1
+0
 .001
 1
 NIL
 HORIZONTAL
 
 SLIDER
-386
-446
-583
-479
+393
+601
+590
+634
 *-Scale-Free-Exponent
 *-Scale-Free-Exponent
 1.5
 3.1
-2
+0
 .01
 1
 NIL
 HORIZONTAL
 
 TEXTBOX
-391
-434
-541
-452
+398
+589
+548
+607
 Scale-Free Exponent
 9
 0.0
@@ -2204,9 +3810,9 @@ Scale-Free Exponent
 
 TEXTBOX
 147
-494
+464
 255
-570
+540
 *Behaviour Colormap\n\nBlue   Cooperate\nOrange Defect
 9
 0.0
@@ -2214,24 +3820,24 @@ TEXTBOX
 
 TEXTBOX
 380
-28
+16
 555
-46
+34
 *Prisoner's Dilemma Parameters
 9
 15.0
 1
 
 SLIDER
-387
-362
-584
-395
+394
+517
+591
+550
 *-Initial-Neighbours
 *-Initial-Neighbours
 1
 *-Num-Agents - 1
-75
+50
 1
 1
 NIL
@@ -2291,28 +3897,6 @@ count turtles with [my.rule = 4 ] * 100 / count turtles
 1
 11
 
-MONITOR
-23
-435
-86
-480
-Mean Path Length
-average-path-length
-3
-1
-11
-
-MONITOR
-89
-436
-184
-481
-Clustering Coefficient
-clustering-coefficient
-3
-1
-11
-
 TEXTBOX
 47
 419
@@ -2324,20 +3908,20 @@ TEXTBOX
 1
 
 TEXTBOX
-385
-128
-594
-152
+382
+127
+591
+151
 *Add noise by replacing the population?
 9
 15.0
 1
 
 SWITCH
-620
-325
-795
-358
+634
+442
+809
+475
 *-Initial-Random-Types?
 *-Initial-Random-Types?
 0
@@ -2345,20 +3929,20 @@ SWITCH
 -1000
 
 TEXTBOX
-622
-310
-792
-329
+636
+427
+806
+446
 *Random Assignation of Types?
 9
 0.0
 1
 
 INPUTBOX
-619
-374
-704
-434
+633
+491
+718
+551
 *-Initial-Maxi-%
 100
 1
@@ -2366,10 +3950,10 @@ INPUTBOX
 Number
 
 INPUTBOX
-706
-374
-789
-434
+720
+491
+803
+551
 *-Initial-Mini-%
 0
 1
@@ -2377,10 +3961,10 @@ INPUTBOX
 Number
 
 INPUTBOX
-620
-434
-703
-494
+634
+551
+717
+611
 *-Initial-Conf-%
 0
 1
@@ -2388,10 +3972,10 @@ INPUTBOX
 Number
 
 MONITOR
-709
-436
-793
-481
+723
+553
+807
+598
 Initial-Anti-%
 100 - *-Initial-Maxi-% - *-Initial-Mini-% - *-Initial-Conf-%
 0
@@ -2399,10 +3983,10 @@ Initial-Anti-%
 11
 
 TEXTBOX
-620
-360
-807
-380
+634
+477
+821
+497
 Otherwise Input % Initial Types
 9
 0.0
@@ -2419,10 +4003,10 @@ Types %
 1
 
 TEXTBOX
-403
-221
-570
-241
+395
+366
+562
+386
 *Network Parameters
 9
 0.0
@@ -2450,43 +4034,11 @@ mean [satisfaction2] of turtles * 100
 1
 11
 
-MONITOR
-187
-436
-267
-481
-Density Links
-density
-2
-1
-11
-
-PLOT
-808
-382
-1116
-502
-Clustering Coefficient Plot
-Coefficient
-Count
-0.0
-0.05
-0.0
-1.0
-true
-true
-"" ""
-PENS
-"maxi" 1.0 0 -2674135 true "" ""
-"Mini" 1.0 0 -10899396 true "" ""
-"Conf" 1.0 0 -13345367 true "" ""
-"Anti" 1.0 0 -16710653 true "" ""
-
 SWITCH
-387
-509
-554
-542
+396
+250
+563
+283
 Load-Topology
 Load-Topology
 1
@@ -2494,36 +4046,15 @@ Load-Topology
 -1000
 
 INPUTBOX
-437
-545
-513
-605
+395
+288
+568
+348
 *-fileIn
-NIL
+netscienceFinal.graphml
 1
 0
 String
-
-MONITOR
-272
-436
-335
-481
-Diameter
-Diameter
-0
-1
-11
-
-TEXTBOX
-389
-487
-592
-518
-Load a saved Topology? Specify file:
-10
-0.0
-1
 
 PLOT
 808
@@ -2548,33 +4079,33 @@ PENS
 "all" 1.0 0 -2064490 true "" ""
 
 PLOT
-808
-503
-1116
-623
-Page Rank Plot
-Page Rank
-Count
+1136
+15
+1303
+135
+Scores Coop
+NIL
+Score
 0.0
-100.0
+500.0
 0.0
-0.05
+1.0
 true
-true
+false
 "" ""
 PENS
-"maxi" 1.0 0 -2674135 true "" ""
-"mini" 1.0 0 -10899396 true "" ""
-"conf" 1.0 0 -13345367 true "" ""
-"anti" 1.0 0 -16777216 true "" ""
+"maxi" 1.0 2 -2674135 true "" ""
+"mini" 1.0 2 -10899396 true "" ""
+"conf" 1.0 2 -13345367 true "" ""
+"anti" 1.0 2 -16777216 true "" ""
 
 BUTTON
-278
-494
-351
-527
+262
+463
+335
+496
 Layout
-layout
+repeat 50 [layout]
 NIL
 1
 T
@@ -2586,10 +4117,10 @@ NIL
 1
 
 BUTTON
-277
-529
-356
-562
+254
+497
+333
+530
 resize-nodes
 resize-nodes
 NIL
@@ -2603,13 +4134,13 @@ NIL
 1
 
 SWITCH
-407
-141
-558
-174
+396
+143
+547
+176
 *-replacement?
 *-replacement?
-1
+0
 1
 -1000
 
@@ -2625,26 +4156,26 @@ count turtles with [shape = \"target\"] * 100 / count turtles
 11
 
 TEXTBOX
-639
-293
-789
-311
+653
+410
+803
+428
 *Choose types distribution
 9
 15.0
 1
 
 SLIDER
-407
-175
-556
-208
+396
+177
+568
+210
 *-cultural-constant
 *-cultural-constant
-.001
+-1
 20
+2
 1
-.001
 1
 NIL
 HORIZONTAL
@@ -2659,6 +4190,439 @@ mean [age] of turtles
 2
 1
 11
+
+BUTTON
+176
+406
+316
+439
+reset-turtles
+setup-init-turtles
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+PLOT
+1138
+139
+1298
+260
+Scores Happy
+NIL
+score
+0.0
+500.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"maxi" 1.0 2 -2674135 true "" ""
+"mini" 1.0 2 -10899396 true "" ""
+"conf" 1.0 2 -13345367 true "" ""
+"anti" 1.0 2 -16777216 true "" ""
+
+PLOT
+1142
+266
+1302
+386
+H&C
+NIL
+score
+0.0
+500.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"anti" 1.0 2 -16777216 true "" ""
+"maxi" 1.0 2 -2674135 true "" ""
+"mini" 1.0 2 -10899396 true "" ""
+"conf" 1.0 2 -13345367 true "" ""
+
+PLOT
+1303
+265
+1463
+385
+H&D
+NIL
+score
+0.0
+500.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"maxi" 1.0 2 -2674135 true "" ""
+"mini" 1.0 2 -10899396 true "" ""
+"conf" 1.0 2 -13345367 true "" ""
+"anti" 1.0 2 -16777216 true "" ""
+
+PLOT
+1142
+386
+1302
+506
+S&C
+NIL
+score
+0.0
+500.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"anti" 1.0 2 -16777216 true "" ""
+"mini" 1.0 2 -10899396 true "" ""
+"maxi" 1.0 2 -2674135 true "" ""
+"conf" 1.0 2 -13345367 true "" ""
+
+PLOT
+1303
+386
+1463
+507
+S&D
+NIL
+score
+0.0
+500.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"anti" 1.0 2 -16777216 true "" ""
+"conf" 1.0 2 -13345367 true "" ""
+"maxi" 1.0 2 -2674135 true "" ""
+"mini" 1.0 2 -10899396 true "" ""
+
+PLOT
+1632
+15
+1792
+135
+Sat Defecting
+NIL
+satisfaction 
+0.0
+500.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"anti" 1.0 2 -16777216 true "" ""
+"mini" 1.0 2 -10899396 true "" ""
+"maxi" 1.0 2 -2674135 true "" ""
+"conf" 1.0 2 -13345367 true "" ""
+
+PLOT
+1300
+139
+1460
+260
+scores UnHappy
+NIL
+score
+0.0
+500.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"anti" 1.0 2 -16777216 true "" ""
+"mini" 1.0 2 -10899396 true "" ""
+"maxi" 1.0 2 -2674135 true "" ""
+"conf" 1.0 2 -13345367 true "" ""
+
+PLOT
+1303
+16
+1463
+137
+Scores Defecting
+NIL
+NIL
+0.0
+500.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"anti" 1.0 2 -16777216 true "" ""
+"mini" 1.0 2 -10899396 true "" ""
+"maxi" 1.0 2 -2674135 true "" ""
+"conf" 1.0 2 -13345367 true "" ""
+
+PLOT
+1469
+15
+1629
+136
+Sat Coop
+NIL
+satisfaction
+0.0
+500.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"anti" 1.0 2 -16777216 true "" ""
+"mini" 1.0 2 -10899396 true "" ""
+"maxi" 1.0 2 -2674135 true "" ""
+"conf" 1.0 2 -13345367 true "" ""
+
+PLOT
+1470
+139
+1630
+260
+Sat Happy
+NIL
+satisfaction
+0.0
+500.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"anti" 1.0 2 -16777216 true "" ""
+"mini" 1.0 2 -10899396 true "" ""
+"maxi" 1.0 2 -2674135 true "" ""
+"conf" 1.0 2 -13345367 true "" ""
+
+PLOT
+1635
+139
+1795
+260
+Sat UnHappy
+NIL
+satisfaction
+0.0
+500.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"anti" 1.0 2 -16777216 true "" ""
+"mini" 1.0 2 -7500403 true "" ""
+"maxi" 1.0 2 -2674135 true "" ""
+"conf" 1.0 2 -13345367 true "" ""
+
+PLOT
+1470
+260
+1630
+381
+Sat H&C
+NIL
+satisfaction
+0.0
+500.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"anti" 1.0 2 -16777216 true "" ""
+"mini" 1.0 2 -10899396 true "" ""
+"maxi" 1.0 2 -2674135 true "" ""
+"conf" 1.0 2 -13345367 true "" ""
+
+PLOT
+1638
+263
+1798
+384
+Sat H&D
+NIL
+satisfaction
+0.0
+500.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"anti" 1.0 2 -16777216 true "" ""
+"mini" 1.0 2 -10899396 true "" ""
+"maxi" 1.0 2 -2674135 true "" ""
+"conf" 1.0 2 -13345367 true "" ""
+
+PLOT
+1472
+386
+1632
+507
+Sat S&C
+NIL
+satisfaction
+0.0
+500.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"anti" 1.0 2 -16777216 true "" ""
+"mini" 1.0 2 -10899396 true "" ""
+"maxi" 1.0 2 -2674135 true "" ""
+"conf" 1.0 2 -13345367 true "" ""
+
+PLOT
+1639
+385
+1799
+506
+Sat S&D
+NIL
+satisfaction
+0.0
+500.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"anti" 1.0 2 -16777216 true "" ""
+"mini" 1.0 2 -10899396 true "" ""
+"maxi" 1.0 2 -2674135 true "" ""
+"conf" 1.0 2 -13345367 true "" ""
+
+BUTTON
+225
+533
+333
+568
+layout circle
+layout-circle turtles plot.radius
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+PLOT
+1143
+511
+1303
+632
+Maxi Neighbors
+NIL
+NIL
+0.0
+500.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"anti" 1.0 2 -16777216 true "" ""
+"mini" 1.0 2 -10899396 true "" ""
+"maxi" 1.0 2 -2674135 true "" ""
+"conf" 1.0 2 -13345367 true "" ""
+
+PLOT
+1305
+509
+1465
+630
+Mini Neighbors
+NIL
+NIL
+0.0
+500.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"anti" 1.0 2 -16777216 true "" ""
+"mini" 1.0 2 -10899396 true "" ""
+"maxi" 1.0 2 -2674135 true "" ""
+"conf" 1.0 2 -13345367 true "" ""
+
+PLOT
+1640
+508
+1800
+629
+Anti Neighbors
+NIL
+NIL
+0.0
+500.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"anti" 1.0 2 -16777216 true "" ""
+"mini" 1.0 2 -10899396 true "" ""
+"maxi" 1.0 2 -2674135 true "" ""
+"conf" 1.0 2 -13345367 true "" ""
+
+PLOT
+1472
+509
+1632
+630
+Conf Neighbors
+NIL
+NIL
+0.0
+500.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"anti" 1.0 2 -16777216 true "" ""
+"mini" 1.0 2 -10899396 true "" ""
+"maxi" 1.0 2 -2674135 true "" ""
+"conf" 1.0 2 -13345367 true "" ""
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -2687,16 +4651,16 @@ whit each one of their neighbours in a torus or network
 The agents can have one of 4 valuation functions:
 Maxi : The agent tries to maximize the score (payoff)  
 mini : The agent tries to minimize the score  
-Conformist: The agent tries to behaves as the majority   
+Conformist: The agent tries to behave as the majority   
 Anti-conformist: The agent tries to behave as the minority
    
 ## HOW TO USE IT
 
-Decide what percentage of patches should cooperate at the initial stage.
+Decide what percentage of agents should cooperate at the initial stage.
 
 Decide the topology structure or load one.
 
-If you are not loading a topology; choose the parameters for the desired topology. Notice the size of the lattice is fixed and you cant change the number of agents.
+If you are not loading a topology; choose the parameters for the desired topology. Notice the size of the lattice is fixed and you can't change the number of agents.
 
 Also, choose if agents can incur in errors while copying either rules or behaviors, with the corresponding sliders.
 
@@ -3019,7 +4983,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.1.0
+NetLogo 5.2.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -3194,6 +5158,73 @@ export-agesL</final>
     </enumeratedValueSet>
     <enumeratedValueSet variable="*-Connection-Probability">
       <value value="0.076"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="REALGRAPHS" repetitions="10" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>repeat 2001 [go]</go>
+    <final>export-behavior-L
+export-satisfaction-L
+export-scores-L
+export-best-L
+export-age-L
+export-prop1-L
+export-prop2-L
+export-prop3-L
+export-prop4-L
+export-global-L</final>
+    <enumeratedValueSet variable="*-Initial-Mini-%">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-replacement?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-Initial-Maxi-%">
+      <value value="100"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-Topology">
+      <value value="&quot;Small-World&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-Initial-Random-Types?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-innovation?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="*-strength-of-dilemma" first="0" step="0.025" last="0.5"/>
+    <enumeratedValueSet variable="*-Initial-Neighbours">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-Rewiring-Probability">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-Scale-Free-Exponent">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="Load-Topology">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-Initial-Conf-%">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-Connection-Probability">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="*-inicoop" first="0" step="25" last="100"/>
+    <enumeratedValueSet variable="Shock%">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-cultural-constant">
+      <value value="2"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="Colormap-View">
+      <value value="&quot;Strategies&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-Num-Agents">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="*-fileIn">
+      <value value="&quot;PGPFinal.graphml&quot;"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
