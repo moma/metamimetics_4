@@ -1,4 +1,4 @@
-extensions [ nw  ]
+extensions [ nw ]
 
 
 
@@ -190,10 +190,10 @@ turtles-own [
   age
   chances.imitations  
 myset
-
+Ibest
   rule?
   behavior?
-
+my.best.elements
 ;come from R
 
 ;globalInfo       
@@ -298,50 +298,6 @@ links-own[
 ;;; To Go ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-to go-automatic
-;;;;;;;;;;;;;;;;;;;;;
-;uncomment to change dynamically on widget
-;set Strength-of-Dilemma *-strength-of-dilemma
-;set inicoop *-inicoop
-;set replacement? *-replacement?
-;set cultural-constant *-cultural-constant
-;if replacement? [set-life-distribution-USA2010]
-;;;;;;;;;;;;;;;;;;;;;
-ask turtles [interact]
-decision-stage
-learn-stage
-ask turtles [set satisfaction2 satisfaction-2]
-set-outputs-1
-
-
-if ticks > ticks-read [
-ask turtles [
-             fill.state.info
-             set-outputs-2
-            ]            
-calculate-Neighbors
-                      ]
-
-;;;;;;;;;;;;;;;;;;;;;;;
-;uncomment to view changes widget
-;ask turtles [establish-color]
-;ask turtles [set-faces]
-my-update-plots1
-;my-update-plots2
-;;;;;;;;;;;;;;;;;;;;;;;
-reset-change
-ask turtles [set chances.imitations chances.imitations + 1
-             
-             ifelse replacement? 
-             [
-             if  chances.imitations >= cultural-constant   [set age age + 1
-                                                            set chances.imitations 0
-                                                     ]
-             ][set age age + 1]
-            ]
-if replacement? [replacement]
-tick
-end
 
 to go
 ;;;;;;;;;;;;;;;;;;;;;
@@ -352,37 +308,74 @@ set replacement? *-replacement?
 set cultural-constant *-cultural-constant
 if replacement? [set-life-distribution-USA2010]
 ;;;;;;;;;;;;;;;;;;;;;
-
 ask turtles [interact]
 decision-stage
 learn-stage
-ask turtles [fill.state.info2]
-ask turtles [set satisfaction2 satisfaction-2]
-ask turtles [set-outputs-1
-  ;set-outputs-2
-  ]
-            
-;calculate-Neighbors
+
+ask turtles [
+establish-color
+set-faces
+set satisfaction2 satisfaction-2
+fill.state.info2
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;uncomment to view changes widget
-ask turtles [establish-color]
-ask turtles [set-faces]
-;;;;;;;;;;;;;;;;;;;;;;;
+;set-outputs-2
+]
+set-outputs-1
+;;;;;;;;;;;;;;;;;;;;;;
 my-update-plots1
 ;my-update-plots2
-reset-change
-ask turtles [set chances.imitations chances.imitations + 1
-             
-             ifelse replacement? 
-             [
-             if  chances.imitations >= cultural-constant   [set age age + 1
-                                                            set chances.imitations 0
-                                                     ]
-             ][set age age + 1]
-            ]
+ask turtles [set chances.imitations chances.imitations + 1             
+             ifelse replacement? [if  chances.imitations >= cultural-constant   [set age age + 1
+                                                             set chances.imitations 0]][set age age + 1]]
 if replacement? [replacement]
 tick
 end
+
+
+to go-automatic2 ;;FOR GRID
+ask turtles [interact]
+decision-stage
+learn-stage
+
+ask turtles [set satisfaction2 satisfaction-2]
+if ticks > ticks-read [
+set-outputs-1
+ask turtles [fill.state.info]            
+set-outputs-2
+                     ]
+
+ask turtles  [set chances.imitations chances.imitations + 1         
+             ifelse replacement? [if  chances.imitations >= cultural-constant   [set age age + 1
+                                                                                set chances.imitations 0]][set age age + 1]]
+if replacement? [replacement]
+tick
+end
+
+to go-automatic
+ask turtles [interact]
+decision-stage
+learn-stage
+ask turtles [set satisfaction2 satisfaction-2]
+if ticks > ticks-read [
+                       set-outputs-1
+                       ask turtles [fill.state.info]
+                       set-outputs-2
+                       ]
+;;;;;;;;;;;;;;;;;;;;;;;;
+;;uncomment to view changes widget
+;;ask turtles [establish-color]
+;;ask turtles [set-faces]
+; my-update-plots1
+;;my-update-plots2
+;;;;;;;;;;;;;;;;;;;;;;;;
+ask turtles  [set chances.imitations chances.imitations + 1             
+             ifelse replacement? [if  chances.imitations >= cultural-constant   [set age age + 1
+                                                                                 set chances.imitations 0] ][set age age + 1]]
+if replacement? [replacement]
+tick
+end
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -390,13 +383,14 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-to run-to-grid [tmax ticks-to-read time-series-output-length averages-N-length]
 
+
+to run-to-grid [tmax ticks-to-read time-series-output-length averages-N-length]
 common-setup
 set ticks-read ticks-to-read
 set Binterval time-series-output-length
 set averages-length averages-N-length
-repeat tmax [go-automatic]
+repeat tmax [go-automatic2]
 reset-ticks
 end 
 
@@ -407,6 +401,347 @@ set Binterval time-series-output-length
 set averages-length averages-N-length
 repeat tmax [go-automatic]
 end
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;              Go Routines ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+to fill.state.info
+set rule.history lput my.rule rule.history
+set behavior.history lput cooperate behavior.history 
+set satisfaction.history lput satisfaction2 satisfaction.history 
+set scores.history lput score scores.history
+set best.history lput Ibest best.history 
+set age.history lput age age.history 
+end
+
+to fill.state.info2
+set rule.history remove-item 0 (lput my.rule rule.history)
+set behavior.history remove-item 0 (lput cooperate behavior.history) 
+set satisfaction.history remove-item 0 (lput satisfaction2 satisfaction.history) 
+set scores.history remove-item 0 (lput score scores.history)
+set best.history remove-item 0 (lput Ibest best.history )
+set age.history remove-item 0 (lput age age.history )
+end
+
+;to reset-change
+;ask turtles   [
+;              set rule? false
+;              set behavior? false
+;              ]
+;end
+
+to set-faces
+ifelse am-i-the-best?   [set shape "face happy"]
+                        [set shape "face sad"]                          
+end
+
+to interact  ;; calculates the agents' payoffs for Prisioner's Dilema.
+let total-cooperators count my.neighbors with [cooperate]
+set inst.score 0
+ifelse cooperate
+    [set inst.score (total-cooperators * (1 - Strength-of-Dilemma) / degree)]
+    [set inst.score ((total-cooperators + (degree - total-cooperators) * Strength-of-Dilemma ) / degree)]  
+set last.score score
+set score inst.score
+end
+
+
+to-report am-i-the-best? ;; reports true if the agent is the best in its neighborhood
+ let test false  
+ if ( my.rule  = 1) and  (score >= [score] of max-one-of my.neighbors [score]  * 0.99)  [set test true]
+ if ( my.rule  = 2) and  (score <= [score] of min-one-of my.neighbors [score] * 1.01)     [set test true]
+ if ( my.rule  = 3) and  (member? my.rule majority-rules)                                      [set test true]
+ if ( my.rule  = 4) and  (member? my.rule minority-rules) and not all? (my.neighbors) [ my.rule  = 4]  [set test true]    
+ report test
+end
+
+to decision-stage
+ask turtles [
+  set Ibest am-i-the-best?
+  let satisfaction  Ibest ;  
+;  if error_on_satisfaction
+;  [
+;  if random-float 1 <= copy-error-rule ;
+;     [set satisfaction not am-i-the-best?]
+;  ]
+if not satisfaction
+[
+;if random-float 1 <= theta ;only some agents will be allowed to change rule;      [
+      set rule? true 
+      set behavior? true  ;      ]
+; if random-float 1 <= theta  ;      [set behavior? true]
+]
+
+if age < 15 
+    [set rule? false]
+]
+end
+
+to learn-stage
+ask turtles 
+[
+if rule? 
+[
+select-rule
+]
+if behavior? [
+select-behavior]
+]
+end
+
+
+to-report best-elements ;; report a list with the agents with the best performance according to agents  
+let bestel myset
+  if-else my.rule = 1 [set bestel bestel with [score >= [score] of max-one-of bestel [score] * 0.99]][ 
+    
+    if-else  my.rule = 2 [set bestel bestel with [score <= [score] of min-one-of bestel [score] * 1.01]][
+       
+            if-else my.rule = 3 [
+                               let rules-list majority-rules
+                               set bestel bestel with [member? my.rule rules-list]
+                                ] [ 
+                                 let rules-list minority-rules
+                                 if not empty? rules-list [set bestel bestel with [member? my.rule rules-list]]  
+                                  ]
+                                                                                                        ]]
+report bestel
+end  
+
+; choose strategy if your rule is not the best, if innovate? choose rule if you are unsatisfied
+to select-rule              
+   set my.best.elements best-elements
+  ;ifelse not is-my-rule-the-best?   
+   if not is-my-rule-the-best?   
+   [
+   copy-strategy (one-of my.best.elements)
+   ]         
+   ;[if not am-i-the-best? and member? rule [rule] of best-elements and innovate? ;stuck agent will innovate with probability error-copy
+   ;    [set rule (random 4 + 1)]
+   ;]
+end
+
+to-report is-my-rule-the-best? ;; reports true if the agent's my.rule is used by any of the best valuated agents in its neighborhood (according with its rule) and false otherwise
+  let test false
+  ifelse Ibest [set test true][
+  if member? my.rule [my.rule] of my.best.elements [set test true] 
+  ]
+  report test
+end
+
+to copy-strategy [temp-agent]
+;;;RULE STEP
+;ifelse random-float 1.0 > copy-error-rule ; some agents do the right thing
+;       [
+       set my.rule [my.rule] of temp-agent
+;      set theta_1 [theta_1] of temp-agent       
+;         set theta_2 [theta_2] of temp-agent 
+;         if Copy-Thetas? [
+;         set theta_1 add-noise "theta_1" Transcription-Error
+;         set theta_2 add-noise "theta_2" Transcription-Error                         ];       ]     
+;       [set my.rule random 4 + 1 ] ;do a random thing
+;       
+       set rule? false
+end
+
+to select-behavior   
+;ifelse random-float 1 > copy-error-behavior ;only some agents do the right thing 
+;       [ 
+       if-else ( my.rule  = 1) or ( my.rule  = 2) [set cooperate [cooperate] of one-of best-elements ]
+             [if-else  my.rule = 3  [set cooperate majority-behavior] [set cooperate not majority-behavior]]
+;       ]
+;      [
+;      ifelse random-float 1.0 < .5  [set cooperate true] [set cooperate false] ;choose random behaviour
+;      ]
+set behavior? false
+end 
+
+
+
+to-report satisfaction-2
+let sat2 0
+ 
+if-else my.rule = 1 [
+            let mmscore min [score] of myset
+            let Mscore max [score] of myset
+            ifelse abs(Mscore - mmscore) = 0
+            [set sat2 1]
+            [set sat2  ( (score  - mmscore ) / (Mscore - mmscore))] 
+            ]                          
+[
+if-else my.rule = 2 [
+                    let mmscore min [score] of myset
+                    let Mscore max [score] of myset
+                    ifelse   (Mscore - mmscore) = 0
+                    [set sat2 1] 
+                    [set sat2  ( ( Mscore - score  ) / ( Mscore - mmscore ))] 
+                    ]              
+[
+if-else my.rule = 3 [
+                    let my-frequency ( count my.neighbors with [ my.rule  = 3] + 1 ) / (degree + 1)
+                    let Mfrequency max-frequency
+                    let mmfrequency min-frequency
+                    ifelse abs(mmfrequency - Mfrequency) = 0 [set sat2 1] [set sat2  (my-frequency - mmfrequency) / (Mfrequency - mmfrequency)]
+                    ]
+                    [
+                    let Mfrequency max-frequency
+                    let mmfrequency min-frequency
+                    let my-frequency (count my.neighbors with [ my.rule  = 4]  + 1) / ( degree + 1)
+                    ifelse abs( Mfrequency - mmfrequency ) = 0 [set sat2 1] [set sat2  ( Mfrequency - my-frequency ) / (  Mfrequency - mmfrequency)]
+                   ]
+]
+]
+report sat2
+end
+
+to-report majority-behavior
+  let mylist [cooperate] of myset
+  report one-of modes mylist
+end
+
+
+
+to-report min-frequency
+let l item 0 minority-rules
+report count (turtle-set my.neighbors self) with [ my.rule  = l] / (degree + 1)
+end
+
+to-report max-frequency
+let l item 0 majority-rules
+report count (turtle-set my.neighbors self) with [ my.rule  = l] / (degree + 1)
+end
+
+
+to-report majority-rules  ;; reports a set with the number of the most frequent rules in agent's neighborhood (agent included)
+                          ;; be careful when use in an ask cycle as the command is applied to "self"
+  let mylist [ my.rule ] of myset
+  set mylist modes mylist
+  report mylist
+end
+
+to-report minority-rules ;; reports a set with the number of the less frequent rules in agent's neighborhood (agent included)
+                         ;; be careful when use in an ask cycle as the command is applied to "self"
+  let mylist_1 [ my.rule ] of myset
+  let mylist []
+  let j 1
+  while [empty? mylist] [
+  let i 1
+  repeat 4 [
+    if length filter [? = i] mylist_1 = j  [set mylist lput i mylist] 
+    set i i + 1
+    ]
+  set j j + 1
+  ] 
+  report mylist
+end
+
+
+
+to-report add-noise [value noise-std]
+      let epsilon random-normal 0.0 noise-std
+      if ( epsilon <= -100 )
+      [ set epsilon -99] 
+      let noisy-value runresult value * 100 / ( 100 + epsilon )
+      if (noisy-value > 1) [set noisy-value 1]
+      if (noisy-value < 0) [set noisy-value 0]     
+      report noisy-value
+end
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Life Distributions  ;;;;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;census-dist : fractions of people with age 0, 5, ...100
+;life-expect   : expected life at ages 0, 5, ...100 (life expectancy = 1/M_age)
+
+;expected rate at which people die per unit time at each age* = M_age* 
+;probability of dying at age* = 1-exp(-M_age*) :: 
+
+;F_age*= fraction of population of age* that dies within one year :: M_age*=-ln(1-F_age*)
+
+;if M is done in intervals (as we have here), M is the value at age A+5
+
+
+to init-age-USA2010 ;;Population fraction for ages according data colected
+                                 ;By Lindsay M. Howden and Julie A. Meyer in
+                                 ;Age and Sex Composition: 2010 Census briefs
+                                 ;Reported fractions have an interval of 5 years starting from 0 until 100 years
+  let census-dist (list 0.0654 0.0659 0.0670 0.0714 0.0699 0.0683 0.0647 0.0654 0.0677 0.0735 0.0722 0.0637 0.0545 0.0403 0.0301 0.0237 0.0186 0.0117 0.0047 0.0012 0.0002)
+  
+  ask turtles [
+    
+    let index floor random 21
+    while [random-float 1 > item index census-dist]
+          [
+          set index floor random 21
+          ]
+    set age   ( (index) * 5 + random 5)
+              ]
+end
+
+
+
+to set-life-distribution-USA2010 ;;Life expectation for ages according data colected by the Centers for Disease Control
+                                 ;and Prevention’s National Center for Health Statistics (NCHS) USA 2010
+                                 ;Murphy, Xu, and Kochanek 'Deaths: preliminary data 2010' National Vital Stat. Reports 60-4
+                                 ;Reported ages have an- averages-length of 5 years starting from 0 until 100 years
+
+set life-expectation (list 78.7 74.3 69.3 64.4 59.5 54.8 50.0 45.3 40.6 36.0 31.5 27.2 23.1 19.2 15.5 12.2 9.2 6.6 4.7 3.3 2.4) 
+set mortality-rate map [1 / ?] life-expectation
+set prob-to-die map [ (1 - exp ( ( - 1 ) * ? )  )] mortality-rate 
+set prob-die-imitation map [( 1 - exp (  ( ln ( 1 - ? )) / cultural-constant )) ] prob-to-die
+end
+
+to-report prob-die
+let index ceiling ( floor ( age   / 5 )) 
+if index > 20 [set index 20]
+if index < 0  [set index 0]
+
+let p.die item (index) prob-die-imitation
+report p.die 
+
+;let mortality item index mortality-rate 
+;let prob-to-die ( 1 - exp ( (- 1 ) *  mortality ) )
+;let prob-die-imitation ( 1 - exp (  (ln ( 1 - prob-to-die )) / cultural-constant ))
+;report prob-die-imitation 
+end
+
+
+to replacement
+  ask turtles [    
+  if random-float 1  < prob-die 
+             [
+             ;set ticks.at.death.list lput ticks ticks.at.death.list
+             replace
+             ]
+       ]
+end   
+
+to replace  
+    set shape "target"
+    set age 0
+    set rule? false
+    set behavior? false
+    set my.rule (random 4) + 1 
+;    set shape "face sad"
+;    set size sizeT
+    set satisfaction2 1
+    ifelse random-float 1.0 < .5 ;(inicoop / 100)
+        [set cooperate true]
+        [set cooperate false]
+    establish-color
+    set score 0.0
+    set rule? false
+    set behavior? false
+set chances.imitations 0
+set Ibest true
+;set shuffled? false
+end
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Setup ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -588,8 +923,6 @@ set DU.mini.scores []
 set DU.conf.scores []
 set DU.anti.scores []
 
-ask turtles [set-outputs-1]
-;resize-nodes
 reset-ticks
 end
 
@@ -641,376 +974,15 @@ set n.anti.list  (list 0)
 set n.conf.list  (list 0)
 set my.neighbors link-neighbors
 set myset (turtle-set my.neighbors self)
+set Ibest true
 ]
+resize-nodes
 end
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;              Go Routines ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-to fill.state.info
-set rule.history lput my.rule rule.history
-set behavior.history lput cooperate behavior.history 
-set satisfaction.history lput satisfaction2 satisfaction.history 
-set scores.history lput score scores.history
-set best.history lput am-i-the-best? best.history 
-set age.history lput age age.history 
-end
-
-to fill.state.info2
-set rule.history remove-item 0 rule.history 
-set rule.history lput my.rule rule.history
-set behavior.history remove-item 0 behavior.history 
-set behavior.history lput cooperate behavior.history 
-set satisfaction.history remove-item 0 satisfaction.history 
-set satisfaction.history lput satisfaction2 satisfaction.history 
-set scores.history remove-item 0 scores.history 
-set scores.history lput score scores.history
-set best.history remove-item 0 best.history 
-set best.history lput am-i-the-best? best.history 
-set age.history remove-item 0 age.history 
-set age.history lput age age.history 
-end
-
-to reset-change
-ask turtles   [
-              set rule? false
-              set behavior? false
-              ]
-end
-
-to set-faces
-ifelse am-i-the-best?   [set shape "face happy"]
-                        [set shape "face sad"]                          
-end
-
-to interact  ;; calculates the agents' payoffs for Prisioner's Dilema.
-let total-cooperators count my.neighbors with [cooperate]
-set inst.score 0
-ifelse cooperate
-    [set inst.score (total-cooperators * (1 - Strength-of-Dilemma) / degree)]
-    [set inst.score ((total-cooperators + (degree - total-cooperators) * Strength-of-Dilemma ) / degree)]  
-set last.score score
-set score inst.score
-end
-
-
-to-report am-i-the-best? ;; reports true if the agent is the best in its neighborhood
- let test false  
- if ( my.rule  = 1) and  (score >= [score] of max-one-of my.neighbors [score]  * 0.99)  [set test true]
- if ( my.rule  = 2) and  (score <= [score] of min-one-of my.neighbors [score] * 1.01)     [set test true]
- if ( my.rule  = 3) and  (member? my.rule majority-rules)                                      [set test true]
- if ( my.rule  = 4) and  (member? my.rule minority-rules) and not all? (my.neighbors) [ my.rule  = 4]  [set test true]    
- report test
-end
-
-to decision-stage
-ask turtles [
-  
-  let satisfaction  am-i-the-best? ;  
-;  if error_on_satisfaction
-;  [
-;  if random-float 1 <= copy-error-rule ;
-;     [set satisfaction not am-i-the-best?]
-;  ]
-
-  
-if not satisfaction
-[
-;if random-float 1 <= theta ;only some agents will be allowed to change rule
-;      [
-      set rule? true 
-      set behavior? true
-;      ]
-       
-; if random-float 1 <= theta  
-;      [set behavior? true]
-]
-
-if age < 15 
-    [set rule? false]
-
-]
-end
-
-to learn-stage
-ask turtles 
-[
-if rule? [select-rule]
-if behavior? [select-behavior]
-]
-end
-
-
-to-report is-my-rule-the-best? ;; reports true if the agent's my.rule is used by any of the best valuated agents in its neighborhood (according with its rule) and false otherwise
-  let test false
-  ifelse am-i-the-best? [set test true][
-  if member? my.rule [my.rule] of best-elements [set test true] 
-  ]
-  report test
-end
-
-; choose strategy if your rule is not the best, if innovate? choose rule if you are unsatisfied
-to select-rule              
-  ;ifelse not is-my-rule-the-best?   
-   if not is-my-rule-the-best?   
-   [copy-strategy (one-of best-elements)]         
-   
-   ;[if not am-i-the-best? and member? rule [rule] of best-elements and innovate? ;stuck agent will innovate with probability error-copy
-   ;    [set rule (random 4 + 1)]
-   ;]
-end
-
-to copy-strategy [temp-agent]
-;;;RULE STEP
-;ifelse random-float 1.0 > copy-error-rule ; some agents do the right thing
-;       [
-
-       set my.rule [my.rule] of temp-agent
-
-;      set theta_1 [theta_1] of temp-agent       
-;         set theta_2 [theta_2] of temp-agent 
-;         if Copy-Thetas? [
-;         set theta_1 add-noise "theta_1" Transcription-Error
-;         set theta_2 add-noise "theta_2" Transcription-Error
-;                         ]
-;       ]     
-;       [set my.rule random 4 + 1 ] ;do a random thing
-;       
-       set rule? false
-end
-
-
-
-to select-behavior 
-  
-;ifelse random-float 1 > copy-error-behavior ;only some agents do the right thing 
-;       [ 
-       if ( my.rule  = 1) or ( my.rule  = 2) [set cooperate [cooperate] of one-of best-elements ]
-       if  my.rule = 3                 [set cooperate majority-behavior]         
-       if my.rule = 4                 [set cooperate not majority-behavior]
-;       ]
-;      [
-;      ifelse random-float 1.0 < .5  [set cooperate true] [set cooperate false] ;choose random behaviour
-;      ]
-set behavior? false
-end 
-
-
-to-report majority-behavior
-  let mylist [cooperate] of myset
-  report one-of modes mylist
-end
-
-to-report satisfaction-2
-let sat2 0
- 
-if my.rule = 1 [
-            ifelse abs(max [score] of myset - min [score] of myset) = 0
-            [set sat2 1]
-            [set sat2  ( (score  - min [score] of myset ) / (max [score] of myset - min [score] of myset))] 
-            ]                          
-
-if my.rule = 2 [
-            ifelse   (max [score] of myset - min [score] of myset) = 0
-            [set sat2 1] 
-            [set sat2  ( ( max [score] of myset - score  ) / ( max [score] of myset - min [score] of myset ))] 
-            ]              
-
-if my.rule = 3 [
-            let my-frequency ( count my.neighbors with [ my.rule  = 3] + 1 ) / (degree + 1)
-            ifelse abs(min-frequency - max-frequency) = 0 
-                                                         [set sat2 1]
-                                                         [set sat2  (my-frequency - min-frequency) / (max-frequency - min-frequency)]
-            ]
-
-if my.rule = 4 [
-            let my-frequency (count my.neighbors with [ my.rule  = 4]  + 1) / ( degree + 1)
-            ifelse abs( max-frequency - min-frequency ) = 0 
-                                                       [set sat2 1]
-                                                       [set sat2  ( max-frequency - my-frequency ) / (  max-frequency - min-frequency)]
-            ]
-
-report sat2
-end
-
-
-to-report majority-rules  ;; reports a set with the number of the most frequent rules in agent's neighborhood (agent included)
-                          ;; be careful when use in an ask cycle as the command is applied to "self"
-  let mylist [ my.rule ] of myset
-  set mylist modes mylist
-  report mylist
-end
-
-to-report minority-rules ;; reports a set with the number of the less frequent rules in agent's neighborhood (agent included)
-                         ;; be careful when use in an ask cycle as the command is applied to "self"
-  let mylist_1 [ my.rule ] of myset
-  let mylist []
-  let j 1
-  while [empty? mylist] [
-  let i 1
-  repeat 4 [
-    if length filter [? = i] mylist_1 = j  [set mylist lput i mylist] 
-    set i i + 1
-    ]
-  set j j + 1
-  ] 
-  report mylist
-end
-
-
-to-report best-elements ;; report a list with the agents with the best performance according to agents  
-let bestel (turtle-set link-neighbors self)
-  if my.rule = 1 [set bestel bestel with [score >= [score] of max-one-of bestel [score] * 0.99]]
-  
-  if my.rule = 2 [set bestel bestel with [score <= [score] of min-one-of bestel [score] * 1.01]]
-  
-  if my.rule = 3 [
-              let rules-list majority-rules
-              set bestel bestel with [member? my.rule rules-list]
-              ] 
-  if my.rule = 4 [
-              let rules-list minority-rules
-              if not empty? rules-list [
-                                        set bestel bestel with [member? my.rule rules-list]
-                                       ]  
-              ]
-  
-  report bestel
-end  
-
-to-report add-noise [value noise-std]
-      let epsilon random-normal 0.0 noise-std
-      if ( epsilon <= -100 )
-      [ set epsilon -99] 
-      let noisy-value runresult value * 100 / ( 100 + epsilon )
-      if (noisy-value > 1) [set noisy-value 1]
-      if (noisy-value < 0) [set noisy-value 0]     
-      report noisy-value
-end
-
-
-to-report min-frequency
-let l item 0 minority-rules
-report count (turtle-set my.neighbors self) with [ my.rule  = l] / (degree + 1)
-end
-
-to-report max-frequency
-let l item 0 majority-rules
-report count (turtle-set my.neighbors self) with [ my.rule  = l] / (degree + 1)
-end
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Life Distributions  ;;;;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;census-dist : fractions of people with age 0, 5, ...100
-;life-expect   : expected life at ages 0, 5, ...100 (life expectancy = 1/M_age)
-
-;expected rate at which people die per unit time at each age* = M_age* 
-;probability of dying at age* = 1-exp(-M_age*) :: 
-
-;F_age*= fraction of population of age* that dies within one year :: M_age*=-ln(1-F_age*)
-
-;if M is done in intervals (as we have here), M is the value at age A+5
-
-
-to init-age-USA2010 ;;Population fraction for ages according data colected
-                                 ;By Lindsay M. Howden and Julie A. Meyer in
-                                 ;Age and Sex Composition: 2010 Census briefs
-                                 ;Reported fractions have an interval of 5 years starting from 0 until 100 years
-  let census-dist (list 0.0654 0.0659 0.0670 0.0714 0.0699 0.0683 0.0647 0.0654 0.0677 0.0735 0.0722 0.0637 0.0545 0.0403 0.0301 0.0237 0.0186 0.0117 0.0047 0.0012 0.0002)
-  
-  ask turtles [
-    
-    let index floor random 21
-    while [random-float 1 > item index census-dist]
-          [
-          set index floor random 21
-          ]
-    set age   ( (index) * 5 + random 5)
-              ]
-end
-
-
-
-to set-life-distribution-USA2010 ;;Life expectation for ages according data colected by the Centers for Disease Control
-                                 ;and Prevention’s National Center for Health Statistics (NCHS) USA 2010
-                                 ;Murphy, Xu, and Kochanek 'Deaths: preliminary data 2010' National Vital Stat. Reports 60-4
-                                 ;Reported ages have an- averages-length of 5 years starting from 0 until 100 years
-
-set life-expectation (list 78.7 74.3 69.3 64.4 59.5 54.8 50.0 45.3 40.6 36.0 31.5 27.2 23.1 19.2 15.5 12.2 9.2 6.6 4.7 3.3 2.4) 
-set mortality-rate map [1 / ?] life-expectation
-set prob-to-die map [ (1 - exp ( ( - 1 ) * ? )  )] mortality-rate 
-set prob-die-imitation map [( 1 - exp (  ( ln ( 1 - ? )) / cultural-constant )) ] prob-to-die
-end
-
-to-report prob-die
-let index ceiling ( floor ( age   / 5 )) 
-if index > 20 [set index 20]
-if index < 0  [set index 0]
-
-let p.die item (index) prob-die-imitation
-report p.die 
-
-;let mortality item index mortality-rate 
-;let prob-to-die ( 1 - exp ( (- 1 ) *  mortality ) )
-;let prob-die-imitation ( 1 - exp (  (ln ( 1 - prob-to-die )) / cultural-constant ))
-;report prob-die-imitation 
-end
-
-
-to replacement
-  ask turtles [    
-  if      random-float 1  < prob-die 
-             [
-             ;set ticks.at.death.list lput ticks ticks.at.death.list
-             replace
-             ;set shape "target"
-             ]
-       ]
-end   
-
-
-to replace  
-    set age 0
-    set rule? false
-    set behavior? false
-    set my.rule (random 4) + 1 
-;    set shape "face sad"
-;    set size sizeT
-    set satisfaction2 1
-    ifelse random-float 1.0 < .5 ;(inicoop / 100)
-        [set cooperate true]
-        [set cooperate false]
-    establish-color
-    set score 0.0
-    set rule? false
-    set behavior? false
-set chances.imitations 0
-;set shuffled? false
-end
-
-
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Measures ;;;;;;;;;; ;;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-to calculate-Neighbors
-ask turtles [
-set n.maxi count my.neighbors with  [my.rule = 1]  / degree
-set n.mini count my.neighbors with  [my.rule = 2]  / degree
-set n.conf count my.neighbors with  [my.rule = 3]  / degree
-set n.anti count my.neighbors with  [my.rule = 4]  / degree
 
-set n.maxi.list lput n.maxi n.maxi.list
-set n.mini.list lput n.mini n.mini.list
-set n.anti.list lput n.anti n.anti.list
-set n.conf.list lput n.conf n.conf.list
-]
-end
 
 to set-outputs-1
   ;populations
@@ -1033,6 +1005,13 @@ end
 
 
 to set-outputs-2  
+ask turtles [
+set n.maxi.list lput count my.neighbors with  [my.rule = 1]  n.maxi.list
+set n.mini.list lput count my.neighbors with  [my.rule = 2]  n.mini.list
+set n.anti.list lput count my.neighbors with  [my.rule = 3]  n.anti.list
+set n.conf.list lput count my.neighbors with  [my.rule = 4]  n.conf.list
+]
+
 ;intersections
 set mean.coop     lput   cooperation-rate        mean.coop
 set mean.sat      lput   satisfaction-rate2      mean.sat
@@ -1101,10 +1080,10 @@ set scores.anti   lput   -1 scores.anti
 
 
 ;;;;;;;;;;COOP HAPPY
-set maxi-coop-happy    turtles-maxi with [cooperate = TRUE and am-i-the-best? = TRUE and age > 15]  
-set mini-coop-happy    turtles-mini with [cooperate = TRUE and am-i-the-best? = TRUE and age > 15]       
-set conf-coop-happy    turtles-conf with [cooperate = TRUE and am-i-the-best? = TRUE and age > 15]       
-set anti-coop-happy    turtles-anti with [cooperate = TRUE and am-i-the-best? = TRUE and age > 15]       
+set maxi-coop-happy    turtles-maxi with [cooperate = TRUE and Ibest = TRUE and age > 15]  
+set mini-coop-happy    turtles-mini with [cooperate = TRUE and Ibest = TRUE and age > 15]       
+set conf-coop-happy    turtles-conf with [cooperate = TRUE and Ibest = TRUE and age > 15]       
+set anti-coop-happy    turtles-anti with [cooperate = TRUE and Ibest = TRUE and age > 15]       
 
 ifelse count maxi-coop-happy > 0
 [
@@ -1159,10 +1138,10 @@ set CH.anti.scores lput  -1  CH.anti.scores
 
 ;;;;;;;;;;COOP UNHAPPY
 
-set maxi-coop-UNhappy  turtles-maxi with [cooperate = TRUE and am-i-the-best? = FALSE and age > 15]      
-set mini-coop-UNhappy  turtles-mini with [cooperate = TRUE and am-i-the-best? = FALSE and age > 15]      
-set conf-coop-UNhappy  turtles-conf with [cooperate = TRUE and am-i-the-best? = FALSE and age > 15]      
-set anti-coop-UNhappy  turtles-anti with [cooperate = TRUE and am-i-the-best? = FALSE and age > 15]      
+set maxi-coop-UNhappy  turtles-maxi with [cooperate = TRUE and Ibest = FALSE and age > 15]      
+set mini-coop-UNhappy  turtles-mini with [cooperate = TRUE and Ibest = FALSE and age > 15]      
+set conf-coop-UNhappy  turtles-conf with [cooperate = TRUE and Ibest = FALSE and age > 15]      
+set anti-coop-UNhappy  turtles-anti with [cooperate = TRUE and Ibest = FALSE and age > 15]      
 
 
 ifelse count maxi-coop-UNhappy > 0
@@ -1218,10 +1197,10 @@ set CU.anti.scores lput  -1  CU.anti.scores
 
 
 ;;;;;;;;;;;;;DEFECTING HAPPY
-set maxi-def-happy     turtles-maxi with [cooperate = FALSE and am-i-the-best? = TRUE and age > 15]      
-set mini-def-happy     turtles-mini with [cooperate = FALSE and am-i-the-best? = TRUE and age > 15]      
-set conf-def-happy     turtles-conf with [cooperate = FALSE and am-i-the-best? = TRUE and age > 15]      
-set anti-def-happy     turtles-anti with [cooperate = FALSE and am-i-the-best? = TRUE and age > 15]      
+set maxi-def-happy     turtles-maxi with [cooperate = FALSE and Ibest = TRUE and age > 15]      
+set mini-def-happy     turtles-mini with [cooperate = FALSE and Ibest = TRUE and age > 15]      
+set conf-def-happy     turtles-conf with [cooperate = FALSE and Ibest = TRUE and age > 15]      
+set anti-def-happy     turtles-anti with [cooperate = FALSE and Ibest = TRUE and age > 15]      
 
 
 ifelse count maxi-def-happy > 0
@@ -1276,10 +1255,10 @@ set DH.anti.scores lput -1  DH.anti.scores
 ]
 
 ;;;;;;;;;;;;;DEFECTING UNHAPPY
-set maxi-def-UNhappy   turtles-maxi with [cooperate = FALSE and am-i-the-best? = FALSE and age > 15]     
-set mini-def-UNhappy   turtles-mini with [cooperate = FALSE and am-i-the-best? = FALSE and age > 15]     
-set conf-def-UNhappy   turtles-conf with [cooperate = FALSE and am-i-the-best? = FALSE and age > 15]     
-set anti-def-UNhappy   turtles-anti with [cooperate = FALSE and am-i-the-best? = FALSE and age > 15]   
+set maxi-def-UNhappy   turtles-maxi with [cooperate = FALSE and Ibest = FALSE and age > 15]     
+set mini-def-UNhappy   turtles-mini with [cooperate = FALSE and Ibest = FALSE and age > 15]     
+set conf-def-UNhappy   turtles-conf with [cooperate = FALSE and Ibest = FALSE and age > 15]     
+set anti-def-UNhappy   turtles-anti with [cooperate = FALSE and Ibest = FALSE and age > 15]   
 
 
 
@@ -2278,55 +2257,55 @@ set-current-plot "Sat Coop"
 
   set-current-plot "Maxi Neighbors"
   set-current-plot-pen "maxi"
-  ifelse  maxi > 0 [plot   mean [n.maxi]  of turtles-maxi][plot 0]
+  ifelse  maxi > 0 [plot   mean [last n.maxi.list]  of turtles-maxi][plot 0]
   set-current-plot "Maxi Neighbors"
   set-current-plot-pen "mini"
-  ifelse  mini > 0 [plot mean [n.mini]  of turtles-maxi][plot 0]
+  ifelse  mini > 0 [plot mean [last n.mini.list]  of turtles-maxi][plot 0]
   set-current-plot "Maxi Neighbors"
   set-current-plot-pen "conf"
-  ifelse  conf > 0 [plot mean [n.conf]  of turtles-maxi][plot 0]  
+  ifelse  conf > 0 [plot mean [last n.conf.list]  of turtles-maxi][plot 0]  
   set-current-plot "Maxi Neighbors"
   set-current-plot-pen "anti"
-  ifelse  anti > 0 [plot mean [n.anti]  of turtles-maxi ][plot 0]
+  ifelse  anti > 0 [plot mean [last n.anti.list]  of turtles-maxi ][plot 0]
 
   set-current-plot "Mini Neighbors"
   set-current-plot-pen "maxi"
-  ifelse  maxi > 0 [plot   mean [n.maxi]  of turtles-mini][plot 0]
+  ifelse  maxi > 0 [plot   mean [last n.maxi.list]  of turtles-mini][plot 0]
   set-current-plot "Mini Neighbors"
   set-current-plot-pen "mini"
-  ifelse  mini > 0 [plot mean [n.mini]  of turtles-mini][plot 0]
+  ifelse  mini > 0 [plot mean [last n.mini.list]  of turtles-mini][plot 0]
   set-current-plot "Mini Neighbors"
   set-current-plot-pen "conf"
-  ifelse  conf > 0 [plot mean [n.conf]  of turtles-mini][plot 0]  
+  ifelse  conf > 0 [plot mean [last n.conf.list]  of turtles-mini][plot 0]  
   set-current-plot "Mini Neighbors"
   set-current-plot-pen "anti"
-  ifelse  anti > 0 [plot mean [n.anti]  of turtles-mini ][plot 0]
+  ifelse  anti > 0 [plot mean [last n.anti.list]  of turtles-mini ][plot 0]
 
   set-current-plot "Conf Neighbors"
   set-current-plot-pen "maxi"
-  ifelse  maxi > 0 [plot   mean [n.maxi]  of turtles-conf][plot 0]
+  ifelse  maxi > 0 [plot   mean [last n.maxi.list]  of turtles-conf][plot 0]
   set-current-plot "Conf Neighbors"
   set-current-plot-pen "mini"
-  ifelse  mini > 0 [plot mean [n.mini]  of turtles-conf][plot 0]
+  ifelse  mini > 0 [plot mean [last n.mini.list]  of turtles-conf][plot 0]
   set-current-plot "Conf Neighbors"
   set-current-plot-pen "conf"
-  ifelse  conf > 0 [plot mean [n.conf]  of turtles-conf][plot 0]  
+  ifelse  conf > 0 [plot mean [last n.conf.list]  of turtles-conf][plot 0]  
   set-current-plot "Conf Neighbors"
   set-current-plot-pen "anti"
-  ifelse  anti > 0 [plot mean [n.anti]  of turtles-conf ][plot 0]
+  ifelse  anti > 0 [plot mean [last n.anti.list]  of turtles-conf ][plot 0]
 
   set-current-plot "Anti Neighbors"
   set-current-plot-pen "maxi"
-  ifelse  maxi > 0 [plot   mean [n.maxi]  of turtles-anti][plot 0]
+  ifelse  maxi > 0 [plot   mean [last n.maxi.list]  of turtles-anti][plot 0]
   set-current-plot "Anti Neighbors"
   set-current-plot-pen "mini"
-  ifelse  mini > 0 [plot mean [n.mini]  of turtles-anti][plot 0]
+  ifelse  mini > 0 [plot mean [last n.mini.list]  of turtles-anti][plot 0]
   set-current-plot "Anti Neighbors"
   set-current-plot-pen "conf"
-  ifelse  conf > 0 [plot mean [n.conf]  of turtles-anti][plot 0]  
+  ifelse  conf > 0 [plot mean [last n.conf.list]  of turtles-anti][plot 0]  
   set-current-plot "Anti Neighbors"
   set-current-plot-pen "anti"
-  ifelse  anti > 0 [plot mean [n.anti]  of turtles-anti ][plot 0]
+  ifelse  anti > 0 [plot mean [last n.anti.list]  of turtles-anti ][plot 0]
   end
 
 
@@ -2349,12 +2328,28 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; EXPORT LOGO;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-to export-rules-L
-let file.name (word run.info "Rules.csv")
+to export-age-L
+let p length [rule.history] of turtle 1 
+let str [run.info] of turtle 1
+let file.name (word str "Ages.csv")
 let spacer ","
 let l sort-on [NODEID] turtles
+foreach l
+[
+ask ? [
+      file-open file.name
+      file-print (list run.info spacer NODEID spacer who spacer (sublist age.history (p - Binterval) (p - 1) ) )
+      file-close
+      ]
+]
+end
+
+to export-rules-L
 let p length [rule.history] of turtle 1 
+let str [run.info] of turtle 1
+let file.name (word str "Rules.csv")
+let spacer ","
+let l sort-on [NODEID] turtles
 foreach l
 [
 ask ? [
@@ -2430,21 +2425,6 @@ ask ? [
 ]
 end
 
-to export-age-L
-let p length [rule.history] of turtle 1 
-let str [run.info] of turtle 1
-let file.name (word str "Ages.csv")
-let spacer ","
-let l sort-on [NODEID] turtles
-foreach l
-[
-ask ? [
-      file-open file.name
-      file-print (list run.info spacer NODEID spacer who spacer (sublist age.history (p - Binterval) (p - 1) ) )
-      file-close
-      ]
-]
-end
 
 to export-prop1-L
 let p length [rule.history] of turtle 1 
@@ -3640,7 +3620,7 @@ SLIDER
 *-strength-of-dilemma
 0
 0.5
-0.22
+0.5
 0.01
 1
 NIL
@@ -3696,7 +3676,7 @@ SLIDER
 *-inicoop
 0
 100
-50
+25
 1
 1
 NIL
@@ -3711,7 +3691,7 @@ SLIDER
 *-Connection-Probability
 0.01
 1
-0.636
+1
 .001
 1
 NIL
@@ -3723,7 +3703,7 @@ INPUTBOX
 569
 454
 *-Num-Agents
-100
+1000
 1
 0
 Number
@@ -3746,7 +3726,7 @@ CHOOSER
 *-Topology
 *-Topology
 "Random" "Small-World" "Scale-Free" "Lattice"
-3
+1
 
 TEXTBOX
 395
@@ -3777,7 +3757,7 @@ SLIDER
 *-Rewiring-Probability
 0
 1
-0
+0.087
 .001
 1
 NIL
@@ -3837,7 +3817,7 @@ SLIDER
 *-Initial-Neighbours
 1
 *-Num-Agents - 1
-50
+10
 1
 1
 NIL
@@ -3859,7 +3839,7 @@ MONITOR
 741
 198
 Maxi %
-count turtles with [ my.rule = 1 ] * 100 / count turtles
+maxi * 100 / Num-Agents
 2
 1
 11
@@ -3870,7 +3850,7 @@ MONITOR
 802
 199
 Mini %
-count turtles with [my.rule = 2 ] * 100 / count turtles
+mini * 100 / Num-Agents
 2
 1
 11
@@ -3881,7 +3861,7 @@ MONITOR
 743
 247
 Conf %
-count turtles with [my.rule = 3 ]  * 100 / count turtles
+conf * 100 / Num-Agents
 2
 1
 11
@@ -3892,7 +3872,7 @@ MONITOR
 803
 247
 Anti %
-count turtles with [my.rule = 4 ] * 100 / count turtles
+anti * 100 / Num-Agents
 2
 1
 11
@@ -4018,7 +3998,7 @@ MONITOR
 805
 68
 Cooperation %
-count turtles with [cooperate ] * 100 / count turtles
+cooperation-rate * 100
 2
 1
 11
@@ -4029,7 +4009,7 @@ MONITOR
 804
 118
 Satisfaction %
-mean [satisfaction2] of turtles * 100
+satisfaction-rate2 * 100
 2
 1
 11
@@ -4041,7 +4021,7 @@ SWITCH
 283
 Load-Topology
 Load-Topology
-1
+0
 1
 -1000
 
@@ -4051,7 +4031,7 @@ INPUTBOX
 568
 348
 *-fileIn
-netscienceFinal.graphml
+PGPFinal.graphml
 1
 0
 String
@@ -4105,7 +4085,7 @@ BUTTON
 335
 496
 Layout
-repeat 50 [layout]
+repeat 20 [layout]
 NIL
 1
 T
@@ -4150,7 +4130,7 @@ MONITOR
 680
 198
 % New Turtles
-count turtles with [shape = \"target\"] * 100 / count turtles
+;count turtles with [shape = \"target\"] * 100 / count turtles
 2
 1
 11
@@ -4186,7 +4166,7 @@ MONITOR
 679
 247
 Mean Age 
-mean [age] of turtles
+;mean [age] of turtles
 2
 1
 11
@@ -4623,6 +4603,16 @@ PENS
 "mini" 1.0 2 -10899396 true "" ""
 "maxi" 1.0 2 -2674135 true "" ""
 "conf" 1.0 2 -13345367 true "" ""
+
+TEXTBOX
+388
+229
+538
+247
+*Load Graph
+10
+15.0
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -5160,9 +5150,8 @@ export-agesL</final>
       <value value="0.076"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="REALGRAPHS" repetitions="10" runMetricsEveryStep="true">
-    <setup>setup</setup>
-    <go>repeat 2001 [go]</go>
+  <experiment name="REALGRAPHS" repetitions="1" runMetricsEveryStep="true">
+    <go>run-logo 200 190 9 9</go>
     <final>export-behavior-L
 export-satisfaction-L
 export-scores-L
@@ -5188,10 +5177,9 @@ export-global-L</final>
     <enumeratedValueSet variable="*-Initial-Random-Types?">
       <value value="true"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="*-innovation?">
-      <value value="false"/>
+    <enumeratedValueSet variable="*-strength-of-dilemma">
+      <value value="0.5"/>
     </enumeratedValueSet>
-    <steppedValueSet variable="*-strength-of-dilemma" first="0" step="0.025" last="0.5"/>
     <enumeratedValueSet variable="*-Initial-Neighbours">
       <value value="1"/>
     </enumeratedValueSet>
@@ -5210,9 +5198,8 @@ export-global-L</final>
     <enumeratedValueSet variable="*-Connection-Probability">
       <value value="1"/>
     </enumeratedValueSet>
-    <steppedValueSet variable="*-inicoop" first="0" step="25" last="100"/>
-    <enumeratedValueSet variable="Shock%">
-      <value value="0"/>
+    <enumeratedValueSet variable="*-inicoop">
+      <value value="25"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="*-cultural-constant">
       <value value="2"/>
@@ -5224,7 +5211,11 @@ export-global-L</final>
       <value value="1"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="*-fileIn">
-      <value value="&quot;PGPFinal.graphml&quot;"/>
+      <value value="&quot;polblogsFinal.graphml&quot;"/>
+      <value value="&quot;jazzFinal.graphml&quot;"/>
+      <value value="&quot;emailFinal.graphml&quot;"/>
+      <value value="&quot;netscienceFinal.graphml&quot;"/>
+      <value value="&quot;schoolFinal.graphml&quot;"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
